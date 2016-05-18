@@ -1,23 +1,28 @@
 function modelFactory(base) {
+  const reservesSchema = base.db.Schema({
+    code: { type: String, required: true },
+    expirationTime: { type: Date, required: true }
+  }, { _id: false, minimize: false });
 
-  var entrySchema = base.db.Schema({
-    code: {type: String, required: true},
-    quantity: {type: Number, required: true}
-  }, {_id: false, minimize: false})
+  const entrySchema = base.db.Schema({
+    code: { type: String, required: true },
+    quantity: { type: Number, required: true },
+    reserves: [reservesSchema]
+  }, { _id: false, minimize: false });
 
-  var schema = base.db.Schema({
-    _id: {type: String, required: true},
-    uid: {type: String, required: true},
-    expirationTime: {type: Date, required: true},
+  const schema = base.db.Schema({
+    _id: { type: String, required: true },
+    uid: { type: String, required: true },
+    expirationTime: { type: Date, required: true },
     entries: [entrySchema]
-  }, {_id: false, minimize: false, timestamps: true});
+  }, { _id: false, minimize: false, timestamps: true });
 
   schema.set('toJSON', {
     virtuals: true
   });
 
   schema.method('toClient', function () {
-    var obj = this.toJSON();
+    const obj = this.toJSON();
     delete obj._id;
     delete obj.__v;
     delete obj.createdAt;

@@ -2,19 +2,28 @@ const moment = require('moment');
 const shortId = require('shortid');
 const Boom = require('boom');
 
-function cartService(base) {
+/**
+ * ## CartService.factory
+ *
+ * Creates all the operations for the Cart Service
+ *
+ * @param {base} Object The micro-base object
+ * @return {Array} Array containing the operation objects
+ */
+function cartFactory(base) {
   base.logger.info(`[service] Instantiating [${base
      .config.get('services:name')}][${base.config.get('services:version')}]`);
 
-  const cartExpirationDays = base.config.get('cartExpirationDays');
-  const maxNumberOfEntriesPerProduct = base.config.get('maxNumberOfEntriesPerProduct');
 
   // Register model(s)
   const Cart = require(base.config.get('models:cartModel'))(base);
 
-  /*
-   Creates a new cart
+  /**
+   * ## cart.new service
+   *
+   * Creates a new cart
    */
+  const cartExpirationMinutes = base.config.get('cartExpirationMinutes');
   const newCart = {
     name: 'new',
     handler: (msg, reply) => {
@@ -22,18 +31,21 @@ function cartService(base) {
         _id: shortId.generate(),
         uid: msg.uid || 'anonymous',
         entries: [],
-        expirationTime: moment().add(cartExpirationDays, 'days').toDate()
+        expirationTime: moment().add(cartExpirationMinutes, 'minutes').toDate()
       });
       cart.save(error => {
         if (error) return reply(Boom.wrap(error));
+        if (base.logger.isDebugEnabled) base.logger.debug(`[cart] cart ${cart._id} created`);
         return reply(cart.toClient());
       });
     }
   };
 
-  /*
-    Finds a Cart and returns it
-  */
+  /**
+   * ## cart.get service
+   *
+   * Finds a Cart and returns it
+   */
   const getCart = {
     name: 'get',
     handler: (msg, reply) => {
@@ -41,49 +53,46 @@ function cartService(base) {
         if (!cart) return reply(Boom.notFound());
         return reply(cart.toClient());
       }).catch(error => {
+        base.logger.error(error);
         reply(Boom.wrap(error));
       });
     }
   };
 
-  /*
-    Adds an entry to an existing Cart
-  */
-  const preAddEntry = require(base.config.get('hooks:preAddEntry'))(base);
-  const postAddEntry = require(base.config.get('hooks:postAddEntry'))(base);
-
+  /**
+   * ## cart.addEntry service
+   *
+   * Adds an entry to an existing Cart or adds quantity to an existent entry
+   */
+  const preAddToCart = base.services.loadModule('hooks:preAddToCart:handler');
+  const addToCart = base.services.loadModule('hooks:addToCart:handler');
+  const postAddToCart = base.services.loadModule('hooks:postAddToCart:handler');
+  const saveCart = base.services.loadModule('hooks:saveCart:handler');
+  const postSaveCart = base.services.loadModule('hooks:postSaveCart:handler');
   const addEntry = {
     name: 'addEntry',
     schema: require(base.config.get('schemas:addEntry')),
-    handler: ({ cartId, product }, reply) => {
+    handler: ({ cartId, product, warehouse }, reply) => {
       Cart.findById(cartId)
          .then(cart => {
+           // Check cart existance
            if (!cart) return reply(Boom.notFound());
            cart.entries = cart.entries || [];
-
-           // preAddEntry Hook
-           preAddEntry(cart, product);
-
-           let entry = cart.entries.find(p => p.code === product.code);
-           if (entry) {
-             entry.quantity += product.quantity;
-           } else {
-             entry = {
-               code: product.code,
-               quantity: product.quantity
-             };
-             cart.entries.push(entry);
-           }
-           // postAddToCart Hook
-           postAddEntry(cart, product);
-
-           return cart.save();
+           return { cart, product, warehouse };
          })
-         .then(cart => {
-           return reply(cart.toClient());
+         .then(data => preAddToCart(data))
+         .then(data => addToCart(data))
+         .then(data => postAddToCart(data))
+         .then(data => saveCart(data))
+         .then(data => postSaveCart(data))
+         .then(data => {
+           // Return the cart to the client
+           if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry ${data.product.code} added to cart ${data.cart._id}`);
+           return reply(data.cart.toClient());
          })
          .catch(error => {
            if (error.isBoom) return reply(error);
+           base.logger.error(error);
            return reply(Boom.wrap(error));
          });
     }
@@ -96,4 +105,5 @@ function cartService(base) {
   ];
 }
 
-module.exports = cartService;
+// Exports the factory
+module.exports = cartFactory;

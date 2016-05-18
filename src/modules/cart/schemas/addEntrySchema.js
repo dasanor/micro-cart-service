@@ -19,7 +19,8 @@ module.exports = {
         required: [
           'code',
           'quantity'
-        ]
+        ],
+        additionalProperties: true
       }
     },
     required: [
