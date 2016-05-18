@@ -29,15 +29,19 @@ function cartFactory(base) {
     handler: (msg, reply) => {
       const cart = new Cart({
         _id: shortId.generate(),
-        uid: msg.uid || 'anonymous',
-        entries: [],
+        userId: msg.userId || 'anonymous',
+        items: [],
         expirationTime: moment().add(cartExpirationMinutes, 'minutes').toDate()
       });
-      cart.save(error => {
-        if (error) return reply(Boom.wrap(error));
-        if (base.logger.isDebugEnabled) base.logger.debug(`[cart] cart ${cart._id} created`);
-        return reply(cart.toClient());
-      });
+      cart.save()
+         .then(savedCart => {
+           if (base.logger.isDebugEnabled) base.logger.debug(`[cart] cart ${savedCart._id} created`);
+           return reply(savedCart.toClient());
+         })
+         .catch(error => {
+           base.logger.error(error);
+           return reply(Boom.wrap(error));
+         });
     }
   };
 
@@ -49,7 +53,7 @@ function cartFactory(base) {
   const getCart = {
     name: 'get',
     handler: (msg, reply) => {
-      Cart.findById(msg.id).then(cart => {
+      Cart.findById(msg.id).exec().then(cart => {
         if (!cart) return reply(Boom.notFound());
         return reply(cart.toClient());
       }).catch(error => {
@@ -72,13 +76,13 @@ function cartFactory(base) {
   const addEntry = {
     name: 'addEntry',
     schema: require(base.config.get('schemas:addEntry')),
-    handler: ({ cartId, product, warehouse }, reply) => {
-      Cart.findById(cartId)
+    handler: ({ cartId, productId, quantity, warehouse }, reply) => {
+      Cart.findById(cartId).exec()
          .then(cart => {
            // Check cart existance
            if (!cart) return reply(Boom.notFound());
            cart.entries = cart.entries || [];
-           return { cart, product, warehouse };
+           return { cart, productId, quantity, warehouse };
          })
          .then(data => preAddToCart(data))
          .then(data => addToCart(data))
@@ -87,7 +91,7 @@ function cartFactory(base) {
          .then(data => postSaveCart(data))
          .then(data => {
            // Return the cart to the client
-           if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry ${data.product.code} added to cart ${data.cart._id}`);
+           if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
            return reply(data.cart.toClient());
          })
          .catch(error => {

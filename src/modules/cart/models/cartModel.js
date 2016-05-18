@@ -4,17 +4,18 @@ function modelFactory(base) {
     expirationTime: { type: Date, required: true }
   }, { _id: false, minimize: false });
 
-  const entrySchema = base.db.Schema({
-    code: { type: String, required: true },
+  const itemsSchema = base.db.Schema({
+    id: { type: String, required: true },
+    productId: { type: String, required: true },
     quantity: { type: Number, required: true },
     reserves: [reservesSchema]
   }, { _id: false, minimize: false });
 
   const schema = base.db.Schema({
     _id: { type: String, required: true },
-    uid: { type: String, required: true },
+    userId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
-    entries: [entrySchema]
+    items: [itemsSchema]
   }, { _id: false, minimize: false, timestamps: true });
 
   schema.set('toJSON', {

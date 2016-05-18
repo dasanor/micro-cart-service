@@ -2,9 +2,9 @@
  * Saves the cart
  */
 function postAddEntry(/* base */) {
-  return (data /* cart, product, warehouse */) => {
+  return (data /* cart, productId, quantity, warehouse */) => {
     return data.cart.save().then((savedCart) => {
-      data.stock = savedCart;
+      data.cart = savedCart;
       return data;
     });
   };

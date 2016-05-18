@@ -1,28 +1,38 @@
+const shortId = require('shortid');
+
 /**
  * Adds an item to the cart
  */
 function addToCart(/* base */) {
-  return (data /* cart, product, warehouse */) => {
+  return (data /* cart, productId, quantity, warehouse */) => {
     return new Promise((resolve /* , reject */) => {
-      let entry = data.cart.entries.find(p => p.code === data.product.code);
+      let entry = data.cart.items.find(p => p.productId === data.productId);
+
+      let reserveData;
+      if (data.availability.data) {
+        reserveData = {
+          code: data.availability.data.id,
+          expirationTime: data.availability.data.expirationTime
+        };
+      }
+
       if (entry) {
-        entry.quantity += data.product.quantity;
+        entry.quantity += data.quantity;
+        if (reserveData) {
+          entry.reserves.push(reserveData);
+        }
       } else {
         entry = {
-          code: data.product.code,
-          quantity: data.product.quantity
+          id: shortId.generate(),
+          productId: data.productId,
+          quantity: data.quantity,
+          reserves: []
         };
-        data.cart.entries.push(entry);
+        if (reserveData) {
+          entry.reserves.push(reserveData);
+        }
+        data.cart.items.push(entry);
       }
-      // Adds reserve data, if any
-      if (data.availability.data) {
-        entry.reserves = entry.reserves || [];
-        entry.reserves.push({
-          code: data.availability.data.code,
-          expirationTime: data.availability.data.expirationTime
-        });
-      }
-      console.log(data)
       return resolve(data);
     });
   };

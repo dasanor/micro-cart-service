@@ -5,27 +5,18 @@ module.exports = {
       cartId: {
         type: 'string'
       },
-      product: {
-        type: 'object',
-        properties: {
-          code: {
-            type: 'string'
-          },
-          quantity: {
-            type: 'integer',
-            minimum: 1
-          }
-        },
-        required: [
-          'code',
-          'quantity'
-        ],
-        additionalProperties: true
+      productId: {
+        type: 'string'
+      },
+      quantity: {
+        type: 'integer',
+        minimum: 1
       }
     },
     required: [
       'cartId',
-      'product'
+      'productId',
+      'quantity'
     ],
     additionalProperties: true
   }
