@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>cartModel.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../../doc-style.css" />
+  <script src="../../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../../", thisFile = "Users/ncornag/Dropbox/work/workspace/micro/examples/micro-cart-service/src/modules/cart/models/cartModeljs", defaultSidebar = true;
+  </script>
+  <script src="../../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>cartModel.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">modelFactory</span><span class="p">(</span><span class="nx">base</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">reservesSchema</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">Schema</span><span class="p">({</span>
+    <span class="nx">code</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="nx">expirationTime</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">Date</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span>
+  <span class="p">},</span> <span class="p">{</span> <span class="nx">_id</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">minimize</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+
+  <span class="kr">const</span> <span class="nx">entrySchema</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">Schema</span><span class="p">({</span>
+    <span class="nx">code</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="nx">quantity</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">Number</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="nx">reserves</span><span class="o">:</span> <span class="p">[</span><span class="nx">reservesSchema</span><span class="p">]</span>
+  <span class="p">},</span> <span class="p">{</span> <span class="nx">_id</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">minimize</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+
+  <span class="kr">const</span> <span class="nx">schema</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">Schema</span><span class="p">({</span>
+    <span class="nx">_id</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="nx">uid</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="nx">expirationTime</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">Date</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="nx">entries</span><span class="o">:</span> <span class="p">[</span><span class="nx">entrySchema</span><span class="p">]</span>
+  <span class="p">},</span> <span class="p">{</span> <span class="nx">_id</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">minimize</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">timestamps</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+
+  <span class="nx">schema</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;toJSON&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">virtuals</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="p">});</span>
+
+  <span class="nx">schema</span><span class="p">.</span><span class="nx">method</span><span class="p">(</span><span class="s1">&#39;toClient&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
+    <span class="k">delete</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">_id</span><span class="p">;</span>
+    <span class="k">delete</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">__v</span><span class="p">;</span>
+    <span class="k">delete</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">createdAt</span><span class="p">;</span>
+    <span class="k">delete</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">updatedAt</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">obj</span><span class="p">;</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">model</span><span class="p">(</span><span class="s1">&#39;Cart&#39;</span><span class="p">,</span> <span class="nx">schema</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">modelFactory</span><span class="p">;</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>
