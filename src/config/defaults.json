@@ -12,14 +12,14 @@
   "hooks": {
     "preAddToCart": {
       "handler": "./modules/cart/hooks/preAddToCart",
-      "maxQuantityPerProduct": 10000
+      "maxQuantityPerProduct": 10000,
+      "maxNumberOfEntries": 15
     },
     "addToCart": {
       "handler": "./modules/cart/hooks/addToCart"
     },
     "postAddToCart": {
       "handler": "./modules/cart/hooks/postAddToCart",
-      "maxNumberOfEntries": 3
     },
     "saveCart": {
       "handler": "./modules/cart/hooks/saveCart"
