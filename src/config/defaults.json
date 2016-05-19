@@ -19,7 +19,7 @@
       "handler": "./modules/cart/hooks/addToCart"
     },
     "postAddToCart": {
-      "handler": "./modules/cart/hooks/postAddToCart",
+      "handler": "./modules/cart/hooks/postAddToCart"
     },
     "saveCart": {
       "handler": "./modules/cart/hooks/saveCart"

@@ -4,8 +4,8 @@ const Boom = require('boom');
  * Hook to allow customization of the verification process before adding a product to the cart
  */
 function preAddToCart(base) {
-  const maxQuantityPerProduct = base.config.get('hooks:preAddEntry:maxQuantityPerProduct');
-  const maxNumberOfEntries = base.config.get('hook:preAddEntry:maxNumberOfEntries');
+  const maxQuantityPerProduct = base.config.get('hooks:preAddToCart:maxQuantityPerProduct');
+  const maxNumberOfEntries = base.config.get('hook:preAddToCart:maxNumberOfEntries');
   return (data /* cart, productId, quantity, warehouse */) => {
     // TODO Convert to Promises.all
     return new Promise((resolve, reject) => {
