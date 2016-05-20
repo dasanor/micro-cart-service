@@ -6,6 +6,13 @@
     "host": "localhost",
     "db": "micro",
     "debug": true
+  },
+  "gateway": {
+    "host": "localhost",
+    "port": 3000
+  },
+  "services": {
+    "port": "3001"
   }
 }
 

@@ -43,7 +43,7 @@
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">postAddEntry</span><span class="p">(</span><span class="cm">/* base */</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="p">(</span><span class="nx">data</span> <span class="cm">/* cart, productId, quantity, warehouse */</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nx">data</span> <span class="cm">/* cart, productId, quantity, warehouseId */</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">data</span><span class="p">.</span><span class="nx">cart</span><span class="p">.</span><span class="nx">save</span><span class="p">().</span><span class="nx">then</span><span class="p">((</span><span class="nx">savedCart</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="nx">data</span><span class="p">.</span><span class="nx">cart</span> <span class="o">=</span> <span class="nx">savedCart</span><span class="p">;</span>
       <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>

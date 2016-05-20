@@ -109,7 +109,7 @@ curl --request POST \
   --url http://localhost:3001/services/cart/v1/addEntry \
   --header 'content-type: application/json' \
   --header 'accept: application/json' \
-  --data '{"cartId": "ByQpDBcM", "productId": "0001", "quantity": 1, "warehouse": "001"}'
+  --data '{"cartId": "ByQpDBcM", "productId": "0001", "quantity": 1, "warehouseId": "001"}'
 ```
 
 ##### Request Validation

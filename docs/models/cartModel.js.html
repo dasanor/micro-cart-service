@@ -38,11 +38,35 @@
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">modelFactory</span><span class="p">(</span><span class="nx">base</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>The reservations schema</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="kr">const</span> <span class="nx">reservesSchema</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">Schema</span><span class="p">({</span>
     <span class="nx">code</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
     <span class="nx">expirationTime</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">Date</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span>
   <span class="p">},</span> <span class="p">{</span> <span class="nx">_id</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">minimize</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>The line items schema</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="kr">const</span> <span class="nx">itemsSchema</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">Schema</span><span class="p">({</span>
     <span class="nx">id</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
     <span class="nx">productId</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
@@ -50,6 +74,18 @@
     <span class="nx">reserves</span><span class="o">:</span> <span class="p">[</span><span class="nx">reservesSchema</span><span class="p">]</span>
   <span class="p">},</span> <span class="p">{</span> <span class="nx">_id</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">minimize</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>The root schema</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="kr">const</span> <span class="nx">schema</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">Schema</span><span class="p">({</span>
     <span class="nx">_id</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
     <span class="nx">userId</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
@@ -57,10 +93,34 @@
     <span class="nx">items</span><span class="o">:</span> <span class="p">[</span><span class="nx">itemsSchema</span><span class="p">]</span>
   <span class="p">},</span> <span class="p">{</span> <span class="nx">_id</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">minimize</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">timestamps</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Enable the virtuals when converting to JSON</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="nx">schema</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;toJSON&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">virtuals</span><span class="o">:</span> <span class="kc">true</span>
   <span class="p">});</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>Add a method to clean the object before sending it to the client</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="nx">schema</span><span class="p">.</span><span class="nx">method</span><span class="p">(</span><span class="s1">&#39;toClient&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="kr">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
     <span class="k">delete</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">_id</span><span class="p">;</span>
@@ -70,6 +130,18 @@
     <span class="k">return</span> <span class="nx">obj</span><span class="p">;</span>
   <span class="p">});</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>Add the model to mongoose</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
   <span class="k">return</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">model</span><span class="p">(</span><span class="s1">&#39;Cart&#39;</span><span class="p">,</span> <span class="nx">schema</span><span class="p">);</span>
 <span class="p">}</span>
 

@@ -20,11 +20,17 @@ function opFactory(base) {
    * ## cart.addEntry service
    *
    * Adds an entry to an existing Cart or adds quantity to an existent entry
+   *
+   * The handler receive an object with the following properties:
+   * @param {cartId} String The Cart id to add to
+   * @param {productId} String The Product id to add
+   * @param {quantity} Integer The qualtity to add
+   * @param {warehouseId} String Optional. The Warehouse id to pick stock
    */
   const op = {
     name: 'addEntry',
     schema: require(base.config.get('schemas:addEntry')),
-    handler: ({ cartId, productId, quantity, warehouse }, reply) => {
+    handler: ({ cartId, productId, quantity, warehouseId }, reply) => {
       base.db.models.Cart
          .findById(cartId)
          .exec()
@@ -32,7 +38,7 @@ function opFactory(base) {
            // Check cart existance
            if (!cart) return reply(Boom.notFound());
            cart.entries = cart.entries || [];
-           return { cart, productId, quantity, warehouse };
+           return { cart, productId, quantity, warehouseId };
          })
          .then(data => preAddToCart(data))
          .then(data => addToCart(data))

@@ -4,11 +4,11 @@
  */
 function stockAvailability(base) {
   const reserveStockForMinutes = base.config.get('hooks:stockAvailability:reserveStockForMinutes');
-  return (productId, quantity, warehouse) => {
+  return (productId, quantity, warehouseId) => {
     return base.services.call('stock:reserve', {
       productId,
       quantity,
-      warehouse,
+      warehouseId,
       reserveStockForMinutes
     });
   };

@@ -6,7 +6,7 @@ const Boom = require('boom');
 function preAddToCart(base) {
   const maxQuantityPerProduct = base.config.get('hooks:preAddToCart:maxQuantityPerProduct');
   const maxNumberOfEntries = base.config.get('hook:preAddToCart:maxNumberOfEntries');
-  return (data /* cart, productId, quantity, warehouse */) => {
+  return (data /* cart, productId, quantity, warehouseId */) => {
     // TODO Convert to Promises.all
     return new Promise((resolve, reject) => {
       // maxQuantityPerProduct check
@@ -35,7 +35,7 @@ function preAddToCart(base) {
       // stockAvailability check
       const stockAvailability = base.services.loadModule('hooks:stockAvailability:handler');
       if (stockAvailability) {
-        return stockAvailability(data.productId, data.quantity, data.warehouse).then(response => {
+        return stockAvailability(data.productId, data.quantity, data.warehouseId).then(response => {
           // TODO verify in which case we return an "error" property
           if (response.error) return reject(Boom.create(response.statusCode, response.message));
           data.availability = response;

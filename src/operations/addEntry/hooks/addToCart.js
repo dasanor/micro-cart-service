@@ -4,7 +4,7 @@ const shortId = require('shortid');
  * Adds an item to the cart
  */
 function addToCart(/* base */) {
-  return (data /* cart, productId, quantity, warehouse */) => {
+  return (data /* cart, productId, quantity, warehouseId */) => {
     return new Promise((resolve /* , reject */) => {
       let entry = data.cart.items.find(p => p.productId === data.productId);
 

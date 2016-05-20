@@ -103,6 +103,31 @@
 
   </div>
   <div class="body"><p>Adds an entry to an existing Cart or adds quantity to an existent entry</p>
+
+<p>The handler receive an object with the following properties:</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">String</span>
+      <span class="dox_type">cartId</span>
+      <span>The Cart id to add to</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">String</span>
+      <span class="dox_type">productId</span>
+      <span>The Product id to add</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">Integer</span>
+      <span class="dox_type">quantity</span>
+      <span>The qualtity to add</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">String</span>
+      <span class="dox_type">warehouseId</span>
+      <span>Optional. The Warehouse id to pick stock</span>
+    </div>
   </div>
 </div>
         </td>
@@ -110,7 +135,7 @@
   <span class="kr">const</span> <span class="nx">op</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;addEntry&#39;</span><span class="p">,</span>
     <span class="nx">schema</span><span class="o">:</span> <span class="nx">require</span><span class="p">(</span><span class="nx">base</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;schemas:addEntry&#39;</span><span class="p">)),</span>
-    <span class="nx">handler</span><span class="o">:</span> <span class="p">({</span> <span class="nx">cartId</span><span class="p">,</span> <span class="nx">productId</span><span class="p">,</span> <span class="nx">quantity</span><span class="p">,</span> <span class="nx">warehouse</span> <span class="p">},</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">handler</span><span class="o">:</span> <span class="p">({</span> <span class="nx">cartId</span><span class="p">,</span> <span class="nx">productId</span><span class="p">,</span> <span class="nx">quantity</span><span class="p">,</span> <span class="nx">warehouseId</span> <span class="p">},</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Cart</span>
          <span class="p">.</span><span class="nx">findById</span><span class="p">(</span><span class="nx">cartId</span><span class="p">)</span>
          <span class="p">.</span><span class="nx">exec</span><span class="p">()</span>
@@ -129,7 +154,7 @@
         <td class="code highlight"><div class="highlight"><pre>
            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cart</span><span class="p">)</span> <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">Boom</span><span class="p">.</span><span class="nx">notFound</span><span class="p">());</span>
            <span class="nx">cart</span><span class="p">.</span><span class="nx">entries</span> <span class="o">=</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">entries</span> <span class="o">||</span> <span class="p">[];</span>
-           <span class="k">return</span> <span class="p">{</span> <span class="nx">cart</span><span class="p">,</span> <span class="nx">productId</span><span class="p">,</span> <span class="nx">quantity</span><span class="p">,</span> <span class="nx">warehouse</span> <span class="p">};</span>
+           <span class="k">return</span> <span class="p">{</span> <span class="nx">cart</span><span class="p">,</span> <span class="nx">productId</span><span class="p">,</span> <span class="nx">quantity</span><span class="p">,</span> <span class="nx">warehouseId</span> <span class="p">};</span>
          <span class="p">})</span>
          <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="nx">preAddToCart</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
          <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="nx">addToCart</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
