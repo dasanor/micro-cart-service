@@ -1,7 +1,10 @@
 function modelFactory(base) {
+  if (base.logger.isDebugEnabled()) base.logger.debug('[db] registering model Stock')
   // The reservations schema
   const reservesSchema = base.db.Schema({
-    code: { type: String, required: true },
+    id: { type: String, required: true },
+    warehouseId: { type: String, required: true },
+    quantity: { type: Number, required: true },
     expirationTime: { type: Date, required: true }
   }, { _id: false, minimize: false });
 
@@ -10,7 +13,7 @@ function modelFactory(base) {
     id: { type: String, required: true },
     productId: { type: String, required: true },
     quantity: { type: Number, required: true },
-    reserves: [reservesSchema]
+    reserves: [ reservesSchema ]
   }, { _id: false, minimize: false });
 
   // The root schema
@@ -18,7 +21,7 @@ function modelFactory(base) {
     _id: { type: String, required: true },
     userId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
-    items: [itemsSchema]
+    items: [ itemsSchema ]
   }, { _id: false, minimize: false, timestamps: true });
 
   // Enable the virtuals when converting to JSON

@@ -19,13 +19,14 @@ function opFactory(base) {
   /**
    * ## cart.addEntry service
    *
-   * Adds an entry to an existing Cart or adds quantity to an existent entry
+   * Adds an entry to an existing Cart
    *
    * The handler receive an object with the following properties:
    * @param {cartId} String The Cart id to add to
    * @param {productId} String The Product id to add
    * @param {quantity} Integer The qualtity to add
    * @param {warehouseId} String Optional. The Warehouse id to pick stock
+   * @returns {entry} Object The new added entry.
    */
   const op = {
     name: 'addEntry',
@@ -36,7 +37,7 @@ function opFactory(base) {
          .exec()
          .then(cart => {
            // Check cart existance
-           if (!cart) return reply(Boom.notFound());
+           if (!cart) return reply(Boom.notFound('Cart not found'));
            cart.entries = cart.entries || [];
            return { cart, productId, quantity, warehouseId };
          })
@@ -48,7 +49,7 @@ function opFactory(base) {
          .then(data => {
            // Return the cart to the client
            if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
-           return reply(data.cart.toClient());
+           return reply(data.addedEntry);
          })
          .catch(error => {
            if (error.isBoom) return reply(error);

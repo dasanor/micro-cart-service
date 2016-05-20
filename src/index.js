@@ -7,3 +7,4 @@ require(base.config.get('models:cartModel'))(base);
 base.services.add(require('./operations/new')(base));
 base.services.add(require('./operations/get')(base));
 base.services.add(require('./operations/addEntry')(base));
+base.services.add(require('./operations/removeEntry')(base));

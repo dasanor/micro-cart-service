@@ -11,23 +11,13 @@ function preAddToCart(base) {
     return new Promise((resolve, reject) => {
       // maxQuantityPerProduct check
       if (maxQuantityPerProduct) {
-        let quantity = data.quantity;
-        const entry = data.cart.items.find(p => p.code === data.productId);
-        if (entry) {
-          quantity += data.quantity;
-        }
-        if (quantity > maxQuantityPerProduct) {
+        if (data.quantity > maxQuantityPerProduct) {
           return reject(Boom.notAcceptable(`Quantity in cart for this product must be less than or equal to ${maxQuantityPerProduct}`));
         }
       }
       // maxNumberOfEntries check
       if (maxNumberOfEntries) {
-        let itemCount = data.cart.items.length;
-        const entry = data.cart.items.find(p => p.code === data.productId);
-        if (!entry) {
-          itemCount++;
-        }
-        if (itemCount > maxNumberOfEntries) {
+        if (data.cart.items.length + 1 > maxNumberOfEntries) {
           return reject(Boom.notAcceptable(`Number of entries must be less than or equal to ${maxNumberOfEntries}`));
         }
         return resolve(data);

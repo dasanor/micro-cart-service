@@ -16,12 +16,12 @@ function opFactory(base) {
    */
   const op = {
     name: 'get',
-    handler: (msg, reply) => {
+    handler: ({cartId}, reply) => {
       base.db.models.Cart
-         .findById(msg.id)
+         .findById(cartId)
          .exec()
          .then(cart => {
-           if (!cart) return reply(boom.notFound());
+           if (!cart) return reply(boom.notFound('Cart not found'));
            return reply(cart.toClient());
          })
          .catch(error => {
