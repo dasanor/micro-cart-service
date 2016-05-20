@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../../doc-style.css" />
   <script src="../../../doc-filelist.js"></script>
   <script>
-    var relativeDir = "../../../", thisFile = "Users/ncornag/Dropbox/work/workspace/micro/examples/micro-cart-service/src/modules/cart/schemas/addEntrySchemajs", defaultSidebar = true;
+    var relativeDir = "../../../", thisFile = "Users/ncornag/Dropbox/work/workspace/micro/examples/micro-cart-service/src/operations/addEntry/schemas/addEntrySchemajs", defaultSidebar = true;
   </script>
   <script src="../../../doc-script.js"></script>
 </head>
@@ -44,27 +44,18 @@
       <span class="nx">cartId</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;string&#39;</span>
       <span class="p">},</span>
-      <span class="nx">product</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
-        <span class="nx">properties</span><span class="o">:</span> <span class="p">{</span>
-          <span class="nx">code</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;string&#39;</span>
-          <span class="p">},</span>
-          <span class="nx">quantity</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;integer&#39;</span><span class="p">,</span>
-            <span class="nx">minimum</span><span class="o">:</span> <span class="mi">1</span>
-          <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nx">required</span><span class="o">:</span> <span class="p">[</span>
-          <span class="s1">&#39;code&#39;</span><span class="p">,</span>
-          <span class="s1">&#39;quantity&#39;</span>
-        <span class="p">],</span>
-        <span class="nx">additionalProperties</span><span class="o">:</span> <span class="kc">true</span>
+      <span class="nx">productId</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;string&#39;</span>
+      <span class="p">},</span>
+      <span class="nx">quantity</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;integer&#39;</span><span class="p">,</span>
+        <span class="nx">minimum</span><span class="o">:</span> <span class="mi">1</span>
       <span class="p">}</span>
     <span class="p">},</span>
     <span class="nx">required</span><span class="o">:</span> <span class="p">[</span>
       <span class="s1">&#39;cartId&#39;</span><span class="p">,</span>
-      <span class="s1">&#39;product&#39;</span>
+      <span class="s1">&#39;productId&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;quantity&#39;</span>
     <span class="p">],</span>
     <span class="nx">additionalProperties</span><span class="o">:</span> <span class="kc">true</span>
   <span class="p">}</span>

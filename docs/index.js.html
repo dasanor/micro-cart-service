@@ -37,8 +37,7 @@
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="kr">const</span> <span class="nx">baseFactory</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;micro-base&#39;</span><span class="p">);</span>
-<span class="kr">const</span> <span class="nx">cartFactory</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./modules/cart&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="kr">const</span> <span class="nx">base</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;micro-base&#39;</span><span class="p">)();</span>
 
 
 </pre></div>
@@ -49,10 +48,10 @@
 <div class="pilwrap">
   <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
 </div>
-<p>Instantiate micro-base</p>
+<p>Register model(s)</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-<span class="kr">const</span> <span class="nx">base</span> <span class="o">=</span> <span class="nx">baseFactory</span><span class="p">();</span>
+<span class="nx">require</span><span class="p">(</span><span class="nx">base</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;models:cartModel&#39;</span><span class="p">))(</span><span class="nx">base</span><span class="p">);</span>
 
 
 </pre></div>
@@ -66,21 +65,9 @@
 <p>Add operations</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-<span class="nx">base</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">cartFactory</span><span class="p">(</span><span class="nx">base</span><span class="p">));</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
-</div>
-<p>Return express app for easy testing</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">app</span><span class="p">;</span>
+<span class="nx">base</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./operations/new&#39;</span><span class="p">)(</span><span class="nx">base</span><span class="p">));</span>
+<span class="nx">base</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./operations/get&#39;</span><span class="p">)(</span><span class="nx">base</span><span class="p">));</span>
+<span class="nx">base</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./operations/addEntry&#39;</span><span class="p">)(</span><span class="nx">base</span><span class="p">));</span>
 </pre></div>
         </td>
       </tr>

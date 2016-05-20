@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../../doc-style.css" />
   <script src="../../../doc-filelist.js"></script>
   <script>
-    var relativeDir = "../../../", thisFile = "Users/ncornag/Dropbox/work/workspace/micro/examples/micro-cart-service/src/modules/cart/hooks/postSaveCartjs", defaultSidebar = true;
+    var relativeDir = "../../../", thisFile = "Users/ncornag/Dropbox/work/workspace/micro/examples/micro-cart-service/src/operations/addEntry/hooks/postSaveCartjs", defaultSidebar = true;
   </script>
   <script src="../../../doc-script.js"></script>
 </head>
@@ -43,7 +43,7 @@
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">addEntry</span><span class="p">(</span><span class="cm">/* base */</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="p">(</span><span class="nx">data</span> <span class="cm">/* cart, product, warehouse */</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nx">data</span> <span class="cm">/* cart, productId, quantity, warehouse */</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">((</span><span class="nx">resolve</span> <span class="cm">/* , reject */</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="nx">resolve</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
     <span class="p">});</span>

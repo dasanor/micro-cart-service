@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../../doc-style.css" />
   <script src="../../../doc-filelist.js"></script>
   <script>
-    var relativeDir = "../../../", thisFile = "Users/ncornag/Dropbox/work/workspace/micro/examples/micro-cart-service/src/modules/cart/hooks/saveCartjs", defaultSidebar = true;
+    var relativeDir = "../../../", thisFile = "Users/ncornag/Dropbox/work/workspace/micro/examples/micro-cart-service/src/operations/addEntry/hooks/saveCartjs", defaultSidebar = true;
   </script>
   <script src="../../../doc-script.js"></script>
 </head>
@@ -43,9 +43,9 @@
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">postAddEntry</span><span class="p">(</span><span class="cm">/* base */</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="p">(</span><span class="nx">data</span> <span class="cm">/* cart, product, warehouse */</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nx">data</span> <span class="cm">/* cart, productId, quantity, warehouse */</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">data</span><span class="p">.</span><span class="nx">cart</span><span class="p">.</span><span class="nx">save</span><span class="p">().</span><span class="nx">then</span><span class="p">((</span><span class="nx">savedCart</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-      <span class="nx">data</span><span class="p">.</span><span class="nx">stock</span> <span class="o">=</span> <span class="nx">savedCart</span><span class="p">;</span>
+      <span class="nx">data</span><span class="p">.</span><span class="nx">cart</span> <span class="o">=</span> <span class="nx">savedCart</span><span class="p">;</span>
       <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
     <span class="p">});</span>
   <span class="p">};</span>

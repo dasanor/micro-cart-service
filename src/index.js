@@ -1,11 +1,9 @@
-const baseFactory = require('micro-base');
-const cartFactory = require('./modules/cart');
+const base = require('micro-base')();
 
-// Instantiate micro-base
-const base = baseFactory();
+// Register model(s)
+require(base.config.get('models:cartModel'))(base);
 
 // Add operations
-base.services.addModule(cartFactory(base));
-
-// Return express app for easy testing
-module.exports = base.app;
+base.services.add(require('./operations/new')(base));
+base.services.add(require('./operations/get')(base));
+base.services.add(require('./operations/addEntry')(base));
