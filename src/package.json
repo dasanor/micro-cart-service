@@ -1,6 +1,6 @@
 {
   "name": "micro-cart-service",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A cart service.",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "boom": "^3.1.3",
-    "micro-base": "^1.0.5",
+    "micro-base": "^0.2.3",
     "moment": "^2.13.0",
     "shortid": "^2.2.6"
   },
