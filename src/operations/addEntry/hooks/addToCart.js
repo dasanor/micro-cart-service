@@ -6,7 +6,6 @@ const shortId = require('shortid');
 function addToCart(/* base */) {
   return (data /* cart, productId, quantity, warehouseId */) => {
     return new Promise((resolve /* , reject */) => {
-      let reserveData;
       const entry = {
         id: shortId.generate(),
         productId: data.productId,

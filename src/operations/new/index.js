@@ -20,21 +20,21 @@ function opFactory(base) {
   const op = {
     name: 'new',
     handler: (msg, reply) => {
-      const cart = new Cart({
+      const cart = new base.db.models.Cart({
         _id: shortId.generate(),
         userId: msg.userId || 'anonymous',
         items: [],
         expirationTime: moment().add(cartExpirationMinutes, 'minutes').toDate()
       });
       cart.save()
-         .then(savedCart => {
-           if (base.logger.isDebugEnabled) base.logger.debug(`[cart] cart ${savedCart._id} created`);
-           return reply(savedCart.toClient());
-         })
-         .catch(error => {
-           base.logger.error(error);
-           return reply(boom.wrap(error));
-         });
+        .then(savedCart => {
+          if (base.logger.isDebugEnabled) base.logger.debug(`[cart] cart ${savedCart._id} created`);
+          return reply(savedCart.toClient());
+        })
+        .catch(error => {
+          base.logger.error(error);
+          return reply(boom.wrap(error));
+        });
     }
   };
   return op;

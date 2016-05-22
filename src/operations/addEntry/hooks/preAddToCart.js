@@ -7,7 +7,6 @@ function preAddToCart(base) {
   const maxQuantityPerProduct = base.config.get('hooks:preAddToCart:maxQuantityPerProduct');
   const maxNumberOfEntries = base.config.get('hook:preAddToCart:maxNumberOfEntries');
   return (data /* cart, productId, quantity, warehouseId */) => {
-    // TODO Convert to Promises.all
     return new Promise((resolve, reject) => {
       // maxQuantityPerProduct check
       if (maxQuantityPerProduct) {
