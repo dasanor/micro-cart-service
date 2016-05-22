@@ -1,3 +1,5 @@
+const Boom = require('boom');
+
 /**
  * Allows the customization of actions after the cart was stored
  */

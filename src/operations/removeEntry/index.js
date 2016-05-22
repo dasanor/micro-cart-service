@@ -7,6 +7,11 @@ const boom = require('boom');
  * @return {Function} The operation factory
  */
 function opFactory(base) {
+  const getCart = base.services.loadModule('hooks:removeEntryGetCart:handler');
+  const removeFromCart = base.services.loadModule('hooks:removeEntryRemoveFromCart:handler');
+  const unreserve = base.services.loadModule('hooks:unreserve:handler');
+  const saveCart = base.services.loadModule('hooks:removeEntrySaveCart:handler');
+
   /**
    * ## cart.removeEntry service
    *
@@ -14,31 +19,21 @@ function opFactory(base) {
    */
   const op = {
     name: 'removeEntry',
-    handler: ({cartId, entryId}, reply) => {
-      base.db.models.Cart
-         .findById(cartId)
-         .exec()
-         .then(cart => {
-           if (!cart) return reply(boom.notFound('Cart not found'));
-           const entry = cart.items.find(e => e.id === entryId);
-           if (!entry) return reply(boom.notFound('Entry not found'));
-           cart.items = cart.items.filter(e => e.id !== entryId);
-           //return cart.save()
-           //   .then(() => {
-           //     return ({ cart });
-           //   });
-           return ({ cart });
-         })
-         .then(data => {
-         })
-         .then(data => {
-           return reply(data.cart);
-           //return reply();
-         })
-         .catch(error => {
-           base.logger.error(error);
-           reply(Boom.wrap(error));
-         });
+    handler: (request, reply) => {
+      getCart(request)
+        .then(data => removeFromCart(data))
+        .then(data => saveCart(data))
+        .then(data => unreserve(data))
+        .then(data => {
+          // Return the cart to the client
+          if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry '${data.entry.id}' removed from cart '${data.cart._id}'`);
+          return reply();
+        })
+        .catch(error => {
+          if (error.isBoom) return reply(error);
+          base.logger.error(error);
+          return reply(boom.wrap(error));
+        });
     }
   };
   return op;

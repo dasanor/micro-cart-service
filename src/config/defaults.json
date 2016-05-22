@@ -33,6 +33,18 @@
     "stockAvailability": {
       "handler": "./operations/addEntry/hooks/stockAvailability",
       "reserveStockForMinutes": 1440
+    },
+    "removeEntryGetCart": {
+      "handler": "./operations/removeEntry/hooks/getCart"
+    },
+    "removeEntryRemoveFromCart": {
+      "handler": "./operations/removeEntry/hooks/removeFromCart"
+    },
+    "unreserve": {
+      "handler": "./operations/removeEntry/hooks/unreserve"
+    },
+    "removeEntrySaveCart": {
+      "handler": "./operations/removeEntry/hooks/saveCart"
     }
   },
   "cartExpirationMinutes": 10080
