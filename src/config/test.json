@@ -1,8 +1,11 @@
 {
   "logger": {
-    "express": {
-      "enabled": false
-    }
+    "level": "debug"
+  },
+  "db": {
+    "host": "localhost",
+    "db": "micro-test",
+    "debug": true
   }
 }
 
