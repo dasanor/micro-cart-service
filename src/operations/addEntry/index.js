@@ -11,6 +11,7 @@ const Boom = require('boom');
  * @return {Function} The operation factory
  */
 function opFactory(base) {
+  const getCart = base.services.loadModule('hooks:getCart:handler');
   const preAddToCart = base.services.loadModule('hooks:preAddToCart:handler');
   const addToCart = base.services.loadModule('hooks:addToCart:handler');
   const postAddToCart = base.services.loadModule('hooks:postAddToCart:handler');
@@ -31,31 +32,23 @@ function opFactory(base) {
   const op = {
     name: 'addEntry',
     schema: require(base.config.get('schemas:addEntry')),
-    handler: ({ cartId, productId, quantity, warehouseId }, reply) => {
-      base.db.models.Cart
-         .findById(cartId)
-         .exec()
-         .then(cart => {
-           // Check cart existance
-           if (!cart) return reply(Boom.notFound('Cart not found'));
-           cart.entries = cart.entries || [];
-           return { cart, productId, quantity, warehouseId };
-         })
-         .then(data => preAddToCart(data))
-         .then(data => addToCart(data))
-         .then(data => postAddToCart(data))
-         .then(data => saveCart(data))
-         .then(data => postSaveCart(data))
-         .then(data => {
-           // Return the cart to the client
-           if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
-           return reply(data.addedEntry);
-         })
-         .catch(error => {
-           if (error.isBoom) return reply(error);
-           base.logger.error(error);
-           return reply(Boom.wrap(error));
-         });
+    handler: (request, reply) => {
+      getCart(request)
+        .then(data => preAddToCart(data))
+        .then(data => addToCart(data))
+        .then(data => postAddToCart(data))
+        .then(data => saveCart(data))
+        .then(data => postSaveCart(data))
+        .then(data => {
+          // Return the cart to the client
+          if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
+          return reply(data.addedEntry);
+        })
+        .catch(error => {
+          if (error.isBoom) return reply(error);
+          base.logger.error(error);
+          return reply(Boom.wrap(error));
+        });
     }
   };
 

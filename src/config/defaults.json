@@ -10,6 +10,9 @@
     "cartModel": "./models/cartModel"
   },
   "hooks": {
+    "getCart": {
+      "handler": "./operations/addEntry/hooks/getCart"
+    },
     "preAddToCart": {
       "handler": "./operations/addEntry/hooks/preAddToCart",
       "maxQuantityPerProduct": 10000,
