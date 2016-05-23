@@ -15,7 +15,7 @@ npm start
 
 ## Code documentation
 
-The code is documented with `docco` and can be accessed [here](https://rawgit.com/ncornag/micro-cart-service/develop/docs/index.js.html)
+The code is documented with `docco` and can be accessed [here](https://rawgit.com/ncornag/micro-cart-service/develop/docs/code/index.js.html)
 
 ## Tests
 

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>unreserve.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../../doc-style.css" />
+  <script src="../../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../../", thisFile = "Users/ncornag/Dropbox/work/workspace/micro/examples/micro-cart-service/src/operations/removeEntry/hooks/unreservejs", defaultSidebar = true;
+  </script>
+  <script src="../../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>unreserve.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kr">const</span> <span class="nx">boom</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;boom&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>Hook to allow customization of stock unreservation
+By default it delegates the responsibility to the StockService</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">stockAvailability</span><span class="p">(</span><span class="nx">base</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nx">data</span> <span class="cm">/* cart, entry */</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">base</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;stock:unreserve&#39;</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">reserveId</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">entry</span><span class="p">.</span><span class="nx">reserves</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">,</span>
+      <span class="nx">quantity</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">entry</span><span class="p">.</span><span class="nx">reserves</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">quantity</span>
+    <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">code</span> <span class="o">===</span> <span class="mi">402</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="err">`</span><span class="p">[</span><span class="nx">cart</span><span class="p">]</span> <span class="nx">unreserve</span> <span class="nx">failed</span> <span class="nx">because</span> <span class="nx">the</span> <span class="nx">reserve</span> <span class="s1">&#39;${data.entry.reserves[0].id}&#39;</span> <span class="nx">was</span> <span class="nx">already</span> <span class="nx">expired</span><span class="err">`</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">code</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="p">(</span><span class="nx">boom</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">,</span> <span class="nx">response</span><span class="p">.</span><span class="nx">message</span><span class="p">));</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
+    <span class="p">});</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">stockAvailability</span><span class="p">;</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

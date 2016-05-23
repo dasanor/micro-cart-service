@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>index.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "Users/ncornag/Dropbox/work/workspace/micro/examples/micro-cart-service/src/operations/removeEntry/indexjs", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h2">
+        <a href="#removeentry%20operation%20factory">removeEntry operation factory</a>
+      </div>
+      <div class="heading h2">
+        <a href="#cart.removeentry%20service">cart.removeEntry service</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>index.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kr">const</span> <span class="nx">boom</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;boom&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="removeentry%20operation%20factory">
+  <h2>
+    <a href="#removeentry%20operation%20factory" name="removeentry%20operation%20factory" class="pilcrow">&#182;</a>
+    <code>removeEntry</code> operation factory
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">Object</span>
+      <span class="dox_type">base</span>
+      <span>The micro-base object</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Function</span>
+      <span>The operation factory</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">opFactory</span><span class="p">(</span><span class="nx">base</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">getCart</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">loadModule</span><span class="p">(</span><span class="s1">&#39;hooks:removeEntryGetCart:handler&#39;</span><span class="p">);</span>
+  <span class="kr">const</span> <span class="nx">removeFromCart</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">loadModule</span><span class="p">(</span><span class="s1">&#39;hooks:removeEntryRemoveFromCart:handler&#39;</span><span class="p">);</span>
+  <span class="kr">const</span> <span class="nx">unreserve</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">loadModule</span><span class="p">(</span><span class="s1">&#39;hooks:unreserve:handler&#39;</span><span class="p">);</span>
+  <span class="kr">const</span> <span class="nx">saveCart</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">services</span><span class="p">.</span><span class="nx">loadModule</span><span class="p">(</span><span class="s1">&#39;hooks:removeEntrySaveCart:handler&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="cart.removeentry%20service">
+  <h2>
+    <a href="#cart.removeentry%20service" name="cart.removeentry%20service" class="pilcrow">&#182;</a>
+    cart.removeEntry service
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Removes an entry from the Cart</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="kr">const</span> <span class="nx">op</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;removeEntry&#39;</span><span class="p">,</span>
+    <span class="nx">handler</span><span class="o">:</span> <span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">getCart</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="nx">removeFromCart</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="nx">saveCart</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="nx">unreserve</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>Return the cart to the client</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">isDebugEnabled</span><span class="p">)</span> <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="err">`</span><span class="p">[</span><span class="nx">cart</span><span class="p">]</span> <span class="nx">entry</span> <span class="s1">&#39;${data.entry.id}&#39;</span> <span class="nx">removed</span> <span class="nx">from</span> <span class="nx">cart</span> <span class="s1">&#39;${data.cart._id}&#39;</span><span class="err">`</span><span class="p">);</span>
+          <span class="k">return</span> <span class="nx">reply</span><span class="p">();</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">isBoom</span><span class="p">)</span> <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+          <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+          <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">boom</span><span class="p">.</span><span class="nx">wrap</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+  <span class="k">return</span> <span class="nx">op</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Exports the factory</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">opFactory</span><span class="p">;</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

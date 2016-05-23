@@ -102,18 +102,20 @@
         <td class="code highlight"><div class="highlight"><pre>
   <span class="kr">const</span> <span class="nx">op</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;get&#39;</span><span class="p">,</span>
-    <span class="nx">handler</span><span class="o">:</span> <span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/{cartId}&#39;</span><span class="p">,</span>
+    <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;GET&#39;</span><span class="p">,</span>
+    <span class="nx">handler</span><span class="o">:</span> <span class="p">({</span><span class="nx">cartId</span><span class="p">},</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Cart</span>
-         <span class="p">.</span><span class="nx">findById</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
-         <span class="p">.</span><span class="nx">exec</span><span class="p">()</span>
-         <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">cart</span> <span class="o">=&gt;</span> <span class="p">{</span>
-           <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cart</span><span class="p">)</span> <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">boom</span><span class="p">.</span><span class="nx">notFound</span><span class="p">());</span>
-           <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">cart</span><span class="p">.</span><span class="nx">toClient</span><span class="p">());</span>
-         <span class="p">})</span>
-         <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="p">{</span>
-           <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-           <span class="nx">reply</span><span class="p">(</span><span class="nx">Boom</span><span class="p">.</span><span class="nx">wrap</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
-         <span class="p">});</span>
+        <span class="p">.</span><span class="nx">findById</span><span class="p">(</span><span class="nx">cartId</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">exec</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">cart</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cart</span><span class="p">)</span> <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">boom</span><span class="p">.</span><span class="nx">notFound</span><span class="p">(</span><span class="s1">&#39;Cart not found&#39;</span><span class="p">));</span>
+          <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">cart</span><span class="p">.</span><span class="nx">toClient</span><span class="p">());</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+          <span class="nx">reply</span><span class="p">(</span><span class="nx">Boom</span><span class="p">.</span><span class="nx">wrap</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
+        <span class="p">});</span>
     <span class="p">}</span>
   <span class="p">};</span>
   <span class="k">return</span> <span class="nx">op</span><span class="p">;</span>

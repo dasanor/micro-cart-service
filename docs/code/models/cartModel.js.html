@@ -38,6 +38,7 @@
 
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">modelFactory</span><span class="p">(</span><span class="nx">base</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">isDebugEnabled</span><span class="p">())</span> <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s1">&#39;[db] registering model Stock&#39;</span><span class="p">)</span>
 
 </pre></div>
         </td>
@@ -51,7 +52,9 @@
         </td>
         <td class="code highlight"><div class="highlight"><pre>
   <span class="kr">const</span> <span class="nx">reservesSchema</span> <span class="o">=</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">Schema</span><span class="p">({</span>
-    <span class="nx">code</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="nx">warehouseId</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+    <span class="nx">quantity</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">Number</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
     <span class="nx">expirationTime</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">Date</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span>
   <span class="p">},</span> <span class="p">{</span> <span class="nx">_id</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">minimize</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
 
@@ -71,7 +74,7 @@
     <span class="nx">id</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
     <span class="nx">productId</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
     <span class="nx">quantity</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">Number</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
-    <span class="nx">reserves</span><span class="o">:</span> <span class="p">[</span><span class="nx">reservesSchema</span><span class="p">]</span>
+    <span class="nx">reserves</span><span class="o">:</span> <span class="p">[</span> <span class="nx">reservesSchema</span> <span class="p">]</span>
   <span class="p">},</span> <span class="p">{</span> <span class="nx">_id</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">minimize</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
 
 
@@ -90,7 +93,7 @@
     <span class="nx">_id</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
     <span class="nx">userId</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
     <span class="nx">expirationTime</span><span class="o">:</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nb">Date</span><span class="p">,</span> <span class="nx">required</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
-    <span class="nx">items</span><span class="o">:</span> <span class="p">[</span><span class="nx">itemsSchema</span><span class="p">]</span>
+    <span class="nx">items</span><span class="o">:</span> <span class="p">[</span> <span class="nx">itemsSchema</span> <span class="p">]</span>
   <span class="p">},</span> <span class="p">{</span> <span class="nx">_id</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">minimize</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">timestamps</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
 
 

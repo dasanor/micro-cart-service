@@ -105,22 +105,23 @@
         <td class="code highlight"><div class="highlight"><pre>
   <span class="kr">const</span> <span class="nx">op</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;new&#39;</span><span class="p">,</span>
+    <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
     <span class="nx">handler</span><span class="o">:</span> <span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">reply</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-      <span class="kr">const</span> <span class="nx">cart</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cart</span><span class="p">({</span>
+      <span class="kr">const</span> <span class="nx">cart</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">base</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">Cart</span><span class="p">({</span>
         <span class="nx">_id</span><span class="o">:</span> <span class="nx">shortId</span><span class="p">.</span><span class="nx">generate</span><span class="p">(),</span>
         <span class="nx">userId</span><span class="o">:</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">userId</span> <span class="o">||</span> <span class="s1">&#39;anonymous&#39;</span><span class="p">,</span>
         <span class="nx">items</span><span class="o">:</span> <span class="p">[],</span>
         <span class="nx">expirationTime</span><span class="o">:</span> <span class="nx">moment</span><span class="p">().</span><span class="nx">add</span><span class="p">(</span><span class="nx">cartExpirationMinutes</span><span class="p">,</span> <span class="s1">&#39;minutes&#39;</span><span class="p">).</span><span class="nx">toDate</span><span class="p">()</span>
       <span class="p">});</span>
       <span class="nx">cart</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
-         <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">savedCart</span> <span class="o">=&gt;</span> <span class="p">{</span>
-           <span class="k">if</span> <span class="p">(</span><span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">isDebugEnabled</span><span class="p">)</span> <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="err">`</span><span class="p">[</span><span class="nx">cart</span><span class="p">]</span> <span class="nx">cart</span> <span class="nx">$</span><span class="p">{</span><span class="nx">savedCart</span><span class="p">.</span><span class="nx">_id</span><span class="p">}</span> <span class="nx">created</span><span class="err">`</span><span class="p">);</span>
-           <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">savedCart</span><span class="p">.</span><span class="nx">toClient</span><span class="p">());</span>
-         <span class="p">})</span>
-         <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="p">{</span>
-           <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
-           <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">boom</span><span class="p">.</span><span class="nx">wrap</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
-         <span class="p">});</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">savedCart</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">isDebugEnabled</span><span class="p">)</span> <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="err">`</span><span class="p">[</span><span class="nx">cart</span><span class="p">]</span> <span class="nx">cart</span> <span class="nx">$</span><span class="p">{</span><span class="nx">savedCart</span><span class="p">.</span><span class="nx">_id</span><span class="p">}</span> <span class="nx">created</span><span class="err">`</span><span class="p">);</span>
+          <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">savedCart</span><span class="p">.</span><span class="nx">toClient</span><span class="p">()).</span><span class="nx">code</span><span class="p">(</span><span class="mi">201</span><span class="p">);</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="nx">base</span><span class="p">.</span><span class="nx">logger</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+          <span class="k">return</span> <span class="nx">reply</span><span class="p">(</span><span class="nx">boom</span><span class="p">.</span><span class="nx">wrap</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
+        <span class="p">});</span>
     <span class="p">}</span>
   <span class="p">};</span>
   <span class="k">return</span> <span class="nx">op</span><span class="p">;</span>
