@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "doc": "docker -i . -o ../docs index.js models operations",
+    "doc": "docker -i . -o ../docs/code index.js models operations",
     "test": "NODE_ENV=test && lab test/test.js",
     "test-cov-html": "NODE_ENV=test && lab -r html -o coverage.html test/test.js"
   },
