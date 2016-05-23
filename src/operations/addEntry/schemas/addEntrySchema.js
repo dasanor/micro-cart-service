@@ -11,10 +11,12 @@ module.exports = {
       quantity: {
         type: 'integer',
         minimum: 1
+      },
+      warehouseId: {
+        type: 'string'
       }
     },
     required: [
-      'cartId',
       'productId',
       'quantity'
     ],

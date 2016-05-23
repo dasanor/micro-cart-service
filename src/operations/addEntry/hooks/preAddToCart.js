@@ -19,14 +19,13 @@ function preAddToCart(base) {
         if (data.cart.items.length + 1 > maxNumberOfEntries) {
           return reject(Boom.notAcceptable(`Number of entries must be less than or equal to ${maxNumberOfEntries}`));
         }
-        return resolve(data);
       }
       // stockAvailability check
       const stockAvailability = base.services.loadModule('hooks:stockAvailability:handler');
       if (stockAvailability) {
         return stockAvailability(data.productId, data.quantity, data.warehouseId).then(response => {
           // TODO verify in which case we return an "error" property
-          if (response.error) return reject(Boom.create(response.statusCode, response.message));
+          if (response && response.error) return reject(Boom.create(response.statusCode, response.message));
           data.availability = response;
           return resolve(data);
         }).catch(error => {

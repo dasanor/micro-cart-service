@@ -19,6 +19,7 @@ function opFactory(base) {
    */
   const op = {
     name: 'new',
+    path: '',
     handler: (msg, reply) => {
       const cart = new base.db.models.Cart({
         _id: shortId.generate(),
@@ -29,7 +30,7 @@ function opFactory(base) {
       cart.save()
         .then(savedCart => {
           if (base.logger.isDebugEnabled) base.logger.debug(`[cart] cart ${savedCart._id} created`);
-          return reply(savedCart.toClient());
+          return reply(savedCart.toClient()).code(201);
         })
         .catch(error => {
           base.logger.error(error);

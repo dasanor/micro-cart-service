@@ -16,18 +16,20 @@ function opFactory(base) {
    */
   const op = {
     name: 'get',
+    path: '/{cartId}',
+    method: 'GET',
     handler: ({cartId}, reply) => {
       base.db.models.Cart
-         .findById(cartId)
-         .exec()
-         .then(cart => {
-           if (!cart) return reply(boom.notFound('Cart not found'));
-           return reply(cart.toClient());
-         })
-         .catch(error => {
-           base.logger.error(error);
-           reply(Boom.wrap(error));
-         });
+        .findById(cartId)
+        .exec()
+        .then(cart => {
+          if (!cart) return reply(boom.notFound('Cart not found'));
+          return reply(cart.toClient());
+        })
+        .catch(error => {
+          base.logger.error(error);
+          reply(Boom.wrap(error));
+        });
     }
   };
   return op;

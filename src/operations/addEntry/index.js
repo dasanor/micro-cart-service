@@ -31,6 +31,8 @@ function opFactory(base) {
    */
   const op = {
     name: 'addEntry',
+    path: '/{cartId}/addEntry',
+    method: 'PUT',
     schema: require(base.config.get('schemas:addEntry')),
     handler: (request, reply) => {
       getCart(request)
