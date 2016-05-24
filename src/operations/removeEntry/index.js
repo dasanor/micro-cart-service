@@ -27,7 +27,7 @@ function opFactory(base) {
         .then(data => {
           // Return the cart to the client
           if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry '${data.entry.id}' removed from cart '${data.cart._id}'`);
-          return reply();
+          return reply().code(204);
         })
         .catch(error => {
           if (error.isBoom) return reply(error);

@@ -1,0 +1,359 @@
+FORMAT: 1A
+HOST: http://localhost:3000
+
+# Cart ecomm service
+Ecommerce Cart service using micro-base framework (beta).
+
+## Micro-base
+Micro-base is a small framework to define and call services, and gives some basic utilities like config, logging, jobs and MongoDB access.
+More info abot the framework [here](https://github.com/ncornag/micro-base/tree/develop).
+
+
+
+
+# Data Structures
+
+## BaseCart (object)
++ id:ByQpDBcM (required, string) - Unique Cart identifier.
++ expirationTime:2016-05-23T15:39:59.935Z (required, string) - The Cart expiration time.
++ items (required, array)
+
+## Cart (BaseCart)
++ userId:uxxxxxxxxxx (required, string) - Unique User identifier.
+
+## AnonymousCart (BaseCart)
++ userId:anonymous (required, string) - Allways 'anonymous' for an anonymmous Cart.
+
+## CartEntryList (array)
++ (CartEntry)
+
+## CartEntry
++ itemId: 1 (required, number) - Unique Entry identifier.
+
+## Entry (object)
++  id:ByQpDBcM (required, string) - The Entry id.
++  productId:0001 (required, string) - The Entry Product id.
++  quantity:10 (required, number) - The Entry quantity.
++  reserves (optional, ReserveList) - The reserves list.
+
+## ReserveList (array)
++ (Reserve)
+
+## Reserve (object)
++ id:HJeJVjeX (required, string) - The Reserve id.
++ warehouseId:001 (required, string) - The reserve warehouse id.
++ quantity:10 (required, number) - The reserve quantity.
++ expirationTime:2016-05-23T15:39:59.935Z (required, string) - The reserve expiration time.
+
+## NewCartRequest (object)
++ userId:uxxxxxxxxxx (optional, string) - The user id who will own the Cart.
+
+## AddEntryRequest (object)
++  cartId:ByQpDBcM (required, string) - The Cart id to add an Entry. Only for RPC style. 
++  productId:0001 (required, string) - The product id to put in the Entry.
++  quantity:10 (required, number) - The quantity to put in the Entry.
++  warehouseId:001 (optional, string) - The warehouse id.
+
+## RemoveEntryRequest (object)
++  cartId:ByQpDBcM (optional, string) - The Cart id to remove the Entry. Only for RPC style. 
++  entryId:ryLKuSJm (required, string) - The Entry id to remove. Only for RPC style. 
+
+
+
+
+# Group Cart
+Operations with the `Cart` entity
+
+
+
+
+## Create New Cart [/services/carts/v1]
+
+Creates a new Cart using an optional User id.
+
+::: note
+Example
+```bash
+curl --request POST \
+  --url http://localhost:3000/services/cart/v1 \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json'
+```
+:::
+
+::: note
+Can also be called with an RPC style:
+
+```bash
+curl --request POST \
+  --url http://localhost:3000/services/cart/v1/new \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json'
+```
+:::
+
+### Create [POST]
+
++ Request with userId (application/json)
+
+    + Headers
+    
+            Accept: application/json
+
+    + Attributes (NewCartRequest)
+
++ Response 201 (application/json)
+
+  + Attributes (Cart)
+
++ Response 400 (application/json)
+
+  + Body
+
+            {
+                "error": "Invalid user"
+            }
+
++ Request anonymous (application/json)
+
+  + Body
+
+            {}
+
++ Response 201 (application/json)
+
+  + Attributes (AnonymousCart)
+
+
+
+
+## Get Cart [/services/carts/v1/{cartId}]
+
+Gets a single Cart.
+
+::: note
+Example
+```bash
+curl --request GET \
+  --url http://localhost:3000/services/cart/v1/ByQpDBcM \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json'
+```  
+:::
+
+::: note
+Can also be called with an RPC style:
+
+```bash
+curl --request POST \
+  --url http://localhost:3000/services/cart/v1/get \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{"cartId": "ByQpDBcM"}'
+```
+:::
+
++ Parameters
+
+    + cartId: `HkwKLxjG` (string, required) - The Cart id
+
+### Get [GET]
+
++ Request default (application/json)
+
+    + Headers
+    
+            Accept: application/json
+
++ Response 200 (application/json)
+
+    + Attributes (Cart)
+
++ Response 404 (application/json)
+
+    + Body
+    
+            {
+              "statusCode": 404,
+              "error": "Not Found",
+              "message": "Cart not found"
+            }    
+
+
+
+
+## Add Entry to a Cart [/services/carts/v1/{cartId}/addEntry]
+
+Adds an Entry to a Cart.
+
+It calls the remote `stock:reserve` service to handle the stock reservation.
+
+If the `warehouseId` is not provided, the `stock:reserve` service will 
+use it's default Warehouse to make the reservation. 
+
+::: note
+Example
+```bash
+curl --request PUT \
+  --url http://localhost:3000/services/cart/v1/{cartId}/addEntry \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{"productId": "0001", "quantity": 10, "warehouseId": "001"}'
+```
+:::
+
+::: note
+Can also be called with an RPC style:
+
+```bash
+curl --request POST \
+  --url http://localhost:3001/services/cart/v1/addEntry \
+  --header 'content-type: application/json' \
+  --header 'accept: application/json' \
+  --data '{"cartId": "ByQpDBcM", "productId": "0001", "quantity": 10, "warehouseId": "001"}'
+```
+:::
+
++ Parameters
+
+    + cartId: `ByQpDBcM` (string, required) - The Cart id
+
+### Add Entry [PUT]
+
++ Request default (application/json)
+
+    + Headers
+
+            Accept: application/json
+
+    + Attributes (AddEntryRequest)
+
++ Response 201
+
+  + Attributes (Entry)
+
++ Response 404 (application/json)
+
+    + Body
+    
+            {
+              "statusCode": 404,
+              "error": "Not Found",
+              "message": "Cart not found"
+            }    
+
++ Request !quantity (application/json)
+
+    + Headers
+
+            Accept: application/json
+
+    + Attributes (AddEntryRequest)
+
++ Response 406 (application/json)
+
+    + Body
+    
+            {
+              "statusCode": 406,
+              "error": "Not Acceptable",
+              "message": "Quantity in cart for this product must be less than or equal to 5"
+            }
+
++ Request !product (application/json)
+
+    + Headers
+
+            Accept: application/json
+
+    + Attributes (AddEntryRequest)
+
++ Response 406 (application/json)
+
+    + Body
+    
+            {
+              "statusCode": 406,
+              "error": "Not Acceptable",
+              "message": "The product '0001' doesn't exist"
+            }
+            
++ Request !stock (application/json)
+
+    + Headers
+
+            Accept: application/json
+
+    + Attributes (AddEntryRequest)
+
++ Response 406 (application/json)
+
+    + Body
+    
+            {
+              "statusCode": 406,
+              "error": "Not Acceptable",
+              "message": "The warehouse '001' doesn't have enough stock for the product '0001'"
+            }
+
+
+
+
+## Remove Entry from a Cart [/services/carts/v1/{cartId}/removeEntry/{entryId}]
+
+Removes an Entry from a Cart.
+
+It calls the remote `stock:reserve` service to handle the stock reservation.
+
+If the `warehouseId` is not provided, the `stock:reserve` service will 
+use it's default Warehouse to make the reservation. 
+
+::: note
+Example
+```bash
+curl --request DELETE \
+  --url http://localhost:3000/services/cart/v1/{cartId}/removeEntry/{entryId} \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json'
+```
+:::
+
+::: note
+Can also be called with an RPC style:
+
+```bash
+curl --request POST \
+  --url http://localhost:3001/services/cart/v1/removeEntry \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json' \
+  --data '{"cartId": "ByQpDBcM","entryId": "ryLKuSJm"}'
+```
+:::
+
++ Parameters
+
+    + cartId: `ByQpDBcM` (string, required) - The Cart id
+    + entryId: `ryLKuSJm` (string, required) - The Entry id
+
+### Remove Entry [DELETE]
+
++ Request default (application/json)
+
+    + Headers
+
+            Accept: application/json
+
+    + Attributes (RemoveEntryRequest)
+
++ Response 201
+
++ Response 404 (application/json)
+
+    + Body
+    
+            {
+              "statusCode": 404,
+              "error": "Not Found",
+              "message": "Cart not found|Entry not found"
+            }    
+            
