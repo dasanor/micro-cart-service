@@ -24,7 +24,6 @@ function preAddToCart(base) {
       const stockAvailability = base.services.loadModule('hooks:stockAvailability:handler');
       if (stockAvailability) {
         return stockAvailability(data.productId, data.quantity, data.warehouseId).then(response => {
-          // TODO verify in which case we return an "error" property
           if (response && response.error) return reject(Boom.create(response.statusCode, response.message));
           data.availability = response;
           return resolve(data);

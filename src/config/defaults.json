@@ -15,8 +15,8 @@
     },
     "preAddToCart": {
       "handler": "./operations/addEntry/hooks/preAddToCart",
-      "maxQuantityPerProduct": 10000,
-      "maxNumberOfEntries": 15
+      "maxQuantityPerProduct": 1000,
+      "maxNumberOfEntries": 5
     },
     "addToCart": {
       "handler": "./operations/addEntry/hooks/addToCart"
