@@ -28,7 +28,7 @@ function opFactory(base) {
         .then(data => unreserve(data))
         .then(data => {
           // Return the cart to the client
-          if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry '${data.entry.id}' removed from cart '${data.cart._id}'`);
+          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry '${data.entry.id}' removed from cart '${data.cart._id}'`);
           return reply().code(204);
         })
         .catch(error => {

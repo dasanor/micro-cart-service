@@ -43,7 +43,7 @@ function opFactory(base) {
         .then(data => postSaveCart(data))
         .then(data => {
           // Return the cart to the client
-          if (base.logger.isDebugEnabled) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
+          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
           return reply(data.addedEntry);
         })
         .catch(error => {

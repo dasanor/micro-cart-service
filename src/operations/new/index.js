@@ -29,7 +29,7 @@ function opFactory(base) {
       });
       cart.save()
         .then(savedCart => {
-          if (base.logger.isDebugEnabled) base.logger.debug(`[cart] cart ${savedCart._id} created`);
+          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] cart ${savedCart._id} created`);
           return reply(savedCart.toClient()).code(201);
         })
         .catch(error => {
