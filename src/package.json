@@ -7,8 +7,8 @@
     "start": "node index.js",
     "doc": "docker -i . -o ../docs/code index.js models operations",
     "apidoc": "aglio -i main.apib --theme-template triple -o ../docs/api/output.html",
-    "test": "NODE_ENV=test && lab test/test.js",
-    "test-cov-html": "NODE_ENV=test && lab -r html -o coverage.html test/test.js"
+    "test": "lab -v -e test test/test.js",
+    "test-cov-html": "lab -v -e test -c -r html -o coverage.html test/test.js"
   },
   "repository": {
     "type": "git",

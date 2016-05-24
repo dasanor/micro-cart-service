@@ -34,7 +34,6 @@ if (!base.db.url.includes('test')) {
 }
 
 function initDB(done) {
-  console.log('[test] cleaning database');
   connect(base.db.url, (err, db) => {
     databaseCleaner.clean(db, () => {
       console.log('[test] database cleaned');
@@ -44,11 +43,65 @@ function initDB(done) {
   });
 }
 
-function createCart() {
+function createCart(numEntries) {
+  let cart;
   return server.inject({
-    method: 'POST',
-    url: '/services/cart/v1'
-  });
+      method: 'POST',
+      url: '/services/cart/v1'
+    })
+    .then(response => {
+      if (numEntries) {
+        const entryRequest = {
+          productId: '0001',
+          quantity: 10,
+          warehouseId: '001'
+        };
+        cart = response.result;
+
+        // Mock a succesfull stock:reserve call
+        const addEntry = function (cartId) {
+          nock('http://gateway/')
+            .post('/services/stock/v1/reserve', {
+              productId: entryRequest.productId,
+              quantity: entryRequest.quantity,
+              warehouseId: entryRequest.warehouseId,
+              reserveStockForMinutes: 1440
+            })
+            .reply(200, {
+              code: 301,
+              msg: 'Stock verified and reserved',
+              reserve: {
+                id: 'HkMR42Wm',
+                warehouseId: entryRequest.warehouseId,
+                quantity: entryRequest.quantity,
+                expirationTime: new Date()
+              }
+            });
+          return new Promise((resolve, reject) => {
+            server.inject({
+                method: 'PUT',
+                url: `/services/cart/v1/${cartId}/addEntry`,
+                payload: entryRequest
+              })
+              .then(response => resolve(response))
+              .catch(error => reject(error));
+          });
+        };
+
+        const allAddEntries = Array.from(new Array(numEntries), () => addEntry(cart.id));
+
+        return Promise
+          .all(allAddEntries)
+          .then(results => {
+            return server.inject({
+                method: 'GET',
+                url: `/services/cart/v1/${cart.id}`
+              })
+              .then(response => response.result);
+          });
+      }
+      return response.result;
+    });
 }
 
 describe('Cart', () => {
@@ -60,7 +113,7 @@ describe('Cart', () => {
   });
 
   it('creates a Cart for an anonymous User', (done) => {
-    var options = {
+    const options = {
       method: 'POST',
       url: '/services/cart/v1'
     };
@@ -84,13 +137,70 @@ describe('Cart', () => {
     });
   });
 
+  it('retrieves a non-existent cart', (done) => {
+    const options = {
+      method: 'GET',
+      url: '/services/cart/v1/xxxx'
+    };
+    server.inject(options)
+      .then((response) => {
+        expect(response.statusCode).to.equal(404);
+        const result = response.result;
+        expect(result.statusCode).to.be.a.number().and.to.equal(404);
+        expect(result.error).to.be.a.string().and.to.equal('Not Found');
+        expect(result.message).to.be.a.string().and.to.equal('Cart not found');
+        done();
+      });
+  });
+
+  it('retrieves an existing cart', (done) => {
+    let cartId;
+    createCart()
+      .then((cart) => {
+        cartId = cart.id;
+        const options = {
+          method: 'GET',
+          url: `/services/cart/v1/${cartId}`
+        };
+        return server.inject(options);
+      })
+      .then((response) => {
+        expect(response.statusCode).to.equal(200);
+        // Expected result:
+        //
+        // {
+        //   "userId": "anonymous",
+        //   "expirationTime": "2016-05-26T08:17:03.150Z",
+        //   "items": [],
+        //   "id": "HkwKLxjG"
+        // }
+        const cart = response.result;
+        expect(cart.id).to.be.a.string().and.to.equal(cartId);
+        expect(cart.expirationTime).to.be.a.date();
+        expect(cart.items).to.be.an.array().and.to.be.empty();
+        expect(cart.userId).to.be.a.string().and.to.equal('anonymous');
+        done();
+      })
+      .catch((error) => done(error));
+  });
+});
+
+describe('Cart Entries', () => {
+  before((done) => {
+    initDB(done);
+  });
+  after((done) => {
+    initDB(done);
+  });
+
+
   it('adds an entry to a non-existent cart', (done) => {
     const entryRequest = {
       productId: '0001',
       quantity: 10,
       warehouseId: '001'
     };
-    var options = {
+    const options = {
       method: 'PUT',
       url: '/services/cart/v1/xxxxxx/addEntry',
       payload: entryRequest
@@ -119,8 +229,7 @@ describe('Cart', () => {
       warehouseId: '001'
     };
     createCart()
-      .then((response) => {
-        const cart = response.result;
+      .then(cart => {
 
         // Mock a succesfull stock:reserve call
         nock('http://gateway/')
@@ -137,7 +246,7 @@ describe('Cart', () => {
               id: 'HkMR42Wm',
               warehouseId: entryRequest.warehouseId,
               quantity: entryRequest.quantity,
-              expirationTime: '2016-05-24T11:04:34.371Z'
+              expirationTime: new Date()
             }
           });
 
@@ -178,4 +287,72 @@ describe('Cart', () => {
       })
       .catch((error) => done(error));
   });
+
+  it('adds an entry with too many products', (done) => {
+    const entryRequest = {
+      productId: '0001',
+      quantity: 10000,
+      warehouseId: '001'
+    };
+    createCart()
+      .then(cart => {
+        const options = {
+          method: 'PUT',
+          url: `/services/cart/v1/${cart.id}/addEntry`,
+          payload: entryRequest
+        };
+        return server.inject(options);
+      })
+      .then((response) => {
+        expect(response.statusCode).to.equal(406);
+        // Expected result:
+        //
+        // {
+        //   statusCode: 406,
+        //   error: 'Not Acceptable',
+        //   message: 'Quantity in cart for this product must be less than or equal to ${maxQuantityPerProduct}'
+        // }
+        const result = response.result;
+        expect(result.statusCode).to.be.a.number().and.to.equal(406);
+        expect(result.error).to.be.a.string().and.to.equal('Not Acceptable');
+        expect(result.message).to.be.a.string().and.to.startWith('Quantity in cart for this product must be less than or equal to');
+        done();
+      })
+      .catch((error) => done(error));
+  });
+
+  it('adds an entry with too many products', (done) => {
+    const entryRequest = {
+      productId: '0001',
+      quantity: 10000,
+      warehouseId: '001'
+    };
+    createCart(6)
+      .then(cart => {
+        const options = {
+          method: 'PUT',
+          url: `/services/cart/v1/${cart.id}/addEntry`,
+          payload: entryRequest
+        };
+        return server.inject(options);
+      })
+      .then((response) => {
+        expect(response.statusCode).to.equal(406);
+        // Expected result:
+        //
+        // {
+        //   statusCode: 406,
+        //   error: 'Not Acceptable',
+        //   message: 'Quantity in cart for this product must be less than or equal to ${maxQuantityPerProduct}'
+        // }
+        const result = response.result;
+        expect(result.statusCode).to.be.a.number().and.to.equal(406);
+        expect(result.error).to.be.a.string().and.to.equal('Not Acceptable');
+        expect(result.message).to.be.a.string().and.to.startWith('Quantity in cart for this product must be less than or equal to');
+        done();
+      })
+      .catch((error) => done(error));
+  });
+
+
 });
