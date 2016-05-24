@@ -5,7 +5,7 @@ const Boom = require('boom');
  */
 function preAddToCart(base) {
   const maxQuantityPerProduct = base.config.get('hooks:preAddToCart:maxQuantityPerProduct');
-  const maxNumberOfEntries = base.config.get('hook:preAddToCart:maxNumberOfEntries');
+  const maxNumberOfEntries = base.config.get('hooks:preAddToCart:maxNumberOfEntries');
   return (data /* cart, productId, quantity, warehouseId */) => {
     return new Promise((resolve, reject) => {
       // maxQuantityPerProduct check

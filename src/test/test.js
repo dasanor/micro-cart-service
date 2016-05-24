@@ -324,16 +324,36 @@ describe('Cart Entries', () => {
   it('adds an entry with too many products', (done) => {
     const entryRequest = {
       productId: '0001',
-      quantity: 10000,
+      quantity: 10,
       warehouseId: '001'
     };
     createCart(6)
       .then(cart => {
+        // Mock a succesfull stock:reserve call
+        nock('http://gateway/')
+          .post('/services/stock/v1/reserve', {
+            productId: entryRequest.productId,
+            quantity: entryRequest.quantity,
+            warehouseId: entryRequest.warehouseId,
+            reserveStockForMinutes: 1440
+          })
+          .reply(200, {
+            code: 301,
+            msg: 'Stock verified and reserved',
+            reserve: {
+              id: 'HkMR42Wm',
+              warehouseId: entryRequest.warehouseId,
+              quantity: entryRequest.quantity,
+              expirationTime: new Date()
+            }
+          });
+
         const options = {
           method: 'PUT',
           url: `/services/cart/v1/${cart.id}/addEntry`,
           payload: entryRequest
         };
+
         return server.inject(options);
       })
       .then((response) => {
@@ -348,7 +368,7 @@ describe('Cart Entries', () => {
         const result = response.result;
         expect(result.statusCode).to.be.a.number().and.to.equal(406);
         expect(result.error).to.be.a.string().and.to.equal('Not Acceptable');
-        expect(result.message).to.be.a.string().and.to.startWith('Quantity in cart for this product must be less than or equal to');
+        expect(result.message).to.be.a.string().and.to.startWith('Number of entries must be less than or equal to');
         done();
       })
       .catch((error) => done(error));
