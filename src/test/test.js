@@ -1,3 +1,5 @@
+const shortId = require('shortid');
+
 const Code = require('code');
 const Lab = require('lab');
 const DatabaseCleaner = require('database-cleaner');
@@ -24,7 +26,6 @@ if (process.env.NODE_ENV !== 'test') {
   console.log('');
   process.exit(1);
 }
-
 // Check the database
 if (!base.db.url.includes('test')) {
   console.log('');
@@ -33,6 +34,7 @@ if (!base.db.url.includes('test')) {
   process.exit(1);
 }
 
+// Helper to clean the database
 function initDB(done) {
   connect(base.db.url, (err, db) => {
     databaseCleaner.clean(db, () => {
@@ -43,6 +45,44 @@ function initDB(done) {
   });
 }
 
+// Helper to mock a successful stock:reserve call
+function mockStockReserveOk(entryRequest) {
+  nock('http://gateway')
+    .post('/services/stock/v1/reserve', {
+      productId: entryRequest.productId,
+      quantity: entryRequest.quantity,
+      warehouseId: entryRequest.warehouseId,
+      reserveStockForMinutes: base.config.get('hooks:stockAvailability:reserveStockForMinutes')
+    })
+    .reply(200, {
+      code: 301,
+      msg: 'Stock verified and reserved',
+      reserve: {
+        id: shortId.generate(),
+        warehouseId: entryRequest.warehouseId,
+        quantity: entryRequest.quantity,
+        expirationTime: new Date()
+      }
+    });
+}
+
+// Helper to mock a un-successful stock:reserve call
+function mockStockReserveNoEnoughStock(entryRequest) {
+  nock('http://gateway')
+    .post('/services/stock/v1/reserve', {
+      productId: entryRequest.productId,
+      quantity: entryRequest.quantity,
+      warehouseId: entryRequest.warehouseId,
+      reserveStockForMinutes: base.config.get('hooks:stockAvailability:reserveStockForMinutes')
+    })
+    .reply(406, {
+      statusCode: 406,
+      error: 'Not Acceptable',
+      message: `The warehouse '${entryRequest.warehouseId}' doesn't have enough stock for the product '${entryRequest.productId}'`
+    });
+}
+
+// Helper to create carts
 function createCart(numEntries) {
   let cart;
   return server.inject({
@@ -58,25 +98,8 @@ function createCart(numEntries) {
         };
         cart = response.result;
 
-        // Mock a succesfull stock:reserve call
         const addEntry = function (cartId) {
-          nock('http://gateway/')
-            .post('/services/stock/v1/reserve', {
-              productId: entryRequest.productId,
-              quantity: entryRequest.quantity,
-              warehouseId: entryRequest.warehouseId,
-              reserveStockForMinutes: 1440
-            })
-            .reply(200, {
-              code: 301,
-              msg: 'Stock verified and reserved',
-              reserve: {
-                id: 'HkMR42Wm',
-                warehouseId: entryRequest.warehouseId,
-                quantity: entryRequest.quantity,
-                expirationTime: new Date()
-              }
-            });
+          mockStockReserveOk(entryRequest);
           return new Promise((resolve, reject) => {
             server.inject({
                 method: 'PUT',
@@ -87,12 +110,11 @@ function createCart(numEntries) {
               .catch(error => reject(error));
           });
         };
-
         const allAddEntries = Array.from(new Array(numEntries), () => addEntry(cart.id));
 
         return Promise
           .all(allAddEntries)
-          .then(results => {
+          .then(() => {
             return server.inject({
                 method: 'GET',
                 url: `/services/cart/v1/${cart.id}`
@@ -230,26 +252,7 @@ describe('Cart Entries', () => {
     };
     createCart()
       .then(cart => {
-
-        // Mock a succesfull stock:reserve call
-        nock('http://gateway/')
-          .post('/services/stock/v1/reserve', {
-            productId: entryRequest.productId,
-            quantity: entryRequest.quantity,
-            warehouseId: entryRequest.warehouseId,
-            reserveStockForMinutes: 1440
-          })
-          .reply(200, {
-            code: 301,
-            msg: 'Stock verified and reserved',
-            reserve: {
-              id: 'HkMR42Wm',
-              warehouseId: entryRequest.warehouseId,
-              quantity: entryRequest.quantity,
-              expirationTime: new Date()
-            }
-          });
-
+        mockStockReserveOk(entryRequest);
         const options = {
           method: 'PUT',
           url: `/services/cart/v1/${cart.id}/addEntry`,
@@ -288,10 +291,10 @@ describe('Cart Entries', () => {
       .catch((error) => done(error));
   });
 
-  it('adds an entry with too many products', (done) => {
+  it('adds an entry with a quantity > maxQuantityPerProduct', (done) => {
     const entryRequest = {
       productId: '0001',
-      quantity: 10000,
+      quantity: base.config.get('hooks:preAddToCart:maxQuantityPerProduct') + 1,
       warehouseId: '001'
     };
     createCart()
@@ -321,33 +324,14 @@ describe('Cart Entries', () => {
       .catch((error) => done(error));
   });
 
-  it('adds an entry with too many products', (done) => {
+  it('adds an entry with a full cart', (done) => {
     const entryRequest = {
       productId: '0001',
       quantity: 10,
       warehouseId: '001'
     };
-    createCart(6)
+    createCart(base.config.get('hooks:preAddToCart:maxNumberOfEntries') + 1)
       .then(cart => {
-        // Mock a succesfull stock:reserve call
-        nock('http://gateway/')
-          .post('/services/stock/v1/reserve', {
-            productId: entryRequest.productId,
-            quantity: entryRequest.quantity,
-            warehouseId: entryRequest.warehouseId,
-            reserveStockForMinutes: 1440
-          })
-          .reply(200, {
-            code: 301,
-            msg: 'Stock verified and reserved',
-            reserve: {
-              id: 'HkMR42Wm',
-              warehouseId: entryRequest.warehouseId,
-              quantity: entryRequest.quantity,
-              expirationTime: new Date()
-            }
-          });
-
         const options = {
           method: 'PUT',
           url: `/services/cart/v1/${cart.id}/addEntry`,
@@ -356,7 +340,7 @@ describe('Cart Entries', () => {
 
         return server.inject(options);
       })
-      .then((response) => {
+      .then(response => {
         expect(response.statusCode).to.equal(406);
         // Expected result:
         //
@@ -374,5 +358,39 @@ describe('Cart Entries', () => {
       .catch((error) => done(error));
   });
 
+  it('adds an entry with a product without stock', (done) => {
+    const entryRequest = {
+      productId: '0001',
+      quantity: 10,
+      warehouseId: '001'
+    };
+    createCart()
+      .then(cart => {
+        mockStockReserveNoEnoughStock(entryRequest);
+        const options = {
+          method: 'PUT',
+          url: `/services/cart/v1/${cart.id}/addEntry`,
+          payload: entryRequest
+        };
+
+        return server.inject(options);
+      })
+      .then(response => {
+        expect(response.statusCode).to.equal(406);
+        // Expected result:
+        //
+        // {
+        //   statusCode: 406,
+        //   error: 'Not Acceptable',
+        //   message: 'The warehouse \'001\' doesn\'t have enough stock for the product \'0001\''
+        // }
+        const result = response.result;
+        expect(result.statusCode).to.be.a.number().and.to.equal(406);
+        expect(result.error).to.be.a.string().and.to.equal('Not Acceptable');
+        expect(result.message).to.be.a.string().and.to.equal(`The warehouse '${entryRequest.warehouseId}' doesn't have enough stock for the product '${entryRequest.productId}'`);
+        done();
+      })
+      .catch((error) => done(error));
+  });
 
 });

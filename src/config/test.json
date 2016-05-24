@@ -6,6 +6,17 @@
     "host": "localhost",
     "db": "micro-test",
     "debug": true
+  },
+  "gateway": {
+    "host": "gateway",
+    "port": "80",
+    "path": "/services"
+  },
+  "hooks": {
+    "preAddToCart": {
+      "maxQuantityPerProduct": 100,
+      "maxNumberOfEntries": 5
+    }
   }
 }
 
