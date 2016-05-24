@@ -3,7 +3,7 @@ const Boom = require('boom');
 /**
  * Allows the customization of actions after the cart was stored
  */
-function addEntry(base) {
+function getCart(base) {
   return ({ cartId, productId, quantity, warehouseId }) => {
     return new Promise((resolve, reject) => {
       // Find the Cart
@@ -19,4 +19,4 @@ function addEntry(base) {
   };
 }
 
-module.exports = addEntry;
+module.exports = getCart;
