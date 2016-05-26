@@ -1,2 +1,7 @@
 {
+  "db": {
+    "host": "mongo",
+    "db": "micro",
+    "debug": true
+  }
 }

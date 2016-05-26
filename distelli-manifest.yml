@@ -1,13 +1,18 @@
 ncornag/micro-cart-service:
 
   Build:
+    ### Test Commands ###
+    - cd src
+    - npm install
+    - npm test
+    ### End Test Commands ###
     ### Docker Build Commands ###
     - docker login -u "$DISTELLI_DOCKER_USERNAME" -p ${DISTELLI_DOCKER_PW//\'/} -e "$DISTELLI_DOCKER_EMAIL" $DISTELLI_DOCKER_ENDPOINT
     - docker build --quiet=false -t "$DISTELLI_DOCKER_REPO" $DISTELLI_DOCKER_PATH
-    - docker tag -f "$DISTELLI_DOCKER_REPO" "$DISTELLI_DOCKER_REPO:$DISTELLI_BUILDNUM"
-    - docker push "$DISTELLI_DOCKER_REPO:$DISTELLI_BUILDNUM"
-    - docker tag -f "$DISTELLI_DOCKER_REPO" "$DISTELLI_DOCKER_REPO:latest"
-    - docker push "$DISTELLI_DOCKER_REPO:latest"
+    #- docker tag -f "$DISTELLI_DOCKER_REPO" "$DISTELLI_DOCKER_REPO:$DISTELLI_BUILDNUM"
+    #- docker push "$DISTELLI_DOCKER_REPO:$DISTELLI_BUILDNUM"
+    #- docker tag -f "$DISTELLI_DOCKER_REPO" "$DISTELLI_DOCKER_REPO:latest"
+    #- docker push "$DISTELLI_DOCKER_REPO:latest"
     ### End Docker Build Commands ###
 
   PreInstall:
