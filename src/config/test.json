@@ -3,7 +3,7 @@
     "level": "info"
   },
   "db": {
-    "host": "localhost",
+    "host": "mongo",
     "db": "micro-test",
     "debug": true
   },
