@@ -1,70 +1,17 @@
-FORMAT: 1A
-HOST: http://localhost:3000
-
-# Cart ecomm service
-Ecommerce Cart service using micro-base framework (beta).
-
-## Micro-base
-Micro-base is a small framework to define and call services, and gives some basic utilities like config, logging, jobs and MongoDB access.
-More info abot the framework [here](https://github.com/ncornag/micro-base/tree/develop).
-
-
-
-
-# Data Structures
-
-## BaseCart (object)
-+ id:ByQpDBcM (required, string) - Unique Cart identifier.
-+ expirationTime:2016-05-23T15:39:59.935Z (required, string) - The Cart expiration time.
-+ items (required, array)
-
-## Cart (BaseCart)
-+ userId:uxxxxxxxxxx (required, string) - Unique User identifier.
-
-## AnonymousCart (BaseCart)
-+ userId:anonymous (required, string) - Allways 'anonymous' for an anonymmous Cart.
-
-## CartEntryList (array)
-+ (CartEntry)
-
-## CartEntry
-+ itemId: 1 (required, number) - Unique Entry identifier.
-
-## Entry (object)
-+  id:ByQpDBcM (required, string) - The Entry id.
-+  productId:0001 (required, string) - The Entry Product id.
-+  quantity:10 (required, number) - The Entry quantity.
-+  reserves (optional, ReserveList) - The reserves list.
-
-## ReserveList (array)
-+ (Reserve)
-
-## Reserve (object)
-+ id:HJeJVjeX (required, string) - The Reserve id.
-+ warehouseId:001 (required, string) - The reserve warehouse id.
-+ quantity:10 (required, number) - The reserve quantity.
-+ expirationTime:2016-05-23T15:39:59.935Z (required, string) - The reserve expiration time.
-
-## NewCartRequest (object)
-+ userId:uxxxxxxxxxx (optional, string) - The user id who will own the Cart.
-
-## AddEntryRequest (object)
-+  cartId:ByQpDBcM (required, string) - The Cart id to add an Entry. Only for RPC style. 
-+  productId:0001 (required, string) - The product id to put in the Entry.
-+  quantity:10 (required, number) - The quantity to put in the Entry.
-+  warehouseId:001 (optional, string) - The warehouse id.
-
-## RemoveEntryRequest (object)
-+  cartId:ByQpDBcM (optional, string) - The Cart id to remove the Entry. Only for RPC style. 
-+  entryId:ryLKuSJm (required, string) - The Entry id to remove. Only for RPC style. 
-
-
-
-
-# Group Cart
 Operations with the `Cart` entity
 
+All operations must contain the appropriate `authorization` token:
+  
+```bash
+--header 'authorization: Bearer xxxxx...'
+```
 
+And the `accept` and `content-type` headers:
+ 
+```bash
+  --header 'accept: application/json' \
+  --header 'content-type: application/json'
+```
 
 
 ## Create New Cart [/services/carts/v1]
@@ -76,17 +23,7 @@ Example
 ```bash
 curl --request POST \
   --url http://localhost:3000/services/cart/v1 \
-  --header 'accept: application/json' \
-  --header 'content-type: application/json'
-```
-:::
-
-::: note
-Can also be called with an RPC style:
-
-```bash
-curl --request POST \
-  --url http://localhost:3000/services/cart/v1/new \
+  --header 'authorization: Bearer xxxxx...' \
   --header 'accept: application/json' \
   --header 'content-type: application/json'
 ```
@@ -98,7 +35,8 @@ curl --request POST \
 
     + Headers
     
-            Accept: application/json
+            accept: application/json
+            authorization: Bearer xxxxx...
 
     + Attributes (NewCartRequest)
 
@@ -136,21 +74,10 @@ Example
 ```bash
 curl --request GET \
   --url http://localhost:3000/services/cart/v1/ByQpDBcM \
+  --header 'authorization: Bearer xxxxx...' \
   --header 'accept: application/json' \
   --header 'content-type: application/json'
 ```  
-:::
-
-::: note
-Can also be called with an RPC style:
-
-```bash
-curl --request POST \
-  --url http://localhost:3000/services/cart/v1/get \
-  --header 'accept: application/json' \
-  --header 'content-type: application/json' \
-  --data '{"cartId": "ByQpDBcM"}'
-```
 :::
 
 + Parameters
@@ -163,7 +90,8 @@ curl --request POST \
 
     + Headers
     
-            Accept: application/json
+            accept: application/json
+            authorization: Bearer xxxxx...
 
 + Response 200 (application/json)
 
@@ -196,21 +124,10 @@ Example
 ```bash
 curl --request PUT \
   --url http://localhost:3000/services/cart/v1/{cartId}/addEntry \
+  --header 'authorization: Bearer xxxxx...' \
   --header 'accept: application/json' \
   --header 'content-type: application/json' \
   --data '{"productId": "0001", "quantity": 10, "warehouseId": "001"}'
-```
-:::
-
-::: note
-Can also be called with an RPC style:
-
-```bash
-curl --request POST \
-  --url http://localhost:3001/services/cart/v1/addEntry \
-  --header 'content-type: application/json' \
-  --header 'accept: application/json' \
-  --data '{"cartId": "ByQpDBcM", "productId": "0001", "quantity": 10, "warehouseId": "001"}'
 ```
 :::
 
@@ -224,7 +141,8 @@ curl --request POST \
 
     + Headers
 
-            Accept: application/json
+            accept: application/json
+            authorization: Bearer xxxxx...
 
     + Attributes (AddEntryRequest)
 
@@ -246,7 +164,8 @@ curl --request POST \
 
     + Headers
 
-            Accept: application/json
+            accept: application/json
+            authorization: Bearer xxxxx...
 
     + Attributes (AddEntryRequest)
 
@@ -264,7 +183,8 @@ curl --request POST \
 
     + Headers
 
-            Accept: application/json
+            accept: application/json
+            authorization: Bearer xxxxx...
 
     + Attributes (AddEntryRequest)
 
@@ -282,7 +202,8 @@ curl --request POST \
 
     + Headers
 
-            Accept: application/json
+            accept: application/json
+            authorization: Bearer xxxxx...
 
     + Attributes (AddEntryRequest)
 
@@ -313,20 +234,9 @@ Example
 ```bash
 curl --request DELETE \
   --url http://localhost:3000/services/cart/v1/{cartId}/removeEntry/{entryId} \
+  --header 'authorization: Bearer xxxxx...' \
   --header 'accept: application/json' \
   --header 'content-type: application/json'
-```
-:::
-
-::: note
-Can also be called with an RPC style:
-
-```bash
-curl --request POST \
-  --url http://localhost:3001/services/cart/v1/removeEntry \
-  --header 'accept: application/json' \
-  --header 'content-type: application/json' \
-  --data '{"cartId": "ByQpDBcM","entryId": "ryLKuSJm"}'
 ```
 :::
 
@@ -341,7 +251,8 @@ curl --request POST \
 
     + Headers
 
-            Accept: application/json
+            accept: application/json
+            authorization: Bearer xxxxx...
 
     + Attributes (RemoveEntryRequest)
 
@@ -356,4 +267,3 @@ curl --request POST \
               "error": "Not Found",
               "message": "Cart not found|Entry not found"
             }    
-            
