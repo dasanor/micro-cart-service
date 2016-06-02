@@ -19,7 +19,7 @@ function opFactory(base) {
    */
   const op = {
     name: 'removeEntry',
-    path: '/{cartId}/removeEntry/{entryId}',
+    path: '/{cartId}/entry/{entryId}',
     method: 'DELETE',
     handler: (request, reply) => {
       getCart(request)
