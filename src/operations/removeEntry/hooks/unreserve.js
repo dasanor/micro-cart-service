@@ -6,8 +6,12 @@ const boom = require('boom');
  */
 function stockAvailability(base) {
   return (data /* cart, entry */) => {
-    return base.services.call('stock:unreserve', {
-      reserveId: data.entry.reserves[0].id,
+    const config = {
+      name: 'stock:unreserve',
+      path: `/reserve/${data.entry.reserves[0].id}`,
+      method: 'PUT'
+    };
+    return base.services.call(config, {
       quantity: data.entry.reserves[0].quantity
     }).then(response => {
       if (response.code === 402) {
