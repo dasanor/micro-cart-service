@@ -16,6 +16,8 @@ And the `accept` and `content-type` headers:
 
 ## Create New Cart [/services/carts/v1]
 
+### Create [POST]
+
 Creates a new Cart using an optional User id.
 
 ::: note
@@ -28,8 +30,6 @@ curl --request POST \
   --header 'content-type: application/json'
 ```
 :::
-
-### Create [POST]
 
 + Request with userId (application/json)
 
@@ -67,6 +67,12 @@ curl --request POST \
 
 ## Get Cart [/services/carts/v1/{cartId}]
 
++ Parameters
+
+    + cartId: `HkwKLxjG` (string, required) - The Cart id
+
+### Get [GET]
+
 Gets a single Cart.
 
 ::: note
@@ -79,12 +85,6 @@ curl --request GET \
   --header 'content-type: application/json'
 ```  
 :::
-
-+ Parameters
-
-    + cartId: `HkwKLxjG` (string, required) - The Cart id
-
-### Get [GET]
 
 + Request default (application/json)
 
@@ -110,7 +110,7 @@ curl --request GET \
 
 
 
-## Add Entry to a Cart [/services/carts/v1/{cartId}/addEntry]
+## Add Entry to a Cart [/services/carts/v1/{cartId}/entry]
 
 Adds an Entry to a Cart.
 
@@ -119,23 +119,23 @@ It calls the remote `stock:reserve` service to handle the stock reservation.
 If the `warehouseId` is not provided, the `stock:reserve` service will 
 use it's default Warehouse to make the reservation. 
 
++ Parameters
+
+    + cartId: `ByQpDBcM` (string, required) - The Cart id
+
+### Add Entry [POST]
+
 ::: note
 Example
 ```bash
-curl --request PUT \
-  --url http://localhost:3000/services/cart/v1/{cartId}/addEntry \
+curl --request POST \
+  --url http://localhost:3000/services/cart/v1/{cartId}/entry \
   --header 'authorization: Bearer xxxxx...' \
   --header 'accept: application/json' \
   --header 'content-type: application/json' \
   --data '{"productId": "0001", "quantity": 10, "warehouseId": "001"}'
 ```
 :::
-
-+ Parameters
-
-    + cartId: `ByQpDBcM` (string, required) - The Cart id
-
-### Add Entry [PUT]
 
 + Request default (application/json)
 
@@ -220,7 +220,7 @@ curl --request PUT \
 
 
 
-## Remove Entry from a Cart [/services/carts/v1/{cartId}/removeEntry/{entryId}]
+## Remove Entry from a Cart [/services/carts/v1/{cartId}/entry/{entryId}]
 
 Removes an Entry from a Cart.
 
@@ -229,23 +229,23 @@ It calls the remote `stock:reserve` service to handle the stock reservation.
 If the `warehouseId` is not provided, the `stock:reserve` service will 
 use it's default Warehouse to make the reservation. 
 
-::: note
-Example
-```bash
-curl --request DELETE \
-  --url http://localhost:3000/services/cart/v1/{cartId}/removeEntry/{entryId} \
-  --header 'authorization: Bearer xxxxx...' \
-  --header 'accept: application/json' \
-  --header 'content-type: application/json'
-```
-:::
-
 + Parameters
 
     + cartId: `ByQpDBcM` (string, required) - The Cart id
     + entryId: `ryLKuSJm` (string, required) - The Entry id
 
 ### Remove Entry [DELETE]
+
+::: note
+Example
+```bash
+curl --request DELETE \
+  --url http://localhost:3000/services/cart/v1/{cartId}/entry/{entryId} \
+  --header 'authorization: Bearer xxxxx...' \
+  --header 'accept: application/json' \
+  --header 'content-type: application/json'
+```
+:::
 
 + Request default (application/json)
 
