@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "doc": "npm install docker && docker -i . -o ../docs/code index.js models operations",
-    "apidoc": "npm install aglio && aglio -i main.apib --theme-template triple -o ../docs/api/index.html",
-    "test": "lab -v -e test test/test.js",
-    "test-cov-html": "lab -v -e test -c -r html -o coverage.html test/test.js"
+    "doc": "npm install docker && docker -i . -o docs/code index.js models operations jobs",
+    "apidoc": "npm install aglio && aglio -i docs/main.apib --theme-template triple -o docs/api/index.html",
+    "test": "NODE_ENV=test && lab test/test.js",
+    "test-cov-html": "NODE_ENV=test && lab -r html -o coverage.html test/test.js"
   },
   "repository": {
     "type": "git",
