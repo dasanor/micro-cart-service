@@ -19,6 +19,8 @@ const server = base.services.server;
 const databaseCleaner = new DatabaseCleaner('mongodb');
 const connect = require('mongodb').connect;
 
+const defaultHeaders = base.config.get('test:defaultHeaders');
+
 // Check the environment
 if (process.env.NODE_ENV !== 'test') {
   console.log('');
@@ -87,7 +89,8 @@ function createCart(numEntries) {
   let cart;
   return server.inject({
       method: 'POST',
-      url: '/services/cart/v1'
+      url: '/services/cart/v1',
+      headers: defaultHeaders
     })
     .then(response => {
       if (numEntries) {
@@ -102,9 +105,10 @@ function createCart(numEntries) {
           mockStockReserveOk(entryRequest);
           return new Promise((resolve, reject) => {
             server.inject({
-                method: 'PUT',
-                url: `/services/cart/v1/${cartId}/addEntry`,
-                payload: entryRequest
+                method: 'POST',
+                url: `/services/cart/v1/${cartId}/entry`,
+                payload: entryRequest,
+                headers: defaultHeaders
               })
               .then(response => resolve(response))
               .catch(error => reject(error));
@@ -117,7 +121,8 @@ function createCart(numEntries) {
           .then(() => {
             return server.inject({
                 method: 'GET',
-                url: `/services/cart/v1/${cart.id}`
+                url: `/services/cart/v1/${cart.id}`,
+                headers: defaultHeaders
               })
               .then(response => response.result);
           });
@@ -137,7 +142,8 @@ describe('Cart', () => {
   it('creates a Cart for an anonymous User', (done) => {
     const options = {
       method: 'POST',
-      url: '/services/cart/v1'
+      url: '/services/cart/v1',
+      headers: defaultHeaders
     };
     server.inject(options, (response) => {
       expect(response.statusCode).to.equal(201);
@@ -162,7 +168,8 @@ describe('Cart', () => {
   it('retrieves a non-existent cart', (done) => {
     const options = {
       method: 'GET',
-      url: '/services/cart/v1/xxxx'
+      url: '/services/cart/v1/xxxx',
+      headers: defaultHeaders
     };
     server.inject(options)
       .then((response) => {
@@ -182,7 +189,8 @@ describe('Cart', () => {
         cartId = cart.id;
         const options = {
           method: 'GET',
-          url: `/services/cart/v1/${cartId}`
+          url: `/services/cart/v1/${cartId}`,
+          headers: defaultHeaders
         };
         return server.inject(options);
       })
@@ -223,9 +231,10 @@ describe('Cart Entries', () => {
       warehouseId: '001'
     };
     const options = {
-      method: 'PUT',
-      url: '/services/cart/v1/xxxxxx/addEntry',
-      payload: entryRequest
+      method: 'POST',
+      url: '/services/cart/v1/xxxxxx/entry',
+      payload: entryRequest,
+      headers: defaultHeaders
     };
     server.inject(options, (response) => {
       expect(response.statusCode).to.equal(404);
@@ -242,6 +251,7 @@ describe('Cart Entries', () => {
       expect(result.message).to.be.a.string().and.to.equal('Cart not found');
       done();
     });
+    /**/
   });
 
   it('adds an entry an existing cart', (done) => {
@@ -254,9 +264,10 @@ describe('Cart Entries', () => {
       .then(cart => {
         mockStockReserveOk(entryRequest);
         const options = {
-          method: 'PUT',
-          url: `/services/cart/v1/${cart.id}/addEntry`,
-          payload: entryRequest
+          method: 'POST',
+          url: `/services/cart/v1/${cart.id}/entry`,
+          payload: entryRequest,
+          headers: defaultHeaders
         };
         return server.inject(options);
       })
@@ -300,9 +311,10 @@ describe('Cart Entries', () => {
     createCart()
       .then(cart => {
         const options = {
-          method: 'PUT',
-          url: `/services/cart/v1/${cart.id}/addEntry`,
-          payload: entryRequest
+          method: 'POST',
+          url: `/services/cart/v1/${cart.id}/entry`,
+          payload: entryRequest,
+          headers: defaultHeaders
         };
         return server.inject(options);
       })
@@ -333,9 +345,10 @@ describe('Cart Entries', () => {
     createCart(base.config.get('hooks:preAddToCart:maxNumberOfEntries') + 1)
       .then(cart => {
         const options = {
-          method: 'PUT',
-          url: `/services/cart/v1/${cart.id}/addEntry`,
-          payload: entryRequest
+          method: 'POST',
+          url: `/services/cart/v1/${cart.id}/entry`,
+          payload: entryRequest,
+          headers: defaultHeaders
         };
 
         return server.inject(options);
@@ -368,9 +381,10 @@ describe('Cart Entries', () => {
       .then(cart => {
         mockStockReserveNoEnoughStock(entryRequest);
         const options = {
-          method: 'PUT',
-          url: `/services/cart/v1/${cart.id}/addEntry`,
-          payload: entryRequest
+          method: 'POST',
+          url: `/services/cart/v1/${cart.id}/entry`,
+          payload: entryRequest,
+          headers: defaultHeaders
         };
 
         return server.inject(options);
