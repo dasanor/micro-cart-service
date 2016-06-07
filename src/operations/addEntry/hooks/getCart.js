@@ -1,7 +1,7 @@
 const Boom = require('boom');
 
 /**
- * Allows the customization of actions after the cart was stored
+ * Allows the customization of actions when retriving the cart
  */
 function getCart(base) {
   return ({ cartId, productId, quantity, warehouseId }) => {
