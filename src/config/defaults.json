@@ -47,5 +47,8 @@
       "handler": "./operations/removeEntry/hooks/saveCart"
     }
   },
-  "cartExpirationMinutes": 10080
+  "cartExpirationMinutes": 10080,
+  "channels": {
+    "carts": "CARTS"
+  }
 }
