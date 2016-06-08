@@ -10,14 +10,17 @@ function preAddToCart(base) {
     return new Promise((resolve, reject) => {
       // maxQuantityPerProduct check
       if (maxQuantityPerProduct) {
-        if (data.quantity > maxQuantityPerProduct) {
-          return reject(Boom.notAcceptable(`Quantity in cart for this product must be less than or equal to ${maxQuantityPerProduct}`));
+        const totalProductQuantity = data.cart.items.reduce((total, item) => {
+          return total + (item.productId === data.productId ? item.quantity : 0);
+        }, data.quantity);
+        if (totalProductQuantity > maxQuantityPerProduct) {
+          return reject(Boom.notAcceptable(`Quantity in cart for this product must be less or equal than '${maxQuantityPerProduct}'`));
         }
       }
       // maxNumberOfEntries check
       if (maxNumberOfEntries) {
         if (data.cart.items.length + 1 > maxNumberOfEntries) {
-          return reject(Boom.notAcceptable(`Number of entries must be less than or equal to ${maxNumberOfEntries}`));
+          return reject(Boom.notAcceptable(`Number of entries must be less or equal than '${maxNumberOfEntries}'`));
         }
       }
       // stockAvailability check
