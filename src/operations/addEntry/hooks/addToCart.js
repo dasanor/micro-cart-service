@@ -3,15 +3,24 @@ const shortId = require('shortid');
 /**
  * Adds an item to the cart
  */
-function addToCart(/* base */) {
-  return (data /* cart, productId, quantity, warehouseId */) => {
+function addToCart(base) {
+
+  const titleOverride = base.config.get('hooks:addToCart:titleOverride');
+  let getTitle;
+  if (titleOverride) {
+    getTitle = base.services.loadModule('hooks:addToCart:titleOverride');
+  } else {
+    getTitle = (product) => `${product.sku} - ${product.title} (${product.brand})`;
+  }
+
+  return (data /* data = {cart, productId, quantity, warehouseId, product, availability} */) => {
     return new Promise((resolve /* , reject */) => {
       const entry = {
         id: shortId.generate(),
         productId: data.productId,
         quantity: data.quantity,
-        price: 0.00,
-        title: 'Default title',
+        price: data.product.salePrice,
+        title: getTitle(data.product),
         reserves: []
       };
       if (data.availability.reserve) {
