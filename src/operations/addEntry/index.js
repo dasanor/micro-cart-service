@@ -38,13 +38,13 @@ function opFactory(base) {
     schema: require(base.config.get('schemas:addEntry')),
     handler: (request, reply) => {
       getCart(request)
-        .then(data => preAddToCart(data))
-        .then(data => addToCart(data))
-        .then(data => postAddToCart(data))
-        .then(data => calculateCart(data))
-        .then(data => postCalculateCart(data))
-        .then(data => saveCart(data))
-        .then(data => postSaveCart(data))
+        .then(preAddToCart)
+        .then(addToCart)
+        .then(postAddToCart)
+        .then(calculateCart)
+        .then(postCalculateCart)
+        .then(saveCart)
+        .then(postSaveCart)
         .then(data => {
           // Return the cart to the client
           if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
