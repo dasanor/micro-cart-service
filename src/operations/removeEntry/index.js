@@ -9,6 +9,8 @@ const boom = require('boom');
 function opFactory(base) {
   const getCart = base.services.loadModule('hooks:removeEntryGetCart:handler');
   const removeFromCart = base.services.loadModule('hooks:removeEntryRemoveFromCart:handler');
+  const calculateCart = base.services.loadModule('hooks:calculateCart:handler'); // From addEntry
+  const postCalculateCart = base.services.loadModule('hooks:postCalculateCart:handler'); // From addEntry
   const unreserve = base.services.loadModule('hooks:unreserve:handler');
   const saveCart = base.services.loadModule('hooks:removeEntrySaveCart:handler');
 
@@ -24,6 +26,8 @@ function opFactory(base) {
     handler: (request, reply) => {
       getCart(request)
         .then(data => removeFromCart(data))
+        .then(data => calculateCart(data))
+        .then(data => postCalculateCart(data))
         .then(data => saveCart(data))
         .then(data => unreserve(data))
         .then(data => {

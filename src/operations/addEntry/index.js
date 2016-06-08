@@ -15,6 +15,8 @@ function opFactory(base) {
   const preAddToCart = base.services.loadModule('hooks:preAddToCart:handler');
   const addToCart = base.services.loadModule('hooks:addToCart:handler');
   const postAddToCart = base.services.loadModule('hooks:postAddToCart:handler');
+  const calculateCart = base.services.loadModule('hooks:calculateCart:handler');
+  const postCalculateCart = base.services.loadModule('hooks:postCalculateCart:handler');
   const saveCart = base.services.loadModule('hooks:saveCart:handler');
   const postSaveCart = base.services.loadModule('hooks:postSaveCart:handler');
   /**
@@ -39,6 +41,8 @@ function opFactory(base) {
         .then(data => preAddToCart(data))
         .then(data => addToCart(data))
         .then(data => postAddToCart(data))
+        .then(data => calculateCart(data))
+        .then(data => postCalculateCart(data))
         .then(data => saveCart(data))
         .then(data => postSaveCart(data))
         .then(data => {

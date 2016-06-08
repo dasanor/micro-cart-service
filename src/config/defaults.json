@@ -24,6 +24,12 @@
     "postAddToCart": {
       "handler": "./operations/addEntry/hooks/postAddToCart"
     },
+    "calculateCart": {
+      "handler": "./operations/addEntry/hooks/calculateCart"
+    },
+    "postCalculateCart": {
+      "handler": "./operations/addEntry/hooks/postCalculateCart"
+    },
     "saveCart": {
       "handler": "./operations/addEntry/hooks/saveCart"
     },

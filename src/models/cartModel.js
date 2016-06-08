@@ -13,7 +13,9 @@ function modelFactory(base) {
     id: { type: String, required: true },
     productId: { type: String, required: true },
     quantity: { type: Number, required: true },
-    reserves: [ reservesSchema ]
+    price: { type: Number, required: true },
+    title: { type: String, required: true },
+    reserves: [reservesSchema]
   }, { _id: false, minimize: false });
 
   // The root schema
@@ -21,7 +23,8 @@ function modelFactory(base) {
     _id: { type: String, required: true },
     userId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
-    items: [ itemsSchema ]
+    total: { type: Number, required: true, default: 0.00 },
+    items: [itemsSchema]
   }, { _id: false, minimize: false, timestamps: true });
 
   // Enable the virtuals when converting to JSON

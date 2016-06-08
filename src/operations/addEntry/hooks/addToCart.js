@@ -10,6 +10,8 @@ function addToCart(/* base */) {
         id: shortId.generate(),
         productId: data.productId,
         quantity: data.quantity,
+        price: 0.00,
+        title: 'Default title',
         reserves: []
       };
       if (data.availability.reserve) {

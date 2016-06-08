@@ -24,8 +24,9 @@ function opFactory(base) {
       const cart = new base.db.models.Cart({
         _id: shortId.generate(),
         userId: msg.userId || 'anonymous',
+        expirationTime: moment().add(cartExpirationMinutes, 'minutes').toDate(),
         items: [],
-        expirationTime: moment().add(cartExpirationMinutes, 'minutes').toDate()
+        total: 0.00
       });
       cart.save()
         .then(savedCart => {
