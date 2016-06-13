@@ -7,12 +7,12 @@ const boom = require('boom');
  * @return {Function} The operation factory
  */
 function opFactory(base) {
-  const getCart = base.services.loadModule('hooks:removeEntryGetCart:handler');
-  const removeFromCart = base.services.loadModule('hooks:removeEntryRemoveFromCart:handler');
-  const calculateCart = base.services.loadModule('hooks:calculateCart:handler'); // From addEntry
-  const postCalculateCart = base.services.loadModule('hooks:postCalculateCart:handler'); // From addEntry
-  const unreserve = base.services.loadModule('hooks:unreserve:handler');
-  const saveCart = base.services.loadModule('hooks:removeEntrySaveCart:handler');
+  const getCart = base.utils.loadModule('hooks:removeEntryGetCart:handler');
+  const removeFromCart = base.utils.loadModule('hooks:removeEntryRemoveFromCart:handler');
+  const calculateCart = base.utils.loadModule('hooks:calculateCart:handler'); // From addEntry
+  const postCalculateCart = base.utils.loadModule('hooks:postCalculateCart:handler'); // From addEntry
+  const unreserve = base.utils.loadModule('hooks:unreserve:handler');
+  const saveCart = base.utils.loadModule('hooks:removeEntrySaveCart:handler');
 
   /**
    * ## cart.removeEntry service

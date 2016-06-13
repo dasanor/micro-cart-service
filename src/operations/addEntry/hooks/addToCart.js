@@ -8,7 +8,7 @@ function addToCart(base) {
   const titleOverride = base.config.get('hooks:addToCart:titleOverride');
   let getTitle;
   if (titleOverride) {
-    getTitle = base.services.loadModule('hooks:addToCart:titleOverride');
+    getTitle = base.utils.loadModule('hooks:addToCart:titleOverride');
   } else {
     getTitle = (product) => `${product.sku} - ${product.title} (${product.brand})`;
   }

@@ -11,14 +11,14 @@ const Boom = require('boom');
  * @return {Function} The operation factory
  */
 function opFactory(base) {
-  const getCart = base.services.loadModule('hooks:getCart:handler');
-  const preAddToCart = base.services.loadModule('hooks:preAddToCart:handler');
-  const addToCart = base.services.loadModule('hooks:addToCart:handler');
-  const postAddToCart = base.services.loadModule('hooks:postAddToCart:handler');
-  const calculateCart = base.services.loadModule('hooks:calculateCart:handler');
-  const postCalculateCart = base.services.loadModule('hooks:postCalculateCart:handler');
-  const saveCart = base.services.loadModule('hooks:saveCart:handler');
-  const postSaveCart = base.services.loadModule('hooks:postSaveCart:handler');
+  const getCart = base.utils.loadModule('hooks:getCart:handler');
+  const preAddToCart = base.utils.loadModule('hooks:preAddToCart:handler');
+  const addToCart = base.utils.loadModule('hooks:addToCart:handler');
+  const postAddToCart = base.utils.loadModule('hooks:postAddToCart:handler');
+  const calculateCart = base.utils.loadModule('hooks:calculateCart:handler');
+  const postCalculateCart = base.utils.loadModule('hooks:postCalculateCart:handler');
+  const saveCart = base.utils.loadModule('hooks:saveCart:handler');
+  const postSaveCart = base.utils.loadModule('hooks:postSaveCart:handler');
   /**
    * ## cart.addEntry service
    *

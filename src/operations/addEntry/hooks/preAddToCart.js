@@ -6,8 +6,8 @@ const Boom = require('boom');
 function preAddToCart(base) {
   const maxQuantityPerProduct = base.config.get('hooks:preAddToCart:maxQuantityPerProduct');
   const maxNumberOfEntries = base.config.get('hooks:preAddToCart:maxNumberOfEntries');
-  const stockAvailability = base.services.loadModule('hooks:stockAvailability:handler');
-  const productAvailability = base.services.loadModule('hooks:productAvailability:handler');
+  const stockAvailability = base.utils.loadModule('hooks:stockAvailability:handler');
+  const productAvailability = base.utils.loadModule('hooks:productAvailability:handler');
   return (data /* cart, productId, quantity, warehouseId */) => {
     return Promise.resolve(data)
       .then(data => {
