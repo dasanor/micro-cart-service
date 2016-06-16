@@ -28,7 +28,7 @@ function opFactory(base) {
         })
         .catch(error => {
           base.logger.error(error);
-          reply(Boom.wrap(error));
+          reply(boom.wrap(error));
         });
     }
   };
