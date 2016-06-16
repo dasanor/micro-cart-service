@@ -1,5 +1,4 @@
 const moment = require('moment');
-const shortId = require('shortid');
 const boom = require('boom');
 
 /**
@@ -22,7 +21,6 @@ function opFactory(base) {
     path: '',
     handler: (msg, reply) => {
       const cart = new base.db.models.Cart({
-        _id: shortId.generate(),
         userId: msg.userId || 'anonymous',
         expirationTime: moment().add(cartExpirationMinutes, 'minutes').toDate(),
         items: [],

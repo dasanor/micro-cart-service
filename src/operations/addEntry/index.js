@@ -1,5 +1,4 @@
 const moment = require('moment');
-const shortId = require('shortid');
 const Boom = require('boom');
 
 /**
