@@ -1,7 +1,8 @@
 const shortId = require('shortid');
 
 function modelFactory(base) {
-  if (base.logger.isDebugEnabled()) base.logger.debug('[db] registering model Stock')
+  if (base.logger.isDebugEnabled()) base.logger.debug('[db] registering model Cart');
+
   // The reservations schema
   const reservesSchema = base.db.Schema({
     _id: {
@@ -25,7 +26,9 @@ function modelFactory(base) {
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
     title: { type: String, required: true },
-    reserves: [reservesSchema]
+    reserves: [reservesSchema],
+    taxTotal: { type: Number, required: false, default: 0.00 },
+    taxDetail: { type: String, required: false }
   }, { _id: false });
 
   // The root schema
@@ -37,8 +40,9 @@ function modelFactory(base) {
     },
     userId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
+    items: [itemsSchema],
     total: { type: Number, required: true, default: 0.00 },
-    items: [itemsSchema]
+    taxTotal: { type: Number, required: true, default: 0.00 }
   }, { _id: false, timestamps: true });
 
   // Enable the virtuals when converting to JSON
