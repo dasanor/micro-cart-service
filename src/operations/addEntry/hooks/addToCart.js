@@ -1,3 +1,5 @@
+const shortId = require('shortid');
+
 /**
  * Adds an item to the cart
  */
@@ -14,6 +16,7 @@ function addToCart(base) {
   return (data /* data = {cart, productId, quantity, warehouseId, product, availability} */) => {
     return new Promise((resolve /* , reject */) => {
       const entry = {
+        id: shortId.generate(),
         productId: data.productId,
         quantity: data.quantity,
         price: data.product.salePrice,
