@@ -7,7 +7,8 @@
     "addEntry": "./schemas/addEntrySchema"
   },
   "models": {
-    "cartModel": "./models/cartModel"
+    "cartModel": "./models/cartModel",
+    "taxModel": "./models/taxModel"
   },
   "hooks": {
     "getCart": {
@@ -16,7 +17,7 @@
     "preAddToCart": {
       "handler": "./operations/addEntry/hooks/preAddToCart",
       "maxQuantityPerProduct": 100,
-      "maxNumberOfEntries": 5
+      "maxNumberOfEntries": 50
     },
     "productAvailability": {
       "handler": "./operations/addEntry/hooks/productAvailability"
@@ -54,6 +55,14 @@
     },
     "removeEntrySaveCart": {
       "handler": "./operations/removeEntry/hooks/saveCart"
+    }
+  },
+  "taxes": {
+    "taxesCalculationService": "./taxes/taxesCalculationService",
+    "defaultCode": "default",
+    "classes": {
+      "default": "./taxes/classes/default",
+      "ca-gsthst": "./taxes/classes/ca-on"
     }
   },
   "cartExpirationMinutes": 10080,
