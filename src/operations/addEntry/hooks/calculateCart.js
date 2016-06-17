@@ -17,12 +17,12 @@ function calculateCart(base) {
   function calculateCartTotals(data) {
     // Calculate Cart totals
     const totals = data.cart.items.reduce((subtotals, item) => {
-      subtotals.total += item.total;
-      subtotals.taxTotal += item.taxTotal;
+      subtotals.beforeTax += item.beforeTax;
+      subtotals.tax += item.tax;
       return subtotals;
-    }, { total: 0.00, taxTotal: 0.00 });
-    data.cart.total = totals.total;
-    data.cart.taxTotal = totals.taxTotal;
+    }, { beforeTax: 0.00, tax: 0.00 });
+    data.cart.beforeTax = totals.beforeTax;
+    data.cart.tax = totals.tax;
     return Promise.resolve(data);
   }
 

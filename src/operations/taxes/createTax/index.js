@@ -22,6 +22,7 @@ function opFactory(base) {
     // TODO: create the tax JsonSchema
     handler: (msg, reply) => {
       const tax = new base.db.models.Tax({
+        code: msg.code,
         class: msg.class,
         title: msg.title,
         description: msg.description,

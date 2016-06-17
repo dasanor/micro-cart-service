@@ -9,6 +9,7 @@ function modelFactory(base) {
         return shortId.generate();
       }
     },
+    code: { type: String, required: true },
     class: { type: String, required: true },
     title: { type: String, required: true },
     description: { type: String, required: false },
@@ -30,6 +31,9 @@ function modelFactory(base) {
     delete obj.updatedAt;
     return obj;
   });
+
+  // Add the indexes
+  schema.index({ code: 1 }, { unique: true });
 
   // Add the model to mongoose
   return base.db.model('Tax', schema);

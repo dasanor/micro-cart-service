@@ -9,7 +9,7 @@ function tax(base) {
     .exec()
     .then(loadedTaxes => {
       taxes = loadedTaxes.reduce((result, item) => {
-        result[item.class] = item;
+        result[item.code] = item;
         return result;
       }, {});
     })
@@ -19,13 +19,21 @@ function tax(base) {
 
   // Preload tax classes (code)
   const taxClassesLocations = base.config.get('taxes:classes');
+  const defaultTaxCode = base.config.get('taxes:defaultCode');
   const taxClasses = {};
   Object.keys(taxClassesLocations).forEach(key => {
     taxClasses[key] = base.utils.loadModule(`taxes:classes:${key}`);
   });
 
+  // Expose the taxes data
   function getTaxes() {
     return taxes;
+  }
+
+  // Expose the tax implementations
+  function calculateItemTaxes(cart, item, product, taxCode) {
+    const taxClass = taxes[taxCode].class;
+    return taxClasses[taxClass](cart, item, product, taxes[taxCode]);
   }
 
   // Calculate Cart taxes
@@ -43,7 +51,7 @@ function tax(base) {
         return base.services.call({
             name: 'catalog:list',
             method: 'GET',
-            path: `/product?id=${productIds.join(',')}&fields=taxClass,categories`
+            path: `/product?id=${productIds.join(',')}&fields=taxCode,categories,isNetPrice`
           }, {})
           .then(productsList => {
             const products = productsList.data.reduce((result, item) => {
@@ -54,19 +62,15 @@ function tax(base) {
           });
       })
       .then(products => {
-        // Calculate taxes for each line
+        // Calculate each line taxes
         cart.items.forEach(item => {
           const product = products[item.productId];
           if (!product) throw boom.notAcceptable('Product not found');
-          // Calculate the tax with the tax class implementation
-          if (product.taxClass) {
-            const {taxTotal, taxDetail} = taxClasses[product.taxClass](cart, item, product, taxes[product.taxClass]);
-            item.taxTotal = taxTotal;
-            item.taxDetail = taxDetail;
-          } else {
-            item.taxTotal = 0.00;
-            item.taxDetail = '';
-          }
+          const taxCode = product.taxCode || defaultTaxCode;
+          const { beforeTax, tax, taxDetail } = calculateItemTaxes(cart, item, product, taxCode);
+          item.beforeTax = beforeTax;
+          item.tax = tax;
+          item.taxDetail = taxDetail;
         });
         return cart;
       });
@@ -74,6 +78,7 @@ function tax(base) {
 
   return {
     calculateCartTaxes,
+    calculateItemTaxes,
     getTaxes
   };
 }

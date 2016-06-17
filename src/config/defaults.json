@@ -59,9 +59,10 @@
   },
   "taxes": {
     "taxesCalculationService": "./taxes/taxesCalculationService",
+    "defaultCode": "default",
     "classes": {
       "default": "./taxes/classes/default",
-      "ca-gsthst": "./taxes/classes/ca-gsthst"
+      "ca-gsthst": "./taxes/classes/ca-on"
     }
   },
   "cartExpirationMinutes": 10080,
