@@ -62,7 +62,7 @@
     "defaultCode": "default",
     "classes": {
       "default": "./taxes/classes/default",
-      "ca-gsthst": "./taxes/classes/ca-on"
+      "ca-on": "./taxes/classes/ca-on"
     }
   },
   "cartExpirationMinutes": 10080,
