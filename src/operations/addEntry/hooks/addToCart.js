@@ -10,7 +10,15 @@ function addToCart(base) {
   if (titleOverride) {
     getTitle = base.utils.loadModule('hooks:addToCart:titleOverride');
   } else {
-    getTitle = (product) => `${product.sku} - ${product.title} (${product.brand})`;
+    getTitle = (product) => {
+      let title = `${product.sku} - ${product.title} (${product.brand})`;
+      if (product.variations) {
+        title = title + product.variations.reduce(function (prev, v) {
+            return prev + ' - ' + v.value;
+          }, '');
+      }
+      return title;
+    };
   }
 
   return (data /* data = {cart, productId, quantity, warehouseId, product, availability} */) => {
