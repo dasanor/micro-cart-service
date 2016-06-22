@@ -1,5 +1,3 @@
-const boom = require('boom');
-
 /**
  * ## `createTax` operation factory
  *
@@ -34,13 +32,7 @@ function opFactory(base) {
           if (base.logger.isDebugEnabled()) base.logger.debug(`[tax] tax ${savedTax._id} created`);
           return reply(savedTax.toClient()).code(201);
         })
-        .catch(error => {
-          if (error.code === 11000 || error.code === 11001) {
-            return reply(boom.forbidden('duplicate key'));
-          }
-          base.logger.error(error);
-          return reply(boom.wrap(error));
-        });
+        .catch(error => reply(base.utils.genericErrorResponse(error)));
     }
   };
   return op;

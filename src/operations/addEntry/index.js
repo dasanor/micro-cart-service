@@ -49,17 +49,7 @@ function opFactory(base) {
           if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
           return reply(data.addedEntry);
         })
-        .catch(error => {
-          if (error.name && error.name === 'ValidationError') {
-            return reply(boom.create(406, 'ValidationError', { data: base.utils.extractErrors(error) }));
-          }
-          if (error.name && error.name === 'MongoError' && (error.code === 11000 || error.code === 11001)) {
-            return reply(boom.forbidden('duplicate key'), { data: error.errmsg });
-          }
-          if (error.isBoom) return reply(error);
-          base.logger.error(error);
-          return reply(boom.wrap(error));
-        });
+        .catch(error => reply(base.utils.genericErrorResponse(error)));
     }
   };
 
