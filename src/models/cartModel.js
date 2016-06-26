@@ -3,6 +3,13 @@ const shortId = require('shortid');
 function modelFactory(base) {
   if (base.logger.isDebugEnabled()) base.logger.debug('[db] registering model Cart');
 
+  // From ProductModel
+  const STOCKSTATUS = {
+    NORMAL: 0,
+    UNLIMITED: 1,
+    DISCONTINUED: 2
+  };
+
   // The reservations schema
   const reservesSchema = base.db.Schema({
     _id: {
@@ -61,8 +68,11 @@ function modelFactory(base) {
     return obj;
   });
 
+  const model = base.db.model('Cart', schema);
+  model.STOCKSTATUS = STOCKSTATUS;
+
   // Add the model to mongoose
-  return base.db.model('Cart', schema);
+  return model;
 }
 
 module.exports = modelFactory;
