@@ -25,6 +25,9 @@
     "addToCart": {
       "handler": "./operations/addEntry/hooks/addToCart"
     },
+    "bulkAddToCart": {
+      "handler": "./operations/addEntry/hooks/bulkAddToCart"
+    },
     "postAddToCart": {
       "handler": "./operations/addEntry/hooks/postAddToCart"
     },

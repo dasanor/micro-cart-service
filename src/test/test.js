@@ -20,6 +20,7 @@ const databaseCleaner = new DatabaseCleaner('mongodb');
 const connect = require('mongodb').connect;
 
 const defaultHeaders = base.config.get('test:defaultHeaders');
+const normalStockStatus = base.db.models.Cart.STOCKSTATUS.NORMAL;
 
 // Check the environment
 if (process.env.NODE_ENV !== 'test') {
@@ -80,7 +81,7 @@ function initDB(done) {
 }
 
 // Helper to mock a successful stock:reserve call
-function mockStockReserveOk(entryRequest) {
+function mockStockReserveOk(entryRequest, times) {
   nock('http://gateway')
     .post('/services/stock/v1/reserve', {
       productId: entryRequest.productId,
@@ -88,6 +89,7 @@ function mockStockReserveOk(entryRequest) {
       warehouseId: entryRequest.warehouseId,
       reserveStockForMinutes: base.config.get('hooks:stockAvailability:reserveStockForMinutes')
     })
+    .times(times || 1)
     .reply(200, {
       code: 301,
       msg: 'Stock verified and reserved',
@@ -100,8 +102,21 @@ function mockStockReserveOk(entryRequest) {
     });
 }
 
+// Helper to mock a successful stock:unreserve call
+function mockStockUnReserveOk(entryRequest, times) {
+  //PUT http://gateway/services/stock/v1/reserve/H1MZWhvVpH {"unreserveQuantity":10}
+
+  nock('http://gateway')
+    .filteringPath(/reserve\/(.*)/g, 'reserve/xxx')
+    .put('/services/stock/v1/reserve/xxx', {
+      unreserveQuantity: entryRequest.quantity
+    })
+    .times(times || 1)
+    .reply(200, {});
+}
+
 // Helper to mock a un-successful stock:reserve call
-function mockStockReserveNoEnoughStock(entryRequest) {
+function mockStockReserveNoEnoughStock(entryRequest, times) {
   nock('http://gateway')
     .post('/services/stock/v1/reserve', {
       productId: entryRequest.productId,
@@ -109,6 +124,7 @@ function mockStockReserveNoEnoughStock(entryRequest) {
       warehouseId: entryRequest.warehouseId,
       reserveStockForMinutes: base.config.get('hooks:stockAvailability:reserveStockForMinutes')
     })
+    .times(times || 1)
     .reply(406, {
       statusCode: 406,
       error: 'Not Acceptable',
@@ -117,23 +133,29 @@ function mockStockReserveNoEnoughStock(entryRequest) {
 }
 
 // Helper to mock a product data get
-function mockProductDataGet(entryRequest) {
+function mockProductDataGet(entryRequest, times) {
   nock('http://gateway')
     .get(`/services/catalog/v1/product/${entryRequest.productId}`)
+    .times(times || 1)
     .reply(200, {
       price: 1260,
       salePrice: 1041.26,
       taxCode: 'default-percentage',
       isNetPrice: false,
       categories: [],
+      stockStatus: normalStockStatus,
+      title: `${entryRequest.productId} title`,
+      brand: `${entryRequest.productId} brand`,
+      sku: `${entryRequest.productId} sku`,
       id: entryRequest.productId
     });
 }
 
 // Helper to mock a product tax data get
-function mockProductTaxDataGet(entryRequest) {
+function mockProductTaxDataGet(entryRequest, times) {
   nock('http://gateway')
     .get(`/services/catalog/v1/product?id=${entryRequest.productId}&fields=taxCode,categories,isNetPrice`)
+    .times(times || 1)
     .reply(200, {
       page: { limit: 10, skip: 0 },
       data: [
@@ -164,50 +186,46 @@ function createCart(numEntries, cartEntryRequest) {
         };
         cart = cartResponse.result;
 
-        const addEntry = function (cartId) {
-          mockProductDataGet(entryRequest);
-          mockProductTaxDataGet(entryRequest);
-          mockStockReserveOk(entryRequest);
-          return new Promise((resolve, reject) => {
-            server.inject({
-                method: 'POST',
-                url: `/services/cart/v1/${cartId}/entry`,
-                payload: entryRequest,
-                headers: defaultHeaders
-              })
-              .then(entryResponse => {
-                if (entryResponse.result && entryResponse.result.statusCode) {
-                  console.error(entryResponse.result);
-                  return reject(entryResponse.result);
-                }
-                resolve(entryResponse);
-              })
-              .catch(error => {
-                console.error(error);
-                reject(error);
-              });
-          });
-        };
-        const allAddEntries = Array.from(new Array(numEntries), () => addEntry(cart.id));
+        const allEntries = Array.from(new Array(numEntries), () => {
+          return entryRequest;
+        });
 
-        return Promise
-          .all(allAddEntries)
-          .then(() => {
+        mockProductDataGet(entryRequest, numEntries);
+        mockStockReserveOk(entryRequest, numEntries);
+        mockProductTaxDataGet(entryRequest, 1);
+
+        return server.inject({
+            method: 'POST',
+            url: `/services/cart/v1/${cart.id}/entry`,
+            payload: { items: allEntries },
+            headers: defaultHeaders
+          })
+          .then(entryResponses => {
+            if (entryResponses.result && entryResponses.result.statusCode) {
+              throw entryResponses;
+            }
+            return entryResponses;
+          })
+          .then(entryResponses => {
+            if (!nock.isDone()) {
+              console.log('----------------');
+              console.error('pending mocks: %j', nock.pendingMocks());
+            }
             return server.inject({
-                method: 'GET',
-                url: `/services/cart/v1/${cart.id}`,
-                headers: defaultHeaders
-              })
-              .then(response => {
-                if (response.result && response.result.statusCode) {
-                  console.error(response.result);
-                }
-                return response.result;
-              })
-              .catch(error => {
-                console.error(error);
-                return error;
-              });
+              method: 'GET',
+              url: `/services/cart/v1/${cart.id}`,
+              headers: defaultHeaders
+            });
+          })
+          .then(response => {
+            if (response.result && response.result.statusCode) {
+              throw entryResponses;
+            }
+            return response.result;
+          })
+          .catch(error => {
+            console.error(error);
+            return error;
           });
       }
       return cartResponse.result;
@@ -315,7 +333,7 @@ describe('Cart Entries', () => {
     const options = {
       method: 'POST',
       url: '/services/cart/v1/xxxxxx/entry',
-      payload: entryRequest,
+      payload: { items: [entryRequest] },
       headers: defaultHeaders
     };
     server.inject(options, (response) => {
@@ -350,16 +368,17 @@ describe('Cart Entries', () => {
         const options = {
           method: 'POST',
           url: `/services/cart/v1/${cart.id}/entry`,
-          payload: entryRequest,
+          payload: { items: [entryRequest] },
           headers: defaultHeaders
         };
         return server.inject(options);
       })
       .then((response) => {
+        expect(nock.isDone()).to.equal(true);
         expect(response.statusCode).to.equal(200);
         // Expected result:
         //
-        // {
+        // [{
         //   "id": "rJ5NVs-X",
         //   "productId": "0001",
         //   "quantity": 10,
@@ -371,8 +390,8 @@ describe('Cart Entries', () => {
         //       "expirationTime": "2016-05-24T09:53:46.425Z"
         //     }
         //   ]
-        // }
-        const entry = response.result;
+        // }]
+        const entry = response.result[0];
         expect(entry.id).to.be.a.string();
         expect(entry.productId).to.be.a.string().and.to.equal(entryRequest.productId);
         expect(entry.quantity).to.be.a.number().and.to.equal(entryRequest.quantity);
@@ -398,7 +417,7 @@ describe('Cart Entries', () => {
         const options = {
           method: 'POST',
           url: `/services/cart/v1/${cart.id}/entry`,
-          payload: entryRequest,
+          payload: { items: [entryRequest] },
           headers: defaultHeaders
         };
         return server.inject(options);
@@ -433,10 +452,9 @@ describe('Cart Entries', () => {
         const options = {
           method: 'POST',
           url: `/services/cart/v1/${cart.id}/entry`,
-          payload: entryRequest,
+          payload: { items: [entryRequest] },
           headers: defaultHeaders
         };
-
         return server.inject(options);
       })
       .then(response => {
@@ -470,12 +488,13 @@ describe('Cart Entries', () => {
         const options = {
           method: 'POST',
           url: `/services/cart/v1/${cart.id}/entry`,
-          payload: entryRequest,
+          payload: { items: [entryRequest] },
           headers: defaultHeaders
         };
         return server.inject(options);
       })
       .then(response => {
+        expect(nock.isDone()).to.equal(true);
         expect(response.statusCode).to.equal(406);
         // Expected result:
         //
@@ -488,6 +507,51 @@ describe('Cart Entries', () => {
         expect(result.statusCode).to.be.a.number().and.to.equal(406);
         expect(result.error).to.be.a.string().and.to.equal('Not Acceptable');
         expect(result.message).to.be.a.string().and.to.equal(`The warehouse '${entryRequest.warehouseId}' doesn't have enough stock for the product '${entryRequest.productId}'`);
+        done();
+      })
+      .catch((error) => done(error));
+  });
+
+  it('adds two entries, the second with a product without stock', (done) => {
+    const entryRequest1 = {
+      productId: '0001',
+      quantity: 10,
+      warehouseId: '001'
+    };
+    const entryRequest2 = {
+      productId: '0002',
+      quantity: 10,
+      warehouseId: '001'
+    };
+    createCart()
+      .then(cart => {
+        mockProductDataGet(entryRequest1);
+        mockProductDataGet(entryRequest2);
+        mockStockReserveOk(entryRequest1);
+        mockStockReserveNoEnoughStock(entryRequest2);
+        mockStockUnReserveOk(entryRequest1); // The first product, already reserved, should be unreserved
+        const options = {
+          method: 'POST',
+          url: `/services/cart/v1/${cart.id}/entry`,
+          payload: { items: [entryRequest1, entryRequest2] },
+          headers: defaultHeaders
+        };
+        return server.inject(options);
+      })
+      .then(response => {
+        expect(nock.isDone()).to.equal(true);
+        expect(response.statusCode).to.equal(406);
+        // Expected result:
+        //
+        // {
+        //   statusCode: 406,
+        //   error: 'Not Acceptable',
+        //   message: 'The warehouse \'001\' doesn\'t have enough stock for the product \'0002\''
+        // }
+        const result = response.result;
+        expect(result.statusCode).to.be.a.number().and.to.equal(406);
+        expect(result.error).to.be.a.string().and.to.equal('Not Acceptable');
+        expect(result.message).to.be.a.string().and.to.equal(`The warehouse '${entryRequest2.warehouseId}' doesn't have enough stock for the product '${entryRequest2.productId}'`);
         done();
       })
       .catch((error) => done(error));

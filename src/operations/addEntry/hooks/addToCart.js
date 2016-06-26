@@ -35,7 +35,7 @@ function addToCart(base) {
         entry.reserves.push(data.availability.reserve);
       }
       data.cart.items.push(entry);
-      data.addedEntry = entry;
+      data.addedEntries.push(entry);
       return resolve(data);
     });
   };

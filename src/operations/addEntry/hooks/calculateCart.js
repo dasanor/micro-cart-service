@@ -26,7 +26,7 @@ function calculateCart(base) {
     return Promise.resolve(data);
   }
 
-  return (data /* cart, productId, quantity, warehouseId */) => {
+  return (data /* {cart, addedEntries} */) => {
     return Promise
       .resolve(data)
       .then(data => calculateItemTotals(data))
@@ -37,7 +37,6 @@ function calculateCart(base) {
           });
       })
       .then(data => calculateCartTotals(data));
-
   };
 }
 

@@ -3,13 +3,11 @@
  */
 function addEntry(base) {
   const cartsChannel = base.config.get('channels:carts');
-  return (data /* cart, productId, quantity, warehouseId */) => {
+  return (data /* cart, addedEntries */) => {
     return new Promise((resolve /* , reject */) => {
       base.events.send(cartsChannel, 'ADDTOCART', {
         cart: data.cart.toObject({ virtuals: true }),
-        productId: data.productId,
-        quantity: data.quantity,
-        warehouseId: data.warehouseId
+        addedEntries: data.addedEntries
       });
       resolve(data);
     });

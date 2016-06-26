@@ -10,14 +10,15 @@ const boom = require('boom');
  * @return {Function} The operation factory
  */
 function opFactory(base) {
+
   const getCart = base.utils.loadModule('hooks:getCart:handler');
-  const preAddToCart = base.utils.loadModule('hooks:preAddToCart:handler');
-  const addToCart = base.utils.loadModule('hooks:addToCart:handler');
+  const bulkAddToCart = base.utils.loadModule('hooks:bulkAddToCart:handler');
   const postAddToCart = base.utils.loadModule('hooks:postAddToCart:handler');
   const calculateCart = base.utils.loadModule('hooks:calculateCart:handler');
   const postCalculateCart = base.utils.loadModule('hooks:postCalculateCart:handler');
   const saveCart = base.utils.loadModule('hooks:saveCart:handler');
   const postSaveCart = base.utils.loadModule('hooks:postSaveCart:handler');
+
   /**
    * ## cart.addEntry service
    *
@@ -36,9 +37,13 @@ function opFactory(base) {
     method: 'POST',
     schema: require(base.config.get('schemas:addEntry')),
     handler: (request, reply) => {
-      getCart(request)
-        .then(preAddToCart)
-        .then(addToCart)
+      const data = {
+        cartId: request.cartId,
+        items: request.items,
+        addedEntries: []
+      };
+      getCart(data)
+        .then(bulkAddToCart)
         .then(postAddToCart)
         .then(calculateCart)
         .then(postCalculateCart)
@@ -47,9 +52,23 @@ function opFactory(base) {
         .then(data => {
           // Return the cart to the client
           if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
-          return reply(data.addedEntry);
+          return reply(data.addedEntries);
         })
-        .catch(error => reply(base.utils.genericErrorResponse(error)));
+        .catch(error => {
+          data.addedEntries.forEach(e => {
+            base.services.call({
+                name: 'stock:unreserve',
+                method: 'PUT',
+                path: `/reserve/${e.reserves[0].id}`
+              }, {
+                unreserveQuantity: e.reserves[0].quantity
+              })
+              .catch(error => {
+                console.error('[cart] unreserving', error);
+              });
+          });
+          reply(base.utils.genericErrorResponse(error));
+        });
     }
   };
 
