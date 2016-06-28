@@ -21,7 +21,7 @@ function preAddToCart(base) {
             return total + (item.productId === data.productId ? item.quantity : 0);
           }, data.quantity);
           if (totalProductQuantity > maxQuantityPerProduct) {
-            throw Boom.notAcceptable(`Quantity in cart for this product must be less or equal than '${maxQuantityPerProduct}'`);
+            throw Boom.notAcceptable(`Quantity in cart (${totalProductQuantity}) for this product ('${data.productId}') must be less or equal than ${maxQuantityPerProduct}`);
           }
         }
         // maxNumberOfEntries check
