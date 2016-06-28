@@ -18,6 +18,7 @@ function opFactory(base) {
   const postCalculateCart = base.utils.loadModule('hooks:postCalculateCart:handler');
   const saveCart = base.utils.loadModule('hooks:saveCart:handler');
   const postSaveCart = base.utils.loadModule('hooks:postSaveCart:handler');
+  const onError = base.utils.loadModule('hooks:onError:handler');
 
   /**
    * ## cart.addEntry service
@@ -55,19 +56,7 @@ function opFactory(base) {
           return reply(data.addedEntries);
         })
         .catch(error => {
-          data.addedEntries.forEach(e => {
-            base.services.call({
-                name: 'stock:unreserve',
-                method: 'PUT',
-                path: `/reserve/${e.reserves[0].id}`
-              }, {
-                unreserveQuantity: e.reserves[0].quantity
-              })
-              .catch(error => {
-                console.error('[cart] unreserving', error);
-              });
-          });
-          reply(base.utils.genericErrorResponse(error));
+          onError(data, error, request, reply);
         });
     }
   };

@@ -58,6 +58,9 @@
     },
     "removeEntrySaveCart": {
       "handler": "./operations/removeEntry/hooks/saveCart"
+    },
+    "onError": {
+      "handler": "./operations/addEntry/hooks/onError"
     }
   },
   "taxes": {
