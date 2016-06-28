@@ -7,7 +7,7 @@ function productAvailability(base) {
     return base.services.call({
       name: 'catalog:getProduct',
       method: 'GET',
-      path: `/product/${productId}`
+      path: `/product/${productId}?fields=-variants`
     }, {});
   };
 }
