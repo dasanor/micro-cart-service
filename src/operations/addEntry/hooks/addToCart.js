@@ -31,7 +31,7 @@ function addToCart(base) {
         title: getTitle(data.product),
         reserves: []
       };
-      if (data.availability.reserve) {
+      if (data.availability && data.availability.reserve) {
         entry.reserves.push(data.availability.reserve);
       }
       data.cart.items.push(entry);
