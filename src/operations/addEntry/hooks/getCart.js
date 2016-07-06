@@ -1,22 +1,21 @@
 const Boom = require('boom');
 
 /**
- * Allows the customization of actions when retriving the cart
+ * Retrieve the cart
  */
-function getCart(base) {
-  return ({ cartId, items, addedEntries }) => {
-    return new Promise((resolve, reject) => {
-      // Find the Cart
-      base.db.models.Cart
-        .findById(cartId)
-        .exec()
-        .then(cart => {
-          // Check cart existance
-          if (!cart) return reject(Boom.notFound('Cart not found'));
-          return resolve({ cart, items, addedEntries });
-        });
-    });
+function factory(base) {
+  return (context, next) => {
+    // Find the Cart
+    base.db.models.Cart
+      .findById(context.cartId)
+      .exec()
+      .then(cart => {
+        // Check cart existance
+        if (!cart) return next(Boom.notFound('Cart not found'));
+        context.cart = cart;
+        return next();
+      });
   };
 }
 
-module.exports = getCart;
+module.exports = factory;

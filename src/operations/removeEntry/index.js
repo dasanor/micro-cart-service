@@ -7,12 +7,8 @@ const boom = require('boom');
  * @return {Function} The operation factory
  */
 function opFactory(base) {
-  const getCart = base.utils.loadModule('hooks:removeEntryGetCart:handler');
-  const removeFromCart = base.utils.loadModule('hooks:removeEntryRemoveFromCart:handler');
-  const calculateCart = base.utils.loadModule('hooks:calculateCart:handler'); // From addEntry
-  const postCalculateCart = base.utils.loadModule('hooks:postCalculateCart:handler'); // From addEntry
-  const unreserve = base.utils.loadModule('hooks:unreserve:handler');
-  const saveCart = base.utils.loadModule('hooks:removeEntrySaveCart:handler');
+
+  const removeFromCartChain = new base.utils.Chain().use('removeFromCartChain');
 
   /**
    * ## cart.removeEntry service
@@ -23,23 +19,25 @@ function opFactory(base) {
     name: 'removeEntry',
     path: '/{cartId}/entry/{entryId}',
     method: 'DELETE',
-    handler: (request, reply) => {
-      getCart(request)
-        .then(data => removeFromCart(data))
-        .then(data => calculateCart(data))
-        .then(data => postCalculateCart(data))
-        .then(data => saveCart(data))
-        .then(data => unreserve(data))
-        .then(data => {
+    handler: (msg, reply) => {
+      const context = {
+        cartId: msg.cartId,
+        entryId: msg.entryId
+      };
+      removeFromCartChain
+        .exec(context)
+        .then(context => {
           // Return the cart to the client
-          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry '${data.entry.id}' removed from cart '${data.cart._id}'`);
+          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry '${context.entry.id}' removed from cart '${context.cart._id}'`);
           return reply().code(204);
         })
         .catch(error => {
+          // Handle errors, rolling back if necessary
           if (error.isBoom) return reply(error);
           base.logger.error(error);
           return reply(boom.wrap(error));
         });
+
     }
   };
   return op;

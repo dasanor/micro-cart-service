@@ -1,10 +1,11 @@
 /**
  * Hook to allow customization of the error handling
  */
-function onError(base) {
-  return (data, error, request, reply) => {
-    if (data.addedEntries) {
-      data.addedEntries.forEach(e => {
+function factory(base) {
+  return (context, error, request, reply) => {
+    if (context.addedEntries) {
+      // Asynchrony revert the reserves
+      context.addedEntries.forEach(e => {
         if (e.reserves[0]) {
           base.services.call({
               name: 'stock:unreserve',
@@ -23,4 +24,4 @@ function onError(base) {
   };
 }
 
-module.exports = onError;
+module.exports = factory;

@@ -10,58 +10,31 @@
     "cartModel": "./models/cartModel",
     "taxModel": "./models/taxModel"
   },
+  "addToCartChain": {
+    "getCart": "./operations/addEntry/hooks/getCart",
+    "bulkAddToCart": "./operations/addEntry/hooks/bulkAddToCart",
+    "calculateCart": "./operations/addEntry/hooks/calculateCart",
+    "postCalculateCart": "./operations/addEntry/hooks/postCalculateCart",
+    "saveCart": "./operations/addEntry/hooks/saveCart",
+    "postSaveCart": "./operations/addEntry/hooks/postSaveCart"
+  },
+  "itemAddToCartChain": {
+    "checkMaxQuantityPerProduct": "./operations/addEntry/hooks/checkMaxQuantityPerProduct",
+    "checkMaxNumberOfEntries": "./operations/addEntry/hooks/checkMaxNumberOfEntries",
+    "checkProductAvailability": "./operations/addEntry/hooks/checkProductAvailability",
+    "checkStockAvailability": "./operations/addEntry/hooks/checkStockAvailability",
+    "addToCart": "./operations/addEntry/hooks/addToCart"
+  },
+  "removeFromCartChain": {
+    "getEntry": "./operations/removeEntry/hooks/getEntry",
+    "removeFromCart": "./operations/removeEntry/hooks/removeFromCart",
+    "calculateCart": "./operations/addEntry/hooks/calculateCart",
+    "postCalculateCart": "./operations/addEntry/hooks/postCalculateCart",
+    "saveCart": "./operations/addEntry/hooks/saveCart",
+    "unreserve": "./operations/removeEntry/hooks/unreserve"
+  },
   "hooks": {
-    "getCart": {
-      "handler": "./operations/addEntry/hooks/getCart"
-    },
-    "preAddToCart": {
-      "handler": "./operations/addEntry/hooks/preAddToCart",
-      "maxQuantityPerProduct": 100,
-      "maxNumberOfEntries": 50
-    },
-    "productAvailability": {
-      "handler": "./operations/addEntry/hooks/productAvailability"
-    },
-    "addToCart": {
-      "handler": "./operations/addEntry/hooks/addToCart"
-    },
-    "bulkAddToCart": {
-      "handler": "./operations/addEntry/hooks/bulkAddToCart"
-    },
-    "postAddToCart": {
-      "handler": "./operations/addEntry/hooks/postAddToCart"
-    },
-    "calculateCart": {
-      "handler": "./operations/addEntry/hooks/calculateCart"
-    },
-    "postCalculateCart": {
-      "handler": "./operations/addEntry/hooks/postCalculateCart"
-    },
-    "saveCart": {
-      "handler": "./operations/addEntry/hooks/saveCart"
-    },
-    "postSaveCart": {
-      "handler": "./operations/addEntry/hooks/postSaveCart"
-    },
-    "stockAvailability": {
-      "handler": "./operations/addEntry/hooks/stockAvailability",
-      "reserveStockForMinutes": 1440
-    },
-    "removeEntryGetCart": {
-      "handler": "./operations/removeEntry/hooks/getCart"
-    },
-    "removeEntryRemoveFromCart": {
-      "handler": "./operations/removeEntry/hooks/removeFromCart"
-    },
-    "unreserve": {
-      "handler": "./operations/removeEntry/hooks/unreserve"
-    },
-    "removeEntrySaveCart": {
-      "handler": "./operations/removeEntry/hooks/saveCart"
-    },
-    "onError": {
-      "handler": "./operations/addEntry/hooks/onError"
-    }
+    "onError": "./operations/addEntry/hooks/onError"
   },
   "taxes": {
     "taxesCalculationService": "./taxes/taxesCalculationService",
@@ -71,8 +44,11 @@
       "ca-on": "./taxes/classes/ca-on"
     }
   },
-  "cartExpirationMinutes": 10080,
   "channels": {
     "carts": "CARTS"
-  }
+  },
+  "cartExpirationMinutes": 10080,
+  "maxQuantityPerProduct": 100,
+  "maxNumberOfEntries": 50,
+  "reserveStockForMinutes": 1440
 }

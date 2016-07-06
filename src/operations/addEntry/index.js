@@ -1,6 +1,3 @@
-const moment = require('moment');
-const boom = require('boom');
-
 /**
  * ## `addToCart` operation factory
  *
@@ -11,14 +8,9 @@ const boom = require('boom');
  */
 function opFactory(base) {
 
-  const getCart = base.utils.loadModule('hooks:getCart:handler');
-  const bulkAddToCart = base.utils.loadModule('hooks:bulkAddToCart:handler');
-  const postAddToCart = base.utils.loadModule('hooks:postAddToCart:handler');
-  const calculateCart = base.utils.loadModule('hooks:calculateCart:handler');
-  const postCalculateCart = base.utils.loadModule('hooks:postCalculateCart:handler');
-  const saveCart = base.utils.loadModule('hooks:saveCart:handler');
-  const postSaveCart = base.utils.loadModule('hooks:postSaveCart:handler');
-  const onError = base.utils.loadModule('hooks:onError:handler');
+  const onError = base.utils.loadModule('hooks:onError');
+
+  const addToCartChain = new base.utils.Chain().use('addToCartChain');
 
   /**
    * ## cart.addEntry service
@@ -27,9 +19,10 @@ function opFactory(base) {
    *
    * The handler receive an object with the following properties:
    * @param {cartId} String The Cart id to add to
-   * @param {productId} String The Product id to add
-   * @param {quantity} Integer The qualtity to add
-   * @param {warehouseId} String Optional. The Warehouse id to pick stock
+   * @param {items} Array of items
+   * @param {items.productId} String The Product id to add
+   * @param {items.quantity} Integer The qualtity to add
+   * @param {items.warehouseId} String Optional. The Warehouse id to pick stock
    * @returns {entry} Object The new added entry.
    */
   const op = {
@@ -37,26 +30,22 @@ function opFactory(base) {
     path: '/{cartId}/entry',
     method: 'POST',
     schema: require(base.config.get('schemas:addEntry')),
-    handler: (request, reply) => {
-      const data = {
-        cartId: request.cartId,
-        items: request.items,
+    handler: (msg, reply) => {
+      const context = {
+        cartId: msg.cartId,
+        items: msg.items,
         addedEntries: []
       };
-      getCart(data)
-        .then(bulkAddToCart)
-        .then(postAddToCart)
-        .then(calculateCart)
-        .then(postCalculateCart)
-        .then(saveCart)
-        .then(postSaveCart)
-        .then(data => {
+      addToCartChain
+        .exec(context)
+        .then(context => {
           // Return the cart to the client
-          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry ${data.productId} added to cart ${data.cart._id}`);
-          return reply(data.addedEntries);
+          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry ${context.productId} added to cart ${context.cart._id}`);
+          return reply(context.addedEntries);
         })
         .catch(error => {
-          onError(data, error, request, reply);
+          // Handle errors, rolling back if necessary
+          onError(context, error, msg, reply);
         });
     }
   };

@@ -1,17 +1,15 @@
 /**
- * Allows the customization of actions after the cart was stored
+ * Actions after the cart was stored
  */
-function addEntry(base) {
+function factory(base) {
   const cartsChannel = base.config.get('channels:carts');
-  return (data /* cart, addedEntries */) => {
-    return new Promise((resolve /* , reject */) => {
-      base.events.send(cartsChannel, 'ADDTOCART', {
-        cart: data.cart.toObject({ virtuals: true }),
-        addedEntries: data.addedEntries
-      });
-      resolve(data);
+  return (context, next) => {
+    base.events.send(cartsChannel, 'ADDTOCART', {
+      cart: context.cart.toObject({ virtuals: true }),
+      addedEntries: context.addedEntries
     });
+    next();
   };
 }
 
-module.exports = addEntry;
+module.exports = factory;

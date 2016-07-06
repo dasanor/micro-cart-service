@@ -18,12 +18,12 @@ function opFactory(base) {
     name: 'get',
     path: '/{cartId}',
     method: 'GET',
-    handler: ({cartId}, reply) => {
+    handler: (msg, reply) => {
       base.db.models.Cart
-        .findById(cartId)
+        .findById(msg.cartId)
         .exec()
         .then(cart => {
-          if (!cart) return reply(boom.notFound('Cart not found'));
+          if (!cart) return reply(boom.notFound(`Cart '${msg.cartId}' not found`));
           return reply(cart.toClient());
         })
         .catch(error => {

@@ -87,7 +87,7 @@ function mockStockReserveOk(entryRequest, times) {
       productId: entryRequest.productId,
       quantity: entryRequest.quantity,
       warehouseId: entryRequest.warehouseId,
-      reserveStockForMinutes: base.config.get('hooks:stockAvailability:reserveStockForMinutes')
+      reserveStockForMinutes: base.config.get('reserveStockForMinutes')
     })
     .times(times || 1)
     .reply(200, {
@@ -122,7 +122,7 @@ function mockStockReserveNoEnoughStock(entryRequest, times) {
       productId: entryRequest.productId,
       quantity: entryRequest.quantity,
       warehouseId: entryRequest.warehouseId,
-      reserveStockForMinutes: base.config.get('hooks:stockAvailability:reserveStockForMinutes')
+      reserveStockForMinutes: base.config.get('reserveStockForMinutes')
     })
     .times(times || 1)
     .reply(406, {
@@ -135,7 +135,7 @@ function mockStockReserveNoEnoughStock(entryRequest, times) {
 // Helper to mock a product data get
 function mockProductDataGet(entryRequest, times) {
   nock('http://gateway')
-    .get(`/services/catalog/v1/product/${entryRequest.productId}`)
+    .get(`/services/catalog/v1/product/${entryRequest.productId}?fields=-variants`)
     .times(times || 1)
     .reply(200, {
       price: 1260,
@@ -246,7 +246,7 @@ describe('Cart', () => {
       url: '/services/cart/v1',
       headers: defaultHeaders
     };
-    server.inject(options, (response) => {
+    server.inject(options, response => {
       expect(response.statusCode).to.equal(201);
       // Expected result:
       //
@@ -273,12 +273,12 @@ describe('Cart', () => {
       headers: defaultHeaders
     };
     server.inject(options)
-      .then((response) => {
+      .then(response => {
         expect(response.statusCode).to.equal(404);
         const result = response.result;
         expect(result.statusCode).to.be.a.number().and.to.equal(404);
         expect(result.error).to.be.a.string().and.to.equal('Not Found');
-        expect(result.message).to.be.a.string().and.to.equal('Cart not found');
+        expect(result.message).to.be.a.string().and.to.equal(`Cart 'xxxx' not found`);
         done();
       });
   });
@@ -295,7 +295,7 @@ describe('Cart', () => {
         };
         return server.inject(options);
       })
-      .then((response) => {
+      .then(response => {
         expect(response.statusCode).to.equal(200);
         // Expected result:
         //
@@ -336,7 +336,7 @@ describe('Cart Entries', () => {
       payload: { items: [entryRequest] },
       headers: defaultHeaders
     };
-    server.inject(options, (response) => {
+    server.inject(options, response => {
       expect(response.statusCode).to.equal(404);
       // Expected result:
       //
@@ -373,7 +373,7 @@ describe('Cart Entries', () => {
         };
         return server.inject(options);
       })
-      .then((response) => {
+      .then(response => {
         expect(nock.isDone()).to.equal(true);
         expect(response.statusCode).to.equal(200);
         // Expected result:
@@ -406,7 +406,7 @@ describe('Cart Entries', () => {
   });
 
   it('adds an entry with a quantity > maxQuantityPerProduct', (done) => {
-    const maxQuantityPerProduct = base.config.get('hooks:preAddToCart:maxQuantityPerProduct');
+    const maxQuantityPerProduct = base.config.get('maxQuantityPerProduct');
     const entryRequest = {
       productId: '0001',
       quantity: maxQuantityPerProduct + 1,
@@ -422,29 +422,29 @@ describe('Cart Entries', () => {
         };
         return server.inject(options);
       })
-      .then((response) => {
+      .then(response => {
         expect(response.statusCode).to.equal(406);
         // Expected result:
         //
         // {
         //   statusCode: 406,
         //   error: 'Not Acceptable',
-        //   message: 'Quantity in cart for this product must be less than or equal to ${maxQuantityPerProduct}'
+        //   message: 'Quantity in cart () for this product () must be less than or equal to ${maxQuantityPerProduct}'
         // }
         const result = response.result;
         expect(result.statusCode).to.be.a.number().and.to.equal(406);
         expect(result.error).to.be.a.string().and.to.equal('Not Acceptable');
-        expect(result.message).to.be.a.string().and.to.startWith(`Quantity in cart for this product must be less or equal than '${maxQuantityPerProduct}'`);
+        expect(result.message).to.be.a.string().and.to.startWith(`Quantity in cart (${maxQuantityPerProduct + 1}) for this product ('${entryRequest.productId}') must be less or equal than ${maxQuantityPerProduct}`);
         done();
       })
       .catch((error) => done(error));
   });
 
   it('adds an entry with a full cart', (done) => {
-    const maxNumberOfEntries = base.config.get('hooks:preAddToCart:maxNumberOfEntries');
+    const maxNumberOfEntries = base.config.get('maxNumberOfEntries');
     const entryRequest = {
       productId: '0001',
-      quantity: 10,
+      quantity: 1,
       warehouseId: '001'
     };
     createCart(maxNumberOfEntries, entryRequest)
@@ -464,7 +464,7 @@ describe('Cart Entries', () => {
         // {
         //   statusCode: 406,
         //   error: 'Not Acceptable',
-        //   message: 'Number of entries must be less or equal than ${maxQuantityPerProduct}'
+        //   message: 'Quantity in cart (510) for this product (\'0001\') must be less or equal than ${maxNumberOfEntries}'
         // }
         const result = response.result;
         expect(result.statusCode).to.be.a.number().and.to.equal(406);

@@ -12,23 +12,20 @@ function modelFactory(base) {
 
   // The reservations schema
   const reservesSchema = base.db.Schema({
-    _id: {
-      type: String, required: true, default: function () {
-        return shortId.generate();
-      }
-    },
+    id: { type: String, required: true },
     warehouseId: { type: String, required: true },
     quantity: { type: Number, required: true },
     expirationTime: { type: Date, required: true }
   }, { _id: false });
 
+  // Enable the virtuals when converting to JSON
+  reservesSchema.set('toJSON', {
+    virtuals: true
+  });
+
   // The line items schema
   const itemsSchema = base.db.Schema({
-    _id: {
-      type: String, required: true, default: function () {
-        return shortId.generate();
-      }
-    },
+    id: { type: String, required: true },
     productId: { type: String, required: true },
     title: { type: String, required: true },
     quantity: { type: Number, required: true },
@@ -38,6 +35,11 @@ function modelFactory(base) {
     taxDetail: { type: String, required: false },
     reserves: [reservesSchema]
   }, { _id: false });
+
+  // Enable the virtuals when converting to JSON
+  itemsSchema.set('toJSON', {
+    virtuals: true
+  });
 
   // The root schema
   const schema = base.db.Schema({

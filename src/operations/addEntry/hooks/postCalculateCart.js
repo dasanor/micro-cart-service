@@ -3,15 +3,11 @@ const boom = require('boom');
 /**
  * Hook to allow customization of the add to cart process after being calculated
  */
-function postCalculateCart(base) {
-  return (data /* cart, addedEntries */) => {
-    return new Promise((resolve /* , reject*/) => {
-
-      // TODO: Verify total !> maxTotal
-
-      return resolve(data);
-    });
+function factory(base) {
+  return (context, next) => {
+    // TODO: Verify total !> maxTotal
+    next();
   };
 }
 
-module.exports = postCalculateCart;
+module.exports = factory;
