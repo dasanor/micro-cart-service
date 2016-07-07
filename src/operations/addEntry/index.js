@@ -40,7 +40,7 @@ function opFactory(base) {
         .exec(context)
         .then(context => {
           // Return the cart to the client
-          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] entry ${context.productId} added to cart ${context.cart._id}`);
+          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] added ${msg.items.length} item(s) to cart ${context.cart._id}`);
           return reply(context.addedEntries);
         })
         .catch(error => {
