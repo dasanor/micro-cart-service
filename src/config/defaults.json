@@ -44,8 +44,22 @@
       "ca-on": "./taxes/classes/ca-on"
     }
   },
-  "channels": {
-    "carts": "CARTS"
+  "bus": {
+    "engines": {
+      "local": {
+        "handler": "./local"
+      },
+      "amqp": {
+        "handler": "./amqp",
+        "url": "amqp://localhost"
+      }
+    },
+    "channels": {
+      "carts": {
+        "name": "CARTS",
+        "engine": "amqp"
+      }
+    }
   },
   "cartExpirationMinutes": 10080,
   "maxQuantityPerProduct": 100,
