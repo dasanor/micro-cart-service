@@ -63,5 +63,6 @@
   "cartExpirationMinutes": 10080,
   "maxQuantityPerProduct": 100,
   "maxNumberOfEntries": 50,
-  "reserveStockForMinutes": 1440
+  "reserveStockForMinutes": 1440,
+  "aggregateItems": true
 }

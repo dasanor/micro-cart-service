@@ -6,7 +6,7 @@ function factory(base) {
   return (context, next) => {
     base.bus.publish(`${cartsChannel}.ADDTOCART`, {
       cart: context.cart.toObject({ virtuals: true }),
-      addedEntries: context.addedEntries
+      newReserves: context.newReserves
     });
     next();
   };

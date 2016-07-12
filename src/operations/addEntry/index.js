@@ -34,14 +34,14 @@ function opFactory(base) {
       const context = {
         cartId: msg.cartId,
         items: msg.items,
-        addedEntries: []
+        newReserves: []
       };
       addToCartChain
         .exec(context)
         .then(context => {
           // Return the cart to the client
           if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] added ${msg.items.length} item(s) to cart ${context.cart._id}`);
-          return reply(context.addedEntries);
+          return reply(context.newReserves);
         })
         .catch(error => {
           // Handle errors, rolling back if necessary

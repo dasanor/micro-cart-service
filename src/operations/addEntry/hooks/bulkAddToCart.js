@@ -13,14 +13,12 @@ function factory(base) {
         productId: i.productId,
         quantity: i.quantity,
         warehouseId: i.warehouseId,
-        addedEntries: context.addedEntries
+        newReserves: context.newReserves
       });
     });
     Promise
       .all(promises)
-      .then(() => {
-        next();
-      })
+      .then(() => next())
       .catch(next);
   };
 }

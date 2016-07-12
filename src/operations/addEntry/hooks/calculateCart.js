@@ -40,7 +40,6 @@ function factory(base) {
           const cartItem = context.cart.items.find(i => i.id === taxedItem.id);
           Object.assign(cartItem, taxedItem);
         });
-        console.log(taxedCart);
         // Summarize
         calculateCartTotals(context.cart);
       })
