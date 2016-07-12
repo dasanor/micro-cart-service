@@ -9,7 +9,7 @@
 function opFactory(base) {
 
   /**
-   * ## catalog.createTax service
+   * ## cart.createTax service
    *
    * Creates a new Tax
    */

@@ -1,16 +1,16 @@
-function tax(base) {
-  return (cart, item, product, taxData) => {
+function tax(/* base */) {
+  return (taxContext, calculateItemTaxes) => {
 
-    let beforeTax, tax, taxDetail;
-    if (product.isNetPrice) {
+    let beforeTax, tax;
+    if (taxContext.product.isNetPrice) {
       const net = item.quantity * item.price;
-      tax = taxData.isPercentage ? Math.round(net * taxData.rate / 100) : taxData.rate;
+      tax = taxContext.taxData.isPercentage ? Math.round(net * taxContext.taxData.rate / 100) : taxContext.taxData.rate;
       beforeTax = net - tax;
     } else {
-      beforeTax = item.quantity * item.price;
-      tax = taxData.isPercentage ? Math.round(beforeTax * taxData.rate / 100) : taxData.rate;
+      beforeTax = taxContext.item.quantity * taxContext.item.price;
+      tax = taxContext.taxData.isPercentage ? Math.round(beforeTax * taxContext.taxData.rate / 100) : taxContext.taxData.rate;
     }
-    taxDetail = taxData.title;
+    const taxDetail = taxContext.taxData.title;
 
     return { beforeTax, tax, taxDetail };
   };

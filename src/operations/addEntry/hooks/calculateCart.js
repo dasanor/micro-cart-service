@@ -3,13 +3,6 @@
  */
 function factory(base) {
 
-  // Calculate item totals
-  function calculateItemTotals(cart) {
-    cart.items.forEach(item => {
-      item.total = item.price * item.quantity;
-    });
-  }
-
   // Calculate Cart totals
   function calculateCartTotals(cart) {
     // Calculate Cart totals
@@ -23,13 +16,36 @@ function factory(base) {
   }
 
   return (context, next) => {
-    calculateItemTotals(context.cart);
-    base.taxesCalculationService
-      .calculateCartTaxes(context.cart)
-      .then(cart => {
+
+    // Build a minimal version of the cart to be sent to the tax calculation service
+    const requestCart = {
+      items: context.cart.items.map(item => {
+        return {
+          id: item.id,
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.price
+        };
+      })
+    };
+
+    base.services.call({
+      name: 'cart:cartTaxes',
+      method: 'POST',
+      path: `/cart/${context.cart.id}/taxes`
+    }, requestCart)
+      .then(taxedCart => {
+        // Add taxes to the cart
+        taxedCart.items.forEach(taxedItem => {
+          const cartItem = context.cart.items.find(i => i.id === taxedItem.id);
+          Object.assign(cartItem, taxedItem);
+        });
+        console.log(taxedCart);
+        // Summarize
         calculateCartTotals(context.cart);
-        next();
-      });
+      })
+      .then(() => next())
+      .catch(next);
 
   };
 }

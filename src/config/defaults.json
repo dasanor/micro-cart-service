@@ -37,11 +37,10 @@
     "onError": "./operations/addEntry/hooks/onError"
   },
   "taxes": {
-    "taxesCalculationService": "./taxes/taxesCalculationService",
     "defaultCode": "default",
     "classes": {
       "default": "./taxes/classes/default",
-      "ca-on": "./taxes/classes/ca-on"
+      "ca-on-pm": "./taxes/classes/ca-on-pm"
     }
   },
   "bus": {
