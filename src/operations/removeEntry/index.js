@@ -3,7 +3,7 @@ const boom = require('boom');
 /**
  * ## `removeEntry` operation factory
  *
- * @param {base} Object The micro-base object
+ * @param {base} Object The microbase object
  * @return {Function} The operation factory
  */
 function opFactory(base) {

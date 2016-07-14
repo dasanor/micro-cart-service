@@ -5,7 +5,7 @@ const boom = require('boom');
  *
  * Calculate Cart Taxes operation
  *
- * @param {base} Object The micro-base object
+ * @param {base} Object The microbase object
  * @return {Function} The operation factory
  */
 function opFactory(base) {

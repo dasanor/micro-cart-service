@@ -3,7 +3,7 @@
  *
  * Create Tax operation
  *
- * @param {base} Object The micro-base object
+ * @param {base} Object The microbase object
  * @return {Function} The operation factory
  */
 function opFactory(base) {
