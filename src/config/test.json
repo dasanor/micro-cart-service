@@ -1,11 +1,9 @@
 {
   "logger": {
     "level": "info",
-    "good": [
-      {
-        "error": "*"
-      }
-    ]
+    "server": {
+      "response": "debug"
+    }
   },
   "db": {
     "host": "mongo",
