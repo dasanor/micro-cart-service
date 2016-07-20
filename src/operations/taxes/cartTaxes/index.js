@@ -12,18 +12,30 @@ function opFactory(base) {
 
   // Preload taxes
   let taxes;
-  base.db.models.Tax
-    .find()
-    .exec()
-    .then(loadedTaxes => {
-      taxes = loadedTaxes.reduce((result, item) => {
-        result[item.code] = item;
-        return result;
-      }, {});
-    })
-    .catch(error => {
-      base.logger.error('[taxes]', error);
-    });
+
+  function loadTaxes() {
+    base.db.models.Tax
+      .find()
+      .exec()
+      .then(loadedTaxes => {
+        taxes = loadedTaxes.reduce((result, item) => {
+          result[item.code] = item;
+          return result;
+        }, {});
+        if (base.logger.isDebugEnabled()) base.logger.debug('[cart] taxes loaded');
+      })
+      .catch(error => {
+        base.logger.error('[taxes]', error);
+      });
+  }
+
+  loadTaxes();
+
+  // Reload taxes on Taces change
+  const taxesChannel = base.config.get('bus:channels:taxes:name');
+  base.bus.subscribe(`${taxesChannel}.*`, (/* msg */) => {
+    loadTaxes();
+  });
 
   // Preload tax classes (code)
   const taxClassesLocations = base.config.get('taxes:classes');
@@ -77,7 +89,7 @@ function opFactory(base) {
           cart.items.forEach(item => {
             const product = products[item.productId];
             if (!product) throw boom.notAcceptable('Product not found');
-            const taxCode = 'ca-on-pm'; // product.taxCode || defaultTaxCode;
+            const taxCode = product.taxCode || defaultTaxCode;
             const { beforeTax, tax, taxDetail } = calculateItemTaxes(
               {
                 cart,

@@ -56,7 +56,11 @@
     "channels": {
       "carts": {
         "name": "CARTS",
-        "engine": "amqp"
+        "engine": "local"
+      },
+      "taxes": {
+        "name": "TAXES",
+        "engine": "local"
       }
     }
   },

@@ -8,6 +8,8 @@
  */
 function opFactory(base) {
 
+  const taxesChannel = base.config.get('bus:channels:taxes:name');
+
   /**
    * ## cart.createTax service
    *
@@ -30,6 +32,14 @@ function opFactory(base) {
       tax.save()
         .then(savedTax => {
           if (base.logger.isDebugEnabled()) base.logger.debug(`[tax] tax ${savedTax._id} created`);
+
+          base.bus.publish(`${taxesChannel}.CREATE`,
+            {
+              new: savedTax.toObject({ virtuals: true }),
+              data: msg
+            }
+          );
+
           return reply(savedTax.toClient()).code(201);
         })
         .catch(error => reply(base.utils.genericErrorResponse(error)));
