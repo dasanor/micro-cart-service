@@ -13,7 +13,8 @@ function factory(base) {
         productId: i.productId,
         quantity: i.quantity,
         warehouseId: i.warehouseId,
-        newReserves: context.newReserves
+        newReserves: context.newReserves,
+        newItems: context.items
       });
     });
     Promise
