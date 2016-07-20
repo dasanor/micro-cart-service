@@ -3,12 +3,12 @@ function tax(/* base */) {
 
     let beforeTax, tax;
     if (taxContext.product.isNetPrice) {
-      const net = item.quantity * item.price;
-      tax = taxContext.taxData.isPercentage ? Math.round(net * taxContext.taxData.rate / 100) : taxContext.taxData.rate;
+      const net = taxContext.item.quantity * taxContext.item.price;
+      tax = taxContext.taxData.isPercentage ? Math.round(net * taxContext.taxData.rate / 100) : (taxContext.item.quantity * taxContext.taxData.rate);
       beforeTax = net - tax;
     } else {
       beforeTax = taxContext.item.quantity * taxContext.item.price;
-      tax = taxContext.taxData.isPercentage ? Math.round(beforeTax * taxContext.taxData.rate / 100) : taxContext.taxData.rate;
+      tax = taxContext.taxData.isPercentage ? Math.round(beforeTax * taxContext.taxData.rate / 100) : (taxContext.item.quantity * taxContext.taxData.rate);
     }
     const taxDetail = taxContext.taxData.title;
 
