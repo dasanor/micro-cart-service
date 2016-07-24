@@ -1,4 +1,4 @@
-# micro-cart-service
+# Cart Service
 
 Ecommerce Cart service, part of the [microbase](http://microbase.io) 
 ecosystem.
@@ -14,7 +14,7 @@ ecosystem.
 * Configurable Taxes
 * Abandonment handling
 
-## Cart
+# Entities
 
 The Cart entity holds the Product inventory.
 
@@ -64,13 +64,13 @@ description | The Tax description | String | no | -
 rate | The Tax rate | Number | yes | -
 isPercentage | The Tax rate is a percentaje or absolute | Boolean | yes | true
 
-## API
+# API
 
 The full API documentation can be accessed in the microbase web http://api.microbase.io 
 and provide access to the Stocks and Reserves endpoints to create, 
 modify and delete them:
 
-### Carts
+## Carts
 
 Name | Description | Method | Endpoint
 -----|-------------|--------|---------
@@ -79,7 +79,7 @@ cart:get | Retrieves a Cart | `GET` | `/services/cart/v1/{cartId}`
 cart:addEntry | Adds and entry to a Cart | `POST` | `/services/cart/v1/{cartId}/entry`
 cart:removeEntry | Deletes an entry from a Cart | `POST` | `/services/cart/v1/{cartId}/entry/{entryId}`
 
-### Taxes
+## Taxes
 
 Name | Description | Method | Endpoint
 -----|-------------|--------|---------
