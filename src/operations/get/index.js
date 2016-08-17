@@ -1,7 +1,5 @@
-const boom = require('boom');
-
 /**
- * ## `get` operation factory
+ * ## `cart.info` operation factory
  *
  * Creates the get Cart operation
  *
@@ -9,27 +7,17 @@ const boom = require('boom');
  * @return {Function} The operation factory
  */
 function opFactory(base) {
-  /**
-   * ## cart.get service
-   *
-   * Finds a Cart and returns it
-   */
   const op = {
-    name: 'get',
-    path: '/{cartId}',
-    method: 'GET',
-    handler: (msg, reply) => {
+    name: 'cart.info',
+    handler: ({ cartId }, reply) => {
       base.db.models.Cart
-        .findById(msg.cartId)
+        .findById(cartId)
         .exec()
         .then(cart => {
-          if (!cart) return reply(boom.notFound(`Cart '${msg.cartId}' not found`));
-          return reply(cart.toClient());
+          if (!cart) throw base.utils.Error('cart_not_found');
+          return reply(base.utils.genericResponse({ cart: cart.toClient() }));
         })
-        .catch(error => {
-          base.logger.error(error);
-          reply(boom.wrap(error));
-        });
+        .catch(error => reply(base.utils.genericResponse(null, error)));
     }
   };
   return op;

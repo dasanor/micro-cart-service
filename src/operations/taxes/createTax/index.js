@@ -1,5 +1,5 @@
 /**
- * ## `createTax` operation factory
+ * ## `tax.create` operation factory
  *
  * Create Tax operation
  *
@@ -7,27 +7,17 @@
  * @return {Function} The operation factory
  */
 function opFactory(base) {
-
   const taxesChannel = base.config.get('bus:channels:taxes:name');
-
-  /**
-   * ## cart.createTax service
-   *
-   * Creates a new Tax
-   */
   const op = {
-    name: 'createTax',
-    path: '/tax',
-    method: 'POST',
+    name: 'tax.create',
     // TODO: create the tax JsonSchema
     handler: (msg, reply) => {
       const tax = new base.db.models.Tax({
         code: msg.code,
         class: msg.class,
         title: msg.title,
-        description: msg.description,
         rate: msg.rate,
-        isPercentage: msg.isPercentage
+        isPercentage: msg.isPercentage || true
       });
       tax.save()
         .then(savedTax => {
@@ -40,7 +30,7 @@ function opFactory(base) {
             }
           );
 
-          return reply(savedTax.toClient()).code(201);
+          return reply(base.utils.genericResponse({ tax: savedTax.toClient() }));
         })
         .catch(error => reply(base.utils.genericErrorResponse(error)));
     }

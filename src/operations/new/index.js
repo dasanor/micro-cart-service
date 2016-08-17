@@ -1,40 +1,33 @@
 const moment = require('moment');
-const boom = require('boom');
 
 /**
- * ## `new` operation factory
+ * ## `cart.new` operation factory
  *
- * Creates the new Cart operation
+ * Creates a new Cart operation
  *
  * @param {base} Object The microbase object
  * @return {Function} The operation factory
  */
 function opFactory(base) {
   const cartExpirationMinutes = base.config.get('cartExpirationMinutes');
-  /**
-   * ## cart.new service
-   *
-   * Creates a new cart
-   */
   const op = {
-    name: 'new',
-    path: '',
-    handler: (msg, reply) => {
+    name: 'cart.new',
+    // TODO: create the stock JsonSchema
+    handler: ({ userId }, reply) => {
       const cart = new base.db.models.Cart({
-        userId: msg.userId || 'anonymous',
+        userId: userId || 'anonymous',
         expirationTime: moment().add(cartExpirationMinutes, 'minutes').toDate(),
         items: [],
         total: 0.00
       });
       cart.save()
         .then(savedCart => {
-          if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] cart ${savedCart._id} created`);
-          return reply(savedCart.toClient()).code(201);
+          if (base.logger.isDebugEnabled()) {
+            base.logger.debug(`[cart] cart ${savedCart._id} created`);
+          }
+          return reply(base.utils.genericResponse({ cart: savedCart.toClient() }));
         })
-        .catch(error => {
-          base.logger.error(error);
-          return reply(boom.wrap(error));
-        });
+        .catch(error => reply(base.utils.genericResponse(null, error)));
     }
   };
   return op;

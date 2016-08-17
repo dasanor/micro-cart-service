@@ -1,5 +1,3 @@
-const boom = require('boom');
-
 /**
  * Hook to allow customization of the product availability check
  * By default it delegates the responsibility to the CatalogService
@@ -8,21 +6,18 @@ function factory(base) {
   const discontinuedStockStatus = base.db.models.Cart.STOCKSTATUS.DISCONTINUED;
   return (context, next) => {
     base.services.call({
-      name: 'catalog:getProduct',
-      method: 'GET',
-      path: `/product/${context.productId}?fields=-variants`
-    }, {})
+      name: 'catalog:product.info'
+    }, {
+      id: context.productId, fields: '-variants'
+    })
       .then(response => {
-        if (response && response.error && response.statusCode === 404) {
-          return next(boom.notAcceptable('Product not found'));
+        if (response && response.ok === false) {
+          return next(base.utils.Error(response.error, response.data));
         }
-        if (response && response.error) {
-          return next(boom.create(response.statusCode, response.message));
+        if (response.product.stockStatus === discontinuedStockStatus) {
+          return next(base.utils.Error('product_discontinued', { productId: context.productId }));
         }
-        if (response.stockStatus === discontinuedStockStatus) {
-          return next(boom.notAcceptable('Product discontinued'));
-        }
-        context.product = response;
+        context.product = response.product;
         return next();
       });
   };

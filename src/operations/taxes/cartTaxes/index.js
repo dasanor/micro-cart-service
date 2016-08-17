@@ -1,7 +1,5 @@
-const boom = require('boom');
-
 /**
- * ## `calculateCartTaxes` operation factory
+ * ## `tax.cartTaxes` operation factory
  *
  * Calculate Cart Taxes operation
  *
@@ -9,7 +7,6 @@ const boom = require('boom');
  * @return {Function} The operation factory
  */
 function opFactory(base) {
-
   // Preload taxes
   let taxes;
 
@@ -45,21 +42,14 @@ function opFactory(base) {
     taxClasses[key] = base.utils.loadModule(`taxes:classes:${key}`);
   });
 
-  function calculateItemTaxes(taxContext, calculateItemTaxes) {
+  function calculateItemTaxes(taxContext, calculateItemTaxesFn) {
     const taxClass = taxes[taxContext.taxCode].class;
     taxContext.taxData = taxes[taxContext.taxCode];
-    return taxClasses[taxClass](taxContext, calculateItemTaxes);
+    return taxClasses[taxClass](taxContext, calculateItemTaxesFn);
   }
 
-  /**
-   * ## cart.calculateCartTaxes service
-   *
-   * Creates a new Tax
-   */
   const op = {
-    name: 'cartTaxes',
-    path: '/cart/{cartId}/taxes',
-    method: 'POST',
+    name: 'tax.cartTaxes',
     // TODO: create the tax JsonSchema
     handler: (cart, reply) => {
       // List unique product IDs
@@ -73,10 +63,11 @@ function opFactory(base) {
         .then(() => {
           // Preload products
           return base.services.call({
-            name: 'catalog:list',
-            method: 'GET',
-            path: `/product?id=${productIds.join(',')}&fields=taxCode,categories,isNetPrice`
-          }, {})
+            name: 'catalog:product.list'
+          }, {
+            id: productIds.join(','),
+            fields: 'taxCode,categories,isNetPrice'
+          })
             .then(productsList => {
               return productsList.data.reduce((result, item) => {
                 result[item.id] = item;
@@ -88,7 +79,9 @@ function opFactory(base) {
           // Calculate each line taxes
           cart.items.forEach(item => {
             const product = products[item.productId];
-            if (!product) throw boom.notAcceptable('Product not found');
+            if (!product) {
+              throw base.utils.Error('product_not_found', { productId: item.productId });
+            }
             const taxCode = product.taxCode || defaultTaxCode;
             const { beforeTax, tax, taxDetail } = calculateItemTaxes(
               {
@@ -104,9 +97,9 @@ function opFactory(base) {
             item.tax = tax;
             item.taxDetail = taxDetail;
           });
-          reply(cart);
+          reply(base.utils.genericResponse({ cart }));
         })
-        .catch(reply);
+        .catch(error => reply(base.utils.genericResponse(null, error)));
     }
   };
   return op;

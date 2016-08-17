@@ -16,9 +16,9 @@ function factory(base) {
   }
 
   return (context, next) => {
-
     // Build a minimal version of the cart to be sent to the tax calculation service
     const requestCart = {
+      cartId: context.cart.id,
       items: context.cart.items.map(item => {
         return {
           id: item.id,
@@ -30,20 +30,22 @@ function factory(base) {
     };
 
     base.services.call({
-      name: 'cart:cartTaxes',
-      method: 'POST',
-      path: `/cart/${context.cart.id}/taxes`
+      name: 'cart:tax.cartTaxes'
     }, requestCart)
-      .then(taxedCart => {
+      .then(response => {
+        if (response && response.ok === false) {
+          return next(base.utils.Error(response.error, response.data));
+        }
         // Add taxes to the cart
+        const taxedCart = response.cart;
         taxedCart.items.forEach(taxedItem => {
           const cartItem = context.cart.items.find(i => i.id === taxedItem.id);
           Object.assign(cartItem, taxedItem);
         });
         // Summarize
         calculateCartTotals(context.cart);
+        return next();
       })
-      .then(() => next())
       .catch(next);
 
   };

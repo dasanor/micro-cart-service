@@ -1,5 +1,3 @@
-const Boom = require('boom');
-
 /**
  * Checks the max quantity per Product in a Cart
  */
@@ -18,12 +16,14 @@ function factory(base) {
         });
       }
       if (context.cart.items.length + newItems > maxNumberOfEntries) {
-        return next(Boom.notAcceptable(`Number of entries must be less or equal than '${maxNumberOfEntries}'`));
+        return next(base.utils.Error('max_number_of_entries', {
+          requestedEntries: context.cart.items.length + newItems,
+          maxEntriesAllowed: maxNumberOfEntries
+        }));
       }
       return next();
-    } else {
-      next();
     }
+    return next();
   };
 }
 

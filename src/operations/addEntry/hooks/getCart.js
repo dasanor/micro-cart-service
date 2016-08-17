@@ -1,5 +1,3 @@
-const Boom = require('boom');
-
 /**
  * Retrieve the cart
  */
@@ -11,7 +9,9 @@ function factory(base) {
       .exec()
       .then(cart => {
         // Check cart existance
-        if (!cart) return next(Boom.notFound('Cart not found'));
+        if (!cart) {
+          return next(base.utils.Error('cart_not_found'));
+        }
         context.cart = cart;
         return next();
       });

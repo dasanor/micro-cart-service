@@ -1,5 +1,5 @@
 /**
- * Adds an item to the cart
+ * Removes an item from the cart
  */
 function factory(/* base */) {
   return (context, next) => {

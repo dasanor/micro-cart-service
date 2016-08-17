@@ -1,6 +1,5 @@
 function tax(/* base */) {
   return (taxContext, calculateItemTaxes) => {
-
     let beforeTax, tax;
     if (taxContext.product.isNetPrice) {
       const net = taxContext.item.quantity * taxContext.item.price;

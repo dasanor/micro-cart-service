@@ -1,7 +1,8 @@
 {
   "services": {
     "name": "cart",
-    "version": "v1"
+    "version": "v1",
+    "style": "RPC"
   },
   "schemas": {
     "addEntry": "./schemas/addEntrySchema"
