@@ -16,7 +16,7 @@ function factory(base) {
         });
       }
       if (context.cart.items.length + newItems > maxNumberOfEntries) {
-        return next(base.utils.Error('max_number_of_entries', {
+        return next(base.utils.Error('max_number_of_entries_exceeded', {
           requestedEntries: context.cart.items.length + newItems,
           maxEntriesAllowed: maxNumberOfEntries
         }));

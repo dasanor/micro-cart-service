@@ -46,7 +46,7 @@ Error | Data | Description
 ------|------|------------
 cart_not_found | - | The Cart was not found
 max_quantity_per_product_exceeded | productId, requestedQuantity, maxQuantityAllowed | The requested quantity exceeds the limit.
-max_number_of_entries | requestedEntries, maxEntriesAllowed | The requested entries exceeds the limit.
+max_number_of_entries_exceeded | requestedEntries, maxEntriesAllowed | The requested entries exceeds the limit.
 product_not_found | productId | The Product was not found.
 product_discontinued | productId | The Product is discontinued.
 validation_error | The data causing the error | Some validation error
