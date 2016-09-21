@@ -51,7 +51,7 @@
       },
       "amqp": {
         "handler": "./amqp",
-        "url": "amqp://localhost"
+        "url": "amqp://bus"
       }
     },
     "channels": {
