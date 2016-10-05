@@ -8,8 +8,7 @@
     "addEntry": "./schemas/addEntrySchema"
   },
   "models": {
-    "cartModel": "./models/cartModel",
-    "taxModel": "./models/taxModel"
+    "cartModel": "./models/cartModel"
   },
   "addToCartChain": {
     "getCart": "./operations/addEntry/hooks/getCart",
@@ -37,13 +36,6 @@
   "hooks": {
     "onError": "./operations/addEntry/hooks/onError"
   },
-  "taxes": {
-    "defaultCode": "default",
-    "classes": {
-      "default": "./taxes/classes/default",
-      "ca-on-pm": "./taxes/classes/ca-on-pm"
-    }
-  },
   "bus": {
     "engines": {
       "local": {
@@ -57,10 +49,6 @@
     "channels": {
       "carts": {
         "name": "CARTS",
-        "engine": "local"
-      },
-      "taxes": {
-        "name": "TAXES",
         "engine": "local"
       }
     }

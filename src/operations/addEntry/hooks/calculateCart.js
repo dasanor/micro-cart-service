@@ -30,7 +30,7 @@ function factory(base) {
     };
 
     base.services.call({
-      name: 'cart:tax.cartTaxes'
+      name: 'tax:tax.cartTaxes'
     }, requestCart)
       .then(response => {
         if (response && response.ok === false) {
