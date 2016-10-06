@@ -4,7 +4,7 @@ This method is used to remove a Cart Entry.
 
 # Arguments
 
-This method has the URL https://server/services/catalog/v1/cart.removeEntry and 
+This method has the URL https://server/services/cart/v1/cart.removeEntry and
 follows the [MicroBase API calling conventions](../calling-conventions.html).
 
 Argument | Required | Type | Example | Description
