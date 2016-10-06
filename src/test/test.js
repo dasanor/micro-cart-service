@@ -157,8 +157,7 @@ function mockCartTaxes(times = 1) {
     .post('/services/tax/v1/tax.cartTaxes')
     .times(times)
     .reply(function(uri, requestBody) {
-      let items = [];
-      requestBody.items.map(item => {return {
+      let items = requestBody.items.map(item => {return {
         productId: item.productId,
         quantity: item.quantity,
         price: 11,
