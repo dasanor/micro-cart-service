@@ -53,10 +53,7 @@ function cleanDB(done) {
 // Helper to initialize the database
 function initDB(done) {
   cleanDB(() => {
-    createTaxes()
-      .then(() => {
-        done();
-      });
+    done();
   });
 }
 
@@ -154,6 +151,35 @@ function mockProductTaxDataGet(options, times = 1) {
     });
 }
 
+// Helper to mock create taxes operation
+function mockCartTaxes(times = 1) {
+  nock('http://gateway')
+    .post('/services/tax/v1/tax.cartTaxes')
+    .times(times)
+    .reply(function(uri, requestBody) {
+      let items = requestBody.items.map(item => {return {
+        productId: item.productId,
+        quantity: item.quantity,
+        price: 11,
+        beforeTax: 10,
+        tax: 10,
+        taxDetail: "Tax 10",
+        id: item.id
+      }});
+
+      return [
+        201,
+        {
+          ok: true,
+          cart: {
+            cartId: requestBody.cartId,
+            items
+          }
+        }
+      ];
+    });
+}
+
 // Helper to inject a call with default parameters
 function callService(options) {
   options.method = options.method || 'POST';
@@ -161,38 +187,8 @@ function callService(options) {
   return server.inject(options);
 }
 
-// Helper to create Taxes
-function createTaxes() {
-  return callService({
-    url: '/services/cart/v1/tax.create',
-    payload: {
-      code: 'default-percentage',
-      class: 'default',
-      title: 'Tax 21%',
-      rate: 21,
-      isPercentage: true
-    }
-  })
-    .then(() => {
-      return callService({
-        url: '/services/cart/v1/tax.create',
-        payload: {
-          code: 'default-fixed',
-          class: 'default',
-          title: 'Tax 5',
-          rate: 5,
-          isPercentage: false
-        }
-      });
-    })
-    .then(() => {
-      const taxesChannel = base.config.get('bus:channels:taxes:name');
-      base.bus.publish(`${taxesChannel}.CREATE`, {});
-    })
-}
-
 // Helper to create carts
-function createCart(numEntries, cartEntryRequest, sequenceProducts) {
+function createCart(numEntries, cartEntryRequest, sequenceProducts, mockProductTaxData = true) {
   let cart;
   return callService({
     url: '/services/cart/v1/cart.new'
@@ -216,9 +212,12 @@ function createCart(numEntries, cartEntryRequest, sequenceProducts) {
           mockStockReserveOk(entry);
           return entry;
         });
-        mockProductTaxDataGet({
-          productId: allEntries.map(entry => entry.productId).join(',')
-        });
+
+        if(mockProductTaxData) {
+          mockProductTaxDataGet({
+            productId: allEntries.map(entry => entry.productId).join(',')
+          });
+        }
 
         return callService({
           url: `/services/cart/v1/cart.addEntry?cartId=${cart.id}`,
@@ -369,6 +368,7 @@ describe('Cart Entries', () => {
       url: '/services/cart/v1/cart.addEntry?cartId=xxxxxx',
       payload: { items: [entryRequest] }
     };
+
     callService(options)
       .then(response => {
         expect(response.statusCode).to.equal(200);
@@ -394,7 +394,7 @@ describe('Cart Entries', () => {
       .then(cart => {
         mockStockReserveOk(entryRequest);
         mockProductDataGet(entryRequest);
-        mockProductTaxDataGet({ productId: entryRequest.productId });
+        mockCartTaxes();
         const options = {
           url: `/services/cart/v1/cart.addEntry?cartId=${cart.id}`,
           payload: { items: [entryRequest] }
@@ -442,6 +442,7 @@ describe('Cart Entries', () => {
       quantity: maxQuantityPerProduct + 1,
       warehouseId: '001'
     };
+
     createCart()
       .then(cart => {
         const options = {
@@ -451,6 +452,7 @@ describe('Cart Entries', () => {
         return callService(options);
       })
       .then(response => {
+        expect(nock.isDone()).to.equal(true);
         expect(response.statusCode).to.equal(200);
         // Expected result:
         // {
@@ -480,7 +482,8 @@ describe('Cart Entries', () => {
       quantity: 1,
       warehouseId: '001'
     };
-    createCart(maxNumberOfEntries, entryRequest1, true)
+    mockCartTaxes();
+    createCart(maxNumberOfEntries, entryRequest1, true, false)
       .then(cart => {
         const options = {
           url: `/services/cart/v1/cart.addEntry?cartId=${cart.id}`,
@@ -489,6 +492,7 @@ describe('Cart Entries', () => {
         return callService(options);
       })
       .then(response => {
+        expect(nock.isDone()).to.equal(true);
         expect(response.statusCode).to.equal(200);
         // Expected result:
         // {
@@ -573,195 +577,6 @@ describe('Cart Entries', () => {
         const result = response.result;
         expect(result.ok).to.equal(false);
         expect(result.error).to.be.a.string().and.to.equal('not_enough_stock');
-        done();
-      })
-      .catch((error) => done(error));
-  });
-
-});
-
-/*
- Taxes Tests
- */
-describe('Taxes', () => {
-  beforeEach(done => {
-    initDB(done);
-  });
-  after(done => {
-    cleanDB(done);
-  });
-
-  it('calculates gross percentage tax', done => {
-    const cartId = 'xxxx';
-    const entryRequest = { id: '1', productId: '0001', quantity: 2, price: 100 };
-    createCart()
-      .then(() => {
-        const options = {
-          url: `/services/cart/v1/tax.cartTaxes?cartId=${cartId}`,
-          payload: { items: [entryRequest] }
-        };
-        mockProductTaxDataGet({ productId: entryRequest.productId });
-        return callService(options);
-      })
-      .then(response => {
-        expect(nock.isDone()).to.equal(true);
-        expect(response.statusCode).to.equal(200);
-        // Expected result:
-        // {
-        //   "ok": true,
-        //   "cart": {
-        //     "cartId": "xxxx",
-        //     "items": [{
-        //       "id": "1",
-        //       "productId": "0001",
-        //       "quantity": 2,
-        //       "price": 100,
-        //       "beforeTax": 200,
-        //       "tax": 42,
-        //       "taxDetail": "Tax 21%"
-        //     }]
-        //   }
-        // }
-        const result = response.result;
-        expect(result.ok).to.equal(true);
-        const cart = result.cart;
-        expect(cart.cartId).to.be.a.string().and.to.equal(cartId);
-        expect(cart.items[0].beforeTax).to.be.a.number().and.to.equal(200);
-        expect(cart.items[0].tax).to.be.a.number().and.to.equal(42);
-        expect(cart.items[0].taxDetail).to.be.a.string().and.to.equal('Tax 21%');
-        done();
-      })
-      .catch((error) => done(error));
-  });
-
-  it('calculates net percentage tax', done => {
-    const cartId = 'xxxx';
-    const entryRequest = { id: '1', productId: '0001', quantity: 2, price: 100 };
-    createCart()
-      .then(() => {
-        const options = {
-          url: `/services/cart/v1/tax.cartTaxes?cartId=${cartId}`,
-          payload: { items: [entryRequest] }
-        };
-        mockProductTaxDataGet({ productId: entryRequest.productId, isNetPrice: true });
-        return callService(options);
-      })
-      .then(response => {
-        expect(nock.isDone()).to.equal(true);
-        expect(response.statusCode).to.equal(200);
-        // Expected result:
-        // {
-        //   "ok": true,
-        //   "cart": {
-        //     "cartId": "xxxx",
-        //     "items": [{
-        //       "id": "1",
-        //       "productId": "0001",
-        //       "quantity": 2,
-        //       "price": 100,
-        //       "beforeTax": 158,
-        //       "tax": 42,
-        //       "taxDetail": "Tax 21%"
-        //     }]
-        //   }
-        // }
-        const result = response.result;
-        expect(result.ok).to.equal(true);
-        const cart = result.cart;
-        expect(cart.cartId).to.be.a.string().and.to.equal(cartId);
-        expect(cart.items[0].beforeTax).to.be.a.number().and.to.equal(158);
-        expect(cart.items[0].tax).to.be.a.number().and.to.equal(42);
-        expect(cart.items[0].taxDetail).to.be.a.string().and.to.equal('Tax 21%');
-        done();
-      })
-      .catch((error) => done(error));
-  });
-
-  it('calculates gross fixed tax', done => {
-    const cartId = 'xxxx';
-    const entryRequest = { id: '1', productId: '0001', quantity: 2, price: 100 };
-    createCart()
-      .then(() => {
-        const options = {
-          url: `/services/cart/v1/tax.cartTaxes?cartId=${cartId}`,
-          payload: { items: [entryRequest] }
-        };
-        mockProductTaxDataGet({ productId: entryRequest.productId, taxCode: 'default-fixed' });
-        return callService(options);
-      })
-      .then(response => {
-        expect(nock.isDone()).to.equal(true);
-        expect(response.statusCode).to.equal(200);
-        // Expected result:
-        // {
-        //   "ok": true,
-        //   "cart": {
-        //     "cartId": "xxxx",
-        //     "items": [{
-        //       "id": "1",
-        //       "productId": "0001",
-        //       "quantity": 2,
-        //       "price": 100,
-        //       "beforeTax": 200,
-        //       "tax": 10,
-        //       "taxDetail": "Tax 5"
-        //     }]
-        //   }
-        // }
-        const result = response.result;
-        expect(result.ok).to.equal(true);
-        const cart = result.cart;
-        expect(cart.cartId).to.be.a.string().and.to.equal(cartId);
-        expect(cart.items[0].beforeTax).to.be.a.number().and.to.equal(200);
-        expect(cart.items[0].tax).to.be.a.number().and.to.equal(10);
-        expect(cart.items[0].taxDetail).to.be.a.string().and.to.equal('Tax 5');
-        done();
-      })
-      .catch((error) => done(error));
-  });
-
-  it('calculates net fixed tax', done => {
-    const cartId = 'xxxx';
-    const entryRequest = { id: '1', productId: '0001', quantity: 2, price: 100 };
-    createCart()
-      .then(() => {
-        const options = {
-          url: `/services/cart/v1/tax.cartTaxes?cartId=${cartId}`,
-          payload: { items: [entryRequest] }
-        };
-        mockProductTaxDataGet({
-          productId: entryRequest.productId,
-          taxCode: 'default-fixed',
-          isNetPrice: true
-        });
-        return callService(options);
-      })
-      .then(response => {
-        expect(nock.isDone()).to.equal(true);
-        expect(response.statusCode).to.equal(200);
-        // Expected result:
-        // {
-        //   "ok": true,
-        //   "cart": {
-        //     "cartId": "xxxx",
-        //     "items": [{
-        //       "id": "1",
-        //       "productId": "0001",
-        //       "quantity": 2,
-        //       "price": 100,
-        //       "beforeTax": 190,
-        //       "tax": 10,
-        //       "taxDetail": "Tax 5"
-        //     }]
-        //   }
-        // }
-        const result = response.result;
-        expect(result.ok).to.equal(true);
-        const cart = result.cart;
-        expect(cart.cartId).to.be.a.string().and.to.equal(cartId);
-        expect(cart.items[0].beforeTax).to.be.a.number().and.to.equal(190);
-        expect(cart.items[0].tax).to.be.a.number().and.to.equal(10);
-        expect(cart.items[0].taxDetail).to.be.a.string().and.to.equal('Tax 5');
         done();
       })
       .catch((error) => done(error));

@@ -10,8 +10,6 @@ ecosystem.
 * Define max number of items items in Cart
 * Define max number of items per Product in Cart
 * Aggregate same products or add them as a single line each
-* Fast Cart calculation
-* Configurable Taxes
 * Abandonment handling
 
 # Entities
@@ -52,18 +50,6 @@ warehouseId | The Warehouse identifier | String | yes | -
 quantity | The quantity reserved | Number | yes | -
 expirationTime | Reserve expiration time | Date | yes | System generated
 
-## Taxes
-
-Field | Description| Type | Required | Default
-------|------------|------|----------|--------
-id | Internal unique Tax identifier | String | yes | System generated
-code | The Tax code unique identifier (i.e.: VAT) | String | yes | -
-class | The Tax class (specific implementation) identifier | String | yes | -
-title | The Tax title | String | yes | -
-description | The Tax description | String | no | -
-rate | The Tax rate | Number | yes | -
-isPercentage | The Tax rate is a percentaje or absolute | Boolean | yes | true
-
 # API
 
 The full API documentation can be accessed in the microbase web http://api.microbase.io 
@@ -78,10 +64,3 @@ cart:new | Creates a Cart | `POST` | `/services/cart/v1`
 cart:get | Retrieves a Cart | `GET` | `/services/cart/v1/{cartId}`
 cart:addEntry | Adds and entry to a Cart | `POST` | `/services/cart/v1/{cartId}/entry`
 cart:removeEntry | Deletes an entry from a Cart | `POST` | `/services/cart/v1/{cartId}/entry/{entryId}`
-
-## Taxes
-
-Name | Description | Method | Endpoint
------|-------------|--------|---------
-cart:createTax | Creates a Tax | `POST` | `/services/cart/v1/tax`
-cart:cartTaxes | Calculates the Cart taxes | `POST` | `/services/cart/v1/cart/{cartId}/taxes`
