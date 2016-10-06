@@ -158,7 +158,7 @@ function mockCartTaxes(times = 1) {
     .times(times)
     .reply(function(uri, requestBody) {
       let items = [];
-      requestBody.items.forEach(item => items.push({
+      requestBody.items.map(item => {return {
         productId: item.productId,
         quantity: item.quantity,
         price: 11,
@@ -166,7 +166,7 @@ function mockCartTaxes(times = 1) {
         tax: 10,
         taxDetail: "Tax 10",
         id: item.id
-      }));
+      }});
 
       return [
         201,
@@ -174,7 +174,7 @@ function mockCartTaxes(times = 1) {
           ok: true,
           cart: {
             cartId: requestBody.cartId,
-            items: items
+            items
           }
         }
       ];
