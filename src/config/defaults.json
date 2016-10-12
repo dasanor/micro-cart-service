@@ -49,7 +49,7 @@
     "channels": {
       "carts": {
         "name": "CARTS",
-        "engine": "local"
+        "engine": "amqp"
       }
     }
   },

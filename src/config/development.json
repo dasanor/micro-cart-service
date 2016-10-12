@@ -2,6 +2,11 @@
   "logger": {
     "level": "debug"
   },
+  "transports": {
+    "http": {
+      "port": "3001"
+    }
+  },
   "db": {
     "host": "localhost",
     "db": "micro",
@@ -9,9 +14,6 @@
   },
   "gateway": {
     "gatewayUrlOverrride": "./config/gatewayUrlOverride"
-  },
-  "services": {
-    "port": "3001"
   }
 }
 
