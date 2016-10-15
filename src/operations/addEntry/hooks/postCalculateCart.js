@@ -1,5 +1,3 @@
-const boom = require('boom');
-
 /**
  * Hook to allow customization of the add to cart process after being calculated
  */

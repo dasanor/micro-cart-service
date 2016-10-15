@@ -17,7 +17,6 @@
   "author": "Nicolás Cornaglia Schlieman",
   "license": "OSL-3.0",
   "dependencies": {
-    "boom": "^3.1.3",
     "microbase": "^0.8.0",
     "moment": "^2.13.0",
     "shortid": "^2.2.6"
