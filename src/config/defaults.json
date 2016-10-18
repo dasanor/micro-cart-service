@@ -11,31 +11,29 @@
     "cartModel": "./models/cartModel"
   },
   "addToCartChain": {
-    "getCart": "./operations/addEntry/hooks/getCart",
-    "bulkAddToCart": "./operations/addEntry/hooks/bulkAddToCart",
-    "calculateCart": "./operations/addEntry/hooks/calculateCart",
-    "postCalculateCart": "./operations/addEntry/hooks/postCalculateCart",
-    "saveCart": "./operations/addEntry/hooks/saveCart",
-    "postSaveCart": "./operations/addEntry/hooks/postSaveCart"
+    "getCart": "./operations/chains/addEntry/getCart",
+    "bulkAddToCart": "./operations/chains/addEntry/bulkAddToCart",
+    "calculateCart": "./operations/chains/addEntry/calculateCart",
+    "postCalculateCart": "./operations/chains/addEntry/postCalculateCart",
+    "saveCart": "./operations/chains/addEntry/saveCart",
+    "postSaveCart": "./operations/chains/addEntry/postSaveCart"
   },
   "itemAddToCartChain": {
-    "checkMaxQuantityPerProduct": "./operations/addEntry/hooks/checkMaxQuantityPerProduct",
-    "checkMaxNumberOfEntries": "./operations/addEntry/hooks/checkMaxNumberOfEntries",
-    "checkProductAvailability": "./operations/addEntry/hooks/checkProductAvailability",
-    "checkStockAvailability": "./operations/addEntry/hooks/checkStockAvailability",
-    "addToCart": "./operations/addEntry/hooks/addToCart"
+    "checkMaxQuantityPerProduct": "./operations/chains/addEntry/checkMaxQuantityPerProduct",
+    "checkMaxNumberOfEntries": "./operations/chains/addEntry/checkMaxNumberOfEntries",
+    "checkProductAvailability": "./operations/chains/addEntry/checkProductAvailability",
+    "checkStockAvailability": "./operations/chains/addEntry/checkStockAvailability",
+    "addToCart": "./operations/chains/addEntry/addToCart"
   },
   "removeFromCartChain": {
-    "getEntry": "./operations/removeEntry/hooks/getEntry",
-    "removeFromCart": "./operations/removeEntry/hooks/removeFromCart",
-    "calculateCart": "./operations/addEntry/hooks/calculateCart",
-    "postCalculateCart": "./operations/addEntry/hooks/postCalculateCart",
-    "saveCart": "./operations/addEntry/hooks/saveCart",
-    "unreserve": "./operations/removeEntry/hooks/unreserve"
+    "getEntry": "./operations/chains/removeEntry/getEntry",
+    "removeFromCart": "./operations/chains/removeEntry/removeFromCart",
+    "calculateCart": "./operations/chains/addEntry/calculateCart",
+    "postCalculateCart": "./operations/chains/addEntry/postCalculateCart",
+    "saveCart": "./operations/chains/addEntry/saveCart",
+    "unreserve": "./operations/chains/removeEntry/unreserve"
   },
-  "hooks": {
-    "onError": "./operations/addEntry/hooks/onError"
-  },
+  "addToCartOnError": "./operations/chains/addEntry/onError",
   "bus": {
     "engines": {
       "local": {

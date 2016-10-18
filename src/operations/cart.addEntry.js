@@ -7,10 +7,9 @@
  * @return {Function} The operation factory
  */
 function opFactory(base) {
-  const onError = base.utils.loadModule('hooks:onError');
+  const onError = base.utils.loadModule('addToCartOnError');
   const addToCartChain = new base.utils.Chain().use('addToCartChain');
   const op = {
-    name: 'cart.addEntry',
     schema: require(base.config.get('schemas:addEntry')),
     handler: (msg, reply) => {
       const context = {

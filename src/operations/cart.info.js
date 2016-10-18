@@ -8,7 +8,6 @@
  */
 function opFactory(base) {
   const op = {
-    name: 'cart.info',
     handler: ({ cartId }, reply) => {
       base.db.models.Cart
         .findById(cartId)

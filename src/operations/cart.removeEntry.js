@@ -8,7 +8,6 @@
 function opFactory(base) {
   const removeFromCartChain = new base.utils.Chain().use('removeFromCartChain');
   const op = {
-    name: 'cart.removeEntry',
     handler: (msg, reply) => {
       const context = {
         cartId: msg.cartId,

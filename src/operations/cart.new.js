@@ -11,7 +11,6 @@ const moment = require('moment');
 function opFactory(base) {
   const cartExpirationMinutes = base.config.get('cartExpirationMinutes');
   const op = {
-    name: 'cart.new',
     // TODO: create the stock JsonSchema
     handler: ({ userId }, reply) => {
       const cart = new base.db.models.Cart({
