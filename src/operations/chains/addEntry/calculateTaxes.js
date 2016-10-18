@@ -1,5 +1,5 @@
 /**
- * Hook to allow customization of Cart calculation
+ * Hook to allow customization Taxes calculation
  */
 function factory(base) {
 
@@ -11,8 +11,11 @@ function factory(base) {
       subtotals.tax += item.tax;
       return subtotals;
     }, { beforeTax: 0.00, tax: 0.00 });
-    cart.beforeTax = totals.beforeTax;
-    cart.tax = totals.tax;
+    cart.taxes = {
+      ok: true,
+      beforeTax: totals.beforeTax,
+      tax: totals.tax
+    };
   }
 
   return (context, next) => {
@@ -46,8 +49,18 @@ function factory(base) {
         calculateCartTotals(context.cart);
         return next();
       })
-      .catch(next);
-
+      .catch(error => {
+        if (error.code === 'ECONNREFUSED') {
+          base.logger.warn(`[cart] cannot reach taxes service '${error.message}'`);
+          context.cart.taxes = {
+            ok: false,
+            error: 'cannot_reach_engine',
+          };
+          return next();
+        }
+        return next(error);
+      })
+      .then(next);
   };
 }
 

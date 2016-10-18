@@ -26,8 +26,7 @@ function opFactory(base) {
               `[cart] added ${msg.items.length} item(s) to cart ${context.cart._id}`
             );
           }
-          // Fix the response
-          return reply(base.utils.genericResponse({ reserves: context.newReserves }));
+          return reply(base.utils.genericResponse({ cart: context.cart.toClient() }));
         })
         .catch(error => {
           // Handle errors, rolling back if necessary

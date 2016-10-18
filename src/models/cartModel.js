@@ -18,6 +18,14 @@ function modelFactory(base) {
     expirationTime: { type: Date, required: true }
   }, { _id: false });
 
+  // The taxes schema
+  const taxesSchema = base.db.Schema({
+    ok: { type: Boolean, required: true, default: true },
+    error: { type: String, required: false },
+    tax: { type: Number, required: true, default: 0.00 },
+    beforeTax: { type: Number, required: true, default: 0.00 }
+  }, { _id: false });
+
   // Enable the virtuals when converting to JSON
   reservesSchema.set('toJSON', {
     virtuals: true
@@ -51,8 +59,8 @@ function modelFactory(base) {
     userId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
     items: [itemsSchema],
-    beforeTax: { type: Number, required: true, default: 0.00 },
-    tax: { type: Number, required: true, default: 0.00 }
+    taxes: { type: taxesSchema, required: true },
+    promotions: { type: base.db.Schema.Types.Mixed, required: true }
   }, { _id: false, timestamps: true });
 
   // Enable the virtuals when converting to JSON

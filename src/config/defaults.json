@@ -13,7 +13,8 @@
   "addToCartChain": {
     "getCart": "./operations/chains/addEntry/getCart",
     "bulkAddToCart": "./operations/chains/addEntry/bulkAddToCart",
-    "calculateCart": "./operations/chains/addEntry/calculateCart",
+    "calculatePromotions": "./operations/chains/addEntry/calculatePromotions",
+    "calculateTaxes": "./operations/chains/addEntry/calculateTaxes",
     "postCalculateCart": "./operations/chains/addEntry/postCalculateCart",
     "saveCart": "./operations/chains/addEntry/saveCart",
     "postSaveCart": "./operations/chains/addEntry/postSaveCart"
@@ -28,7 +29,8 @@
   "removeFromCartChain": {
     "getEntry": "./operations/chains/removeEntry/getEntry",
     "removeFromCart": "./operations/chains/removeEntry/removeFromCart",
-    "calculateCart": "./operations/chains/addEntry/calculateCart",
+    "calculatePromotions": "./operations/chains/addEntry/calculatePromotions",
+    "calculateTaxes": "./operations/chains/addEntry/calculateTaxes",
     "postCalculateCart": "./operations/chains/addEntry/postCalculateCart",
     "saveCart": "./operations/chains/addEntry/saveCart",
     "unreserve": "./operations/chains/removeEntry/unreserve"
