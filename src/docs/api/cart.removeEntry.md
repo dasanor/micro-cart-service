@@ -9,9 +9,9 @@ follows the [MicroBase API calling conventions](../calling-conventions.html).
 
 Argument | Required | Type | Example | Description
 ---------|----------|------|---------|------------
-token  | yes | Token  | Bearer xxxxx... | Authentication token.
-cartId | yes | String | H19PRsec        | The id of the Cart.
-itemId | yes | String | HyR1hMmc        | The id of the Entry to remove.
+token   | yes | Token  | Bearer xxxxx... | Authentication token.
+cartId  | yes | String | H19PRsec        | The id of the Cart.
+entryId | yes | String | HyR1hMmc        | The id of the Entry to remove.
 
 # Response
 
