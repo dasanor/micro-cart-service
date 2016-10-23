@@ -1,5 +1,5 @@
 /**
- * Retrieve the cart and the entry
+ * Retrieve the cart and the itemId
  */
 function factory(base) {
   return (context, next) => {
@@ -12,12 +12,13 @@ function factory(base) {
         if (!cart) {
           return next(base.utils.Error('cart_not_found'));
         }
-        // Check entry existence
-        const entry = cart.items.find(e => e.id === context.entryId);
-        if (!entry) return next(base.utils.Error('entry_not_found'));
-        // return the cart and the entry
+        // Check itemId existence
+        const itemId = cart.items.find(e => e.id === context.itemId);
+        if (!itemId) return next(base.utils.Error('item_not_found'));
+        // return the cart and the itemId
         context.cart = cart;
-        context.entry = entry;
+        context.itemId = itemId;
+        if (!context.productId) context.productId = itemId.productId;
         next();
       });
   };

@@ -5,37 +5,38 @@
     "style": "RPC"
   },
   "schemas": {
-    "addEntry": "./schemas/addEntrySchema"
+    "addToCart": "./schemas/addToCartSchema",
+    "removeFromCart": "./schemas/removeFromCartSchema"
   },
   "models": {
     "cartModel": "./models/cartModel"
   },
   "addToCartChain": {
-    "getCart": "./operations/chains/addEntry/getCart",
-    "bulkAddToCart": "./operations/chains/addEntry/bulkAddToCart",
-    "calculatePromotions": "./operations/chains/addEntry/calculatePromotions",
-    "calculateTaxes": "./operations/chains/addEntry/calculateTaxes",
-    "postCalculateCart": "./operations/chains/addEntry/postCalculateCart",
-    "saveCart": "./operations/chains/addEntry/saveCart",
-    "postSaveCart": "./operations/chains/addEntry/postSaveCart"
+    "getCart": "./operations/chains/addToCart/getCart",
+    "bulkAddToCart": "./operations/chains/addToCart/bulkAddToCart",
+    "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
+    "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
+    "postCalculateCart": "./operations/chains/addToCart/postCalculateCart",
+    "saveCart": "./operations/chains/addToCart/saveCart",
+    "postSaveCart": "./operations/chains/addToCart/postSaveCart"
   },
   "itemAddToCartChain": {
-    "checkMaxQuantityPerProduct": "./operations/chains/addEntry/checkMaxQuantityPerProduct",
-    "checkMaxNumberOfEntries": "./operations/chains/addEntry/checkMaxNumberOfEntries",
-    "checkProductAvailability": "./operations/chains/addEntry/checkProductAvailability",
-    "checkStockAvailability": "./operations/chains/addEntry/checkStockAvailability",
-    "addToCart": "./operations/chains/addEntry/addToCart"
+    "checkMaxQuantityPerProduct": "./operations/chains/addToCart/checkMaxQuantityPerProduct",
+    "checkMaxNumberOfEntries": "./operations/chains/addToCart/checkMaxNumberOfEntries",
+    "checkProductAvailability": "./operations/chains/addToCart/checkProductAvailability",
+    "checkStockAvailability": "./operations/chains/addToCart/checkStockAvailability",
+    "addToCart": "./operations/chains/addToCart/addToCart"
   },
   "removeFromCartChain": {
-    "getEntry": "./operations/chains/removeEntry/getEntry",
-    "removeFromCart": "./operations/chains/removeEntry/removeFromCart",
-    "calculatePromotions": "./operations/chains/addEntry/calculatePromotions",
-    "calculateTaxes": "./operations/chains/addEntry/calculateTaxes",
-    "postCalculateCart": "./operations/chains/addEntry/postCalculateCart",
-    "saveCart": "./operations/chains/addEntry/saveCart",
-    "unreserve": "./operations/chains/removeEntry/unreserve"
+    "getEntry": "./operations/chains/removeFromCart/getEntry",
+    "removeFromCart": "./operations/chains/removeFromCart/removeFromCart",
+    "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
+    "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
+    "postCalculateCart": "./operations/chains/addToCart/postCalculateCart",
+    "saveCart": "./operations/chains/addToCart/saveCart",
+    "unreserve": "./operations/chains/removeFromCart/unreserve"
   },
-  "addToCartOnError": "./operations/chains/addEntry/onError",
+  "addToCartOnError": "./operations/chains/addToCart/onError",
   "bus": {
     "engines": {
       "local": {

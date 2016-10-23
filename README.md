@@ -52,15 +52,4 @@ expirationTime | Reserve expiration time | Date | yes | System generated
 
 # API
 
-The full API documentation can be accessed in the microbase web http://api.microbase.io 
-and provide access to the Stocks and Reserves endpoints to create, 
-modify and delete them:
-
-## Carts
-
-Name | Description | Method | Endpoint
------|-------------|--------|---------
-cart:new | Creates a Cart | `POST` | `/services/cart/v1`
-cart:get | Retrieves a Cart | `GET` | `/services/cart/v1/{cartId}`
-cart:addEntry | Adds and entry to a Cart | `POST` | `/services/cart/v1/{cartId}/entry`
-cart:removeEntry | Deletes an entry from a Cart | `POST` | `/services/cart/v1/{cartId}/entry/{entryId}`
+The full API documentation can be accessed in the microbase web http://docs.microbase.io

@@ -17,7 +17,7 @@
   "author": "Nicolás Cornaglia Schlieman",
   "license": "OSL-3.0",
   "dependencies": {
-    "microbase": "^0.8.0",
+    "microbase": "^0.8.3",
     "moment": "^2.13.0",
     "shortid": "^2.2.6"
   },

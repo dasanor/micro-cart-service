@@ -1,7 +1,7 @@
 /**
- * ## `cart.addEntry` operation factory
+ * ## `cart.addToCart` operation factory
  *
- * Creates the addEntry Cart operation
+ * Creates the addToCart Cart operation
  *
  * @param {base} Object The microbase object
  * @return {Function} The operation factory
@@ -10,7 +10,9 @@ function opFactory(base) {
   const onError = base.utils.loadModule('addToCartOnError');
   const addToCartChain = new base.utils.Chain().use('addToCartChain');
   const op = {
-    schema: require(base.config.get('schemas:addEntry')),
+    validator: {
+      schema: require(base.config.get('schemas:addToCart')),
+    },
     handler: (msg, reply) => {
       const context = {
         cartId: msg.cartId,

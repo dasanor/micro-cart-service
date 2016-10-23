@@ -1,7 +1,7 @@
 const moment = require('moment');
 
 /**
- * ## `cart.new` operation factory
+ * ## `cart.create` operation factory
  *
  * Creates a new Cart operation
  *
