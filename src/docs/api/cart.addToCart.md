@@ -1,10 +1,10 @@
-# cart.addEntry
+# cart.addToCart
 
-This method is used to add an Entry to a Cart.
+This method is used to add items to a Cart.
 
 # Arguments
 
-This method has the URL https://server/services/cart/v1/cart.addEntry and
+This method has the URL https://server/services/cart/v1/cart.addToCart and
 follows the [MicroBase API calling conventions](../calling-conventions.html).
 
 Argument | Required | Type | Example | Description
@@ -55,7 +55,7 @@ validation_error | The data causing the error | Some validation error
 
 ```bash
 curl --request POST \
-  --url http://localhost:3000/services/cart/v1/cart.addEntry?cartId=H19PRsec \
+  --url http://localhost:3000/services/cart/v1/cart.addToCart?cartId=H19PRsec \
   --header 'authorization: Bearer xxxxx...' \
   --header 'accept: application/json' \
   --header 'content-type: application/json' \

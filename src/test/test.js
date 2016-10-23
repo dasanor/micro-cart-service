@@ -58,12 +58,12 @@ function initDB(done) {
 }
 
 // Helper to mock a successful stock:reserve call
-function mockStockReserveOk(entryRequest, times = 1) {
+function mockStockReserveOk(itemRequest, times = 1) {
   nock('http://gateway')
     .post('/services/stock/v1/stock.reserve', {
-      productId: entryRequest.productId,
-      quantity: entryRequest.quantity,
-      warehouseId: entryRequest.warehouseId,
+      productId: itemRequest.productId,
+      quantity: itemRequest.quantity,
+      warehouseId: itemRequest.warehouseId,
       reserveStockForMinutes: reserveStockForMinutes
     })
     .times(times)
@@ -71,18 +71,18 @@ function mockStockReserveOk(entryRequest, times = 1) {
       ok: true,
       reserve: {
         id: shortId.generate(),
-        warehouseId: entryRequest.warehouseId,
-        quantity: entryRequest.quantity,
+        warehouseId: itemRequest.warehouseId,
+        quantity: itemRequest.quantity,
         expirationTime: new Date()
       }
     });
 }
 
 // Helper to mock a successful stock:unreserve call
-function mockStockUnReserveOk(entryRequest, times) {
+function mockStockUnReserveOk(itemRequest, times) {
   nock('http://gateway')
     .post('/services/stock/v1/stock.unreserve', {
-      unreserveQuantity: entryRequest.quantity
+      unreserveQuantity: itemRequest.quantity
     })
     .times(times || 1)
     .reply(200, {
@@ -91,12 +91,12 @@ function mockStockUnReserveOk(entryRequest, times) {
 }
 
 // Helper to mock a un-successful stock:reserve call
-function mockStockReserveNoEnoughStock(entryRequest, times) {
+function mockStockReserveNoEnoughStock(itemRequest, times) {
   nock('http://gateway')
     .post('/services/stock/v1/stock.reserve', {
-      productId: entryRequest.productId,
-      quantity: entryRequest.quantity,
-      warehouseId: entryRequest.warehouseId,
+      productId: itemRequest.productId,
+      quantity: itemRequest.quantity,
+      warehouseId: itemRequest.warehouseId,
       reserveStockForMinutes: base.config.get('reserveStockForMinutes')
     })
     .times(times || 1)
@@ -188,14 +188,14 @@ function callService(options) {
 }
 
 // Helper to create carts
-function createCart(numEntries, cartEntryRequest, sequenceProducts, mockProductTaxData = true) {
+function createCart(numEntries, cartitemRequest, sequenceProducts, mockProductTaxData = true) {
   let cart;
   return callService({
     url: '/services/cart/v1/cart.new'
   })
     .then(cartResponse => {
       if (numEntries) {
-        const entryRequest = cartEntryRequest || {
+        const itemRequest = cartitemRequest || {
           productId: '0001',
           quantity: 10,
           warehouseId: '001'
@@ -203,31 +203,31 @@ function createCart(numEntries, cartEntryRequest, sequenceProducts, mockProductT
         cart = cartResponse.result.cart;
 
         const allEntries = Array.from(new Array(numEntries), (a, i) => {
-          const entry = {
-            productId: entryRequest.productId + (sequenceProducts ? i : ''),
-            quantity: entryRequest.quantity,
-            warehouseId: entryRequest.warehouseId
+          const itemId = {
+            productId: itemRequest.productId + (sequenceProducts ? i : ''),
+            quantity: itemRequest.quantity,
+            warehouseId: itemRequest.warehouseId
           };
-          mockProductDataGet(entry);
-          mockStockReserveOk(entry);
-          return entry;
+          mockProductDataGet(itemId);
+          mockStockReserveOk(itemId);
+          return itemId;
         });
 
         if(mockProductTaxData) {
           mockProductTaxDataGet({
-            productId: allEntries.map(entry => entry.productId).join(',')
+            productId: allEntries.map(itemId => itemId.productId).join(',')
           });
         }
 
         return callService({
-          url: `/services/cart/v1/cart.addEntry?cartId=${cart.id}`,
+          url: `/services/cart/v1/cart.addToCart?cartId=${cart.id}`,
           payload: { items: allEntries }
         })
-          .then(entryResponses => {
-            if (entryResponses.statusCode !== 200 || entryResponses.result.ok === false) {
-              throw entryResponses;
+          .then(itemResponses => {
+            if (itemResponses.statusCode !== 200 || itemResponses.result.ok === false) {
+              throw itemResponses;
             }
-            return entryResponses;
+            return itemResponses;
           })
           .then(() => {
             if (!nock.isDone()) {
@@ -358,15 +358,15 @@ describe('Cart Entries', () => {
     cleanDB(done);
   });
 
-  it('adds an entry to a non-existent cart', done => {
-    const entryRequest = {
+  it('adds an itemId to a non-existent cart', done => {
+    const itemRequest = {
       productId: '0001',
       quantity: 10,
       warehouseId: '001'
     };
     const options = {
-      url: '/services/cart/v1/cart.addEntry?cartId=xxxxxx',
-      payload: { items: [entryRequest] }
+      url: '/services/cart/v1/cart.addToCart?cartId=xxxxxx',
+      payload: { items: [itemRequest] }
     };
 
     callService(options)
@@ -384,20 +384,20 @@ describe('Cart Entries', () => {
       });
   });
 
-  it('adds an entry an existing cart', done => {
-    const entryRequest = {
+  it('adds an itemId an existing cart', done => {
+    const itemRequest = {
       productId: '0001',
       quantity: 10,
       warehouseId: '001'
     };
     createCart()
       .then(cart => {
-        mockStockReserveOk(entryRequest);
-        mockProductDataGet(entryRequest);
+        mockStockReserveOk(itemRequest);
+        mockProductDataGet(itemRequest);
         mockCartTaxes();
         const options = {
-          url: `/services/cart/v1/cart.addEntry?cartId=${cart.id}`,
-          payload: { items: [entryRequest] }
+          url: `/services/cart/v1/cart.addToCart?cartId=${cart.id}`,
+          payload: { items: [itemRequest] }
         };
         return callService(options);
       })
@@ -421,9 +421,9 @@ describe('Cart Entries', () => {
         expect(reserves).to.be.an.array().and.to.have.length(1);
         const reserve = reserves[0];
         expect(reserve.id).to.be.a.string();
-        expect(reserve.productId).to.be.a.string().and.to.equal(entryRequest.productId);
-        expect(reserve.quantity).to.be.a.number().and.to.equal(entryRequest.quantity);
-        expect(reserve.warehouseId).to.be.a.string().and.to.equal(entryRequest.warehouseId);
+        expect(reserve.productId).to.be.a.string().and.to.equal(itemRequest.productId);
+        expect(reserve.quantity).to.be.a.number().and.to.equal(itemRequest.quantity);
+        expect(reserve.warehouseId).to.be.a.string().and.to.equal(itemRequest.warehouseId);
         expect(reserve.expirationTime).to.be.a.string();
         try {
           const expirationTime = new Date(reserve.expirationTime);
@@ -435,9 +435,9 @@ describe('Cart Entries', () => {
       .catch((error) => done(error));
   });
 
-  it('adds an entry with a quantity > maxQuantityPerProduct', done => {
+  it('adds an itemId with a quantity > maxQuantityPerProduct', done => {
     const maxQuantityPerProduct = base.config.get('maxQuantityPerProduct');
-    const entryRequest = {
+    const itemRequest = {
       productId: '0001',
       quantity: maxQuantityPerProduct + 1,
       warehouseId: '001'
@@ -446,8 +446,8 @@ describe('Cart Entries', () => {
     createCart()
       .then(cart => {
         const options = {
-          url: `/services/cart/v1/cart.addEntry?cartId=${cart.id}`,
-          payload: { items: [entryRequest] }
+          url: `/services/cart/v1/cart.addToCart?cartId=${cart.id}`,
+          payload: { items: [itemRequest] }
         };
         return callService(options);
       })
@@ -462,32 +462,32 @@ describe('Cart Entries', () => {
         const result = response.result;
         expect(result.ok).to.equal(false);
         expect(result.error).to.be.a.string().and.to.equal('max_quantity_per_product_exceeded');
-        expect(result.data.productId).to.equal(entryRequest.productId);
+        expect(result.data.productId).to.equal(itemRequest.productId);
         expect(result.data.maxQuantityAllowed).to.equal(maxQuantityPerProduct);
-        expect(result.data.requestedQuantity).to.equal(entryRequest.quantity);
+        expect(result.data.requestedQuantity).to.equal(itemRequest.quantity);
         done();
       })
       .catch((error) => done(error));
   });
 
-  it('adds an entry with a full cart', done => {
+  it('adds an itemId with a full cart', done => {
     const maxNumberOfEntries = base.config.get('maxNumberOfEntries');
-    const entryRequest1 = {
+    const itemRequest1 = {
       productId: '0001',
       quantity: 1,
       warehouseId: '001'
     };
-    const entryRequest2 = {
+    const itemRequest2 = {
       productId: '0002',
       quantity: 1,
       warehouseId: '001'
     };
     mockCartTaxes();
-    createCart(maxNumberOfEntries, entryRequest1, true, false)
+    createCart(maxNumberOfEntries, itemRequest1, true, false)
       .then(cart => {
         const options = {
-          url: `/services/cart/v1/cart.addEntry?cartId=${cart.id}`,
-          payload: { items: [entryRequest2] }
+          url: `/services/cart/v1/cart.addToCart?cartId=${cart.id}`,
+          payload: { items: [itemRequest2] }
         };
         return callService(options);
       })
@@ -509,19 +509,19 @@ describe('Cart Entries', () => {
       .catch((error) => done(error));
   });
 
-  it('adds an entry with a product without stock', done => {
-    const entryRequest = {
+  it('adds an itemId with a product without stock', done => {
+    const itemRequest = {
       productId: '0001',
       quantity: 10,
       warehouseId: '001'
     };
     createCart()
       .then(cart => {
-        mockProductDataGet(entryRequest);
-        mockStockReserveNoEnoughStock(entryRequest);
+        mockProductDataGet(itemRequest);
+        mockStockReserveNoEnoughStock(itemRequest);
         const options = {
-          url: `/services/cart/v1/cart.addEntry?cartId=${cart.id}`,
-          payload: { items: [entryRequest] }
+          url: `/services/cart/v1/cart.addToCart?cartId=${cart.id}`,
+          payload: { items: [itemRequest] }
         };
         return callService(options);
       })
@@ -542,27 +542,27 @@ describe('Cart Entries', () => {
   });
 
   it('adds two entries, the second with a product without stock', done => {
-    const entryRequest1 = {
+    const itemRequest1 = {
       productId: '0001',
       quantity: 10,
       warehouseId: '001'
     };
-    const entryRequest2 = {
+    const itemRequest2 = {
       productId: '0002',
       quantity: 10,
       warehouseId: '001'
     };
     createCart()
       .then(cart => {
-        mockProductDataGet(entryRequest1);
-        mockProductDataGet(entryRequest2);
-        mockStockReserveOk(entryRequest1);
-        mockStockReserveNoEnoughStock(entryRequest2);
+        mockProductDataGet(itemRequest1);
+        mockProductDataGet(itemRequest2);
+        mockStockReserveOk(itemRequest1);
+        mockStockReserveNoEnoughStock(itemRequest2);
         // The first product, already reserved, should be unreserved
-        mockStockUnReserveOk(entryRequest1);
+        mockStockUnReserveOk(itemRequest1);
         const options = {
-          url: `/services/cart/v1/cart.addEntry?cartId=${cart.id}`,
-          payload: { items: [entryRequest1, entryRequest2] }
+          url: `/services/cart/v1/cart.addToCart?cartId=${cart.id}`,
+          payload: { items: [itemRequest1, itemRequest2] }
         };
         return callService(options);
       })

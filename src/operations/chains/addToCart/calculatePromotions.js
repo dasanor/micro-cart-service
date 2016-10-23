@@ -37,8 +37,7 @@ function factory(base) {
           return next();
         }
         return next(error);
-      })
-      .then(next);
+      });
   };
 }
 

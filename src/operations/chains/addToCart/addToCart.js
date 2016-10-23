@@ -21,16 +21,16 @@ function factory(base) {
   }
 
   return (context, next) => {
-    let entry;
+    let itemId;
     let push = false;
     if (aggregateItems) {
-      entry = context.cart.items.find(i => i.productId === context.productId);
-      if (entry) {
-        entry.quantity += context.quantity;
+      itemId = context.cart.items.find(i => i.productId === context.productId);
+      if (itemId) {
+        itemId.quantity += context.quantity;
       }
     }
-    if (!entry) {
-      entry = {
+    if (!itemId) {
+      itemId = {
         id: shortId.generate(),
         productId: context.productId,
         quantity: context.quantity,
@@ -41,10 +41,10 @@ function factory(base) {
       push = true;
     }
     if (context.availability && context.availability.reserve) {
-      entry.reserves.push(context.availability.reserve);
+      itemId.reserves.push(context.availability.reserve);
       context.newReserves.push(Object.assign({ productId: context.productId }, context.availability.reserve));
     }
-    if (push) context.cart.items.push(entry);
+    if (push) context.cart.items.push(itemId);
     return next();
   };
 }

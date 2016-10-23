@@ -14,7 +14,7 @@ function modelFactory(base) {
   const reservesSchema = base.db.Schema({
     id: { type: String, required: true },
     warehouseId: { type: String, required: true },
-    quantity: { type: Number, required: true },
+    quantity: { type: Number, required: false },
     expirationTime: { type: Date, required: true }
   }, { _id: false });
 
@@ -59,7 +59,7 @@ function modelFactory(base) {
     userId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
     items: [itemsSchema],
-    taxes: { type: taxesSchema, required: true },
+    taxes: taxesSchema,
     promotions: { type: base.db.Schema.Types.Mixed, required: true }
   }, { _id: false, timestamps: true });
 
