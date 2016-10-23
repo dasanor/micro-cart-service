@@ -3,6 +3,7 @@ const shortId = require('shortid');
 const Code = require('code');
 const Lab = require('lab');
 const nock = require('nock');
+const request = require('supertest-as-promised');
 
 // shortcuts
 const lab = exports.lab = Lab.script();
@@ -13,7 +14,7 @@ const it = lab.it;
 const expect = Code.expect;
 
 const base = require('../index.js');
-const server = base.services.server;
+const app = base.transports.http.app;
 
 const defaultHeaders = base.config.get('test:defaultHeaders');
 const normalStockStatus = base.db.models.Cart.STOCKSTATUS.NORMAL;
@@ -184,14 +185,19 @@ function mockCartTaxes(times = 1) {
 function callService(options) {
   options.method = options.method || 'POST';
   options.headers = options.headers || defaultHeaders;
-  return server.inject(options);
+  const promise = request(app)[options.method.toLowerCase()](options.url);
+  Object.keys(options.headers).forEach(key => {
+    promise.set(key, options.headers[key]);
+  });
+  if (options.payload) promise.send(options.payload);
+  return promise;
 }
 
 // Helper to create carts
 function createCart(numEntries, cartitemRequest, sequenceProducts, mockProductTaxData = true) {
   let cart;
   return callService({
-    url: '/services/cart/v1/cart.new'
+    url: '/services/cart/v1/cart.create'
   })
     .then(cartResponse => {
       if (numEntries) {
@@ -200,7 +206,7 @@ function createCart(numEntries, cartitemRequest, sequenceProducts, mockProductTa
           quantity: 10,
           warehouseId: '001'
         };
-        cart = cartResponse.result.cart;
+        cart = cartResponse.body.cart;
 
         const allEntries = Array.from(new Array(numEntries), (a, i) => {
           const itemId = {
@@ -224,7 +230,7 @@ function createCart(numEntries, cartitemRequest, sequenceProducts, mockProductTa
           payload: { items: allEntries }
         })
           .then(itemResponses => {
-            if (itemResponses.statusCode !== 200 || itemResponses.result.ok === false) {
+            if (itemResponses.statusCode !== 200 || itemResponses.body.ok === false) {
               throw itemResponses;
             }
             return itemResponses;
@@ -241,17 +247,17 @@ function createCart(numEntries, cartitemRequest, sequenceProducts, mockProductTa
             });
           })
           .then(response => {
-            if (response.statusCode !== 200 || response.result.ok === false) {
+            if (response.statusCode !== 200 || response.body.ok === false) {
               throw response;
             }
-            return response.result.cart;
+            return response.body.cart;
           })
           .catch(error => {
             console.error(error);
             return error;
           });
       }
-      return cartResponse.result.cart;
+      return cartResponse.body.cart;
     });
 }
 
@@ -268,7 +274,7 @@ describe('Cart', () => {
 
   it('creates a Cart for an anonymous User', done => {
     const options = {
-      url: '/services/cart/v1/cart.new'
+      url: '/services/cart/v1/cart.create'
     };
     callService(options)
       .then(response => {
@@ -283,8 +289,9 @@ describe('Cart', () => {
         //     "userId": "anonymous"
         //   }
         // }
-        expect(response.result.ok).to.equal(true);
-        const cart = response.result.cart;
+        console.log(response.body);
+        expect(response.body.ok).to.equal(true);
+        const cart = response.body.cart;
         expect(cart.id).to.be.a.string();
         expect(cart.expirationTime).to.be.a.date();
         expect(cart.items).to.be.an.array().and.to.be.empty();
@@ -305,7 +312,7 @@ describe('Cart', () => {
         //   "ok": fase,
         //   "error": "cart_not_found"
         // }
-        const result = response.result;
+        const result = response.body;
         expect(result.ok).to.equal(false);
         expect(result.error).to.equal('cart_not_found');
         done();
@@ -335,8 +342,8 @@ describe('Cart', () => {
         //     "id": "HkwKLxjG"
         //   }
         // }
-        expect(response.result.ok).to.equal(true);
-        const cart = response.result.cart;
+        expect(response.body.ok).to.equal(true);
+        const cart = response.body.cart;
         expect(cart.id).to.be.a.string().and.to.equal(cartId);
         expect(cart.expirationTime).to.be.a.date();
         expect(cart.items).to.be.an.array().and.to.be.empty();
@@ -377,7 +384,7 @@ describe('Cart Entries', () => {
         //   "ok": fase,
         //   "error": "cart_not_found"
         // }
-        const result = response.result;
+        const result = response.body;
         expect(result.ok).to.equal(false);
         expect(result.error).to.equal('cart_not_found');
         done();
@@ -415,7 +422,7 @@ describe('Cart Entries', () => {
         //     "expirationTime": "2016-05-24T09:53:46.425Z"
         //   }]
         // }
-        const result = response.result;
+        const result = response.body;
         expect(result.ok).to.equal(true);
         const reserves = result.reserves;
         expect(reserves).to.be.an.array().and.to.have.length(1);
@@ -459,7 +466,7 @@ describe('Cart Entries', () => {
         //   "ok": true,
         //   "error", "max_quantity_per_product_exceeded"
         // }
-        const result = response.result;
+        const result = response.body;
         expect(result.ok).to.equal(false);
         expect(result.error).to.be.a.string().and.to.equal('max_quantity_per_product_exceeded');
         expect(result.data.productId).to.equal(itemRequest.productId);
@@ -499,7 +506,7 @@ describe('Cart Entries', () => {
         //   "ok": true,
         //   "error", "max_quantity_per_product_exceeded"
         // }
-        const result = response.result;
+        const result = response.body;
         expect(result.ok).to.equal(false);
         expect(result.error).to.be.a.string().and.to.equal('max_number_of_entries_exceeded');
         expect(result.data.maxEntriesAllowed).to.equal(maxNumberOfEntries);
@@ -533,7 +540,7 @@ describe('Cart Entries', () => {
         //   "ok": true,
         //   "error", "not_enough_stock"
         // }
-        const result = response.result;
+        const result = response.body;
         expect(result.ok).to.equal(false);
         expect(result.error).to.be.a.string().and.to.equal('not_enough_stock');
         done();
@@ -574,7 +581,7 @@ describe('Cart Entries', () => {
         //   "ok": true,
         //   "error", "not_enough_stock"
         // }
-        const result = response.result;
+        const result = response.body;
         expect(result.ok).to.equal(false);
         expect(result.error).to.be.a.string().and.to.equal('not_enough_stock');
         done();
