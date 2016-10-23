@@ -152,7 +152,7 @@ function mockProductTaxDataGet(options, times = 1) {
     });
 }
 
-// Helper to mock create taxes operation
+// Helper to mock calculate taxes operation
 function mockCartTaxes(times = 1) {
   nock('http://gateway')
     .post('/services/tax/v1/tax.cartTaxes')
@@ -178,6 +178,20 @@ function mockCartTaxes(times = 1) {
           }
         }
       ];
+    });
+}
+
+// Helper to mock calculate promotions operation
+function mockCartPromotions(times = 1) {
+  nock('http://gateway')
+    .post('/services/promotion/v1/promotion.cartPromotions')
+    .times(times)
+    .reply((uri, requestBody) => {
+      return {
+        ok: true,
+        almostFulfilledPromos: [],
+        fulfilledPromos: []
+      };
     });
 }
 
@@ -289,15 +303,16 @@ describe('Cart', () => {
         //     "userId": "anonymous"
         //   }
         // }
-        console.log(response.body);
         expect(response.body.ok).to.equal(true);
         const cart = response.body.cart;
         expect(cart.id).to.be.a.string();
-        expect(cart.expirationTime).to.be.a.date();
+        const expirationTime = new Date(cart.expirationTime);
+        expect(expirationTime).to.be.a.date().and.not.equal('Invalid Date');
         expect(cart.items).to.be.an.array().and.to.be.empty();
         expect(cart.userId).to.be.a.string().and.to.equal('anonymous');
         done();
-    });
+      })
+      .catch(error => done(error));
   });
 
   it('retrieves a non-existent cart', done => {
@@ -316,7 +331,8 @@ describe('Cart', () => {
         expect(result.ok).to.equal(false);
         expect(result.error).to.equal('cart_not_found');
         done();
-      });
+      })
+      .catch(error => done(error));
   });
 
   it('retrieves an existing cart', done => {
@@ -345,12 +361,13 @@ describe('Cart', () => {
         expect(response.body.ok).to.equal(true);
         const cart = response.body.cart;
         expect(cart.id).to.be.a.string().and.to.equal(cartId);
-        expect(cart.expirationTime).to.be.a.date();
+        const expirationTime = new Date(cart.expirationTime);
+        expect(expirationTime).to.be.a.date().and.not.equal('Invalid Date');
         expect(cart.items).to.be.an.array().and.to.be.empty();
         expect(cart.userId).to.be.a.string().and.to.equal('anonymous');
         done();
       })
-      .catch((error) => done(error));
+      .catch(error => done(error));
   });
 });
 
@@ -388,10 +405,11 @@ describe('Cart Entries', () => {
         expect(result.ok).to.equal(false);
         expect(result.error).to.equal('cart_not_found');
         done();
-      });
+      })
+      .catch(error => done(error));
   });
 
-  it('adds an itemId an existing cart', done => {
+  it('adds an itemId to a existing cart', done => {
     const itemRequest = {
       productId: '0001',
       quantity: 10,
@@ -402,6 +420,7 @@ describe('Cart Entries', () => {
         mockStockReserveOk(itemRequest);
         mockProductDataGet(itemRequest);
         mockCartTaxes();
+        mockCartPromotions();
         const options = {
           url: `/services/cart/v1/cart.addToCart?cartId=${cart.id}`,
           payload: { items: [itemRequest] }
@@ -414,32 +433,66 @@ describe('Cart Entries', () => {
         // Expected result:
         // {
         //   "ok": true,
-        //   "reserves": [{
-        //     "productId": "0001",
-        //     "id": "ry5NVs-Q",
-        //     "warehouseId": "001",
-        //     "quantity": 10,
-        //     "expirationTime": "2016-05-24T09:53:46.425Z"
-        //   }]
+        //   "cart": {
+        //     "taxes": {
+        //       "beforeTax": 10,
+        //       "tax": 10,
+        //       "ok": true
+        //     },
+        //     "promotions": {
+        //       "fulfilledPromos": [],
+        //       "almostFulfilledPromos": [],
+        //       "ok": true
+        //     },
+        //     "userId": "anonymous",
+        //     "expirationTime": "2016-10-31T12:22:05.167Z",
+        //     "items": [
+        //       {
+        //         "taxDetail": "Tax 10",
+        //         "id": "rkWrla_jyx",
+        //         "productId": "0001",
+        //         "quantity": 10,
+        //         "price": 11,
+        //         "title": "0001 sku - 0001 title (0001 brand)",
+        //         "reserves": [
+        //           {
+        //             "id": "B1greaui1e",
+        //             "warehouseId": "001",
+        //             "quantity": 10,
+        //             "expirationTime": "2016-10-24T12:22:05.218Z"
+        //           }
+        //         ],
+        //         "tax": 10,
+        //         "beforeTax": 10
+        //       }
+        //     ],
+        //     "id": "S1Seauiye"
+        //   }
         // }
         const result = response.body;
         expect(result.ok).to.equal(true);
-        const reserves = result.reserves;
+
+        const cart = response.body.cart;
+        expect(cart.items).to.be.an.array().and.to.have.length(1);
+
+        const item = cart.items[0];
+        expect(item.id).to.be.a.string();
+        expect(item.productId).to.be.a.string().and.to.equal(itemRequest.productId);
+        expect(item.quantity).to.be.a.number().and.to.equal(itemRequest.quantity);
+
+        const reserves = item.reserves;
         expect(reserves).to.be.an.array().and.to.have.length(1);
+
         const reserve = reserves[0];
         expect(reserve.id).to.be.a.string();
-        expect(reserve.productId).to.be.a.string().and.to.equal(itemRequest.productId);
         expect(reserve.quantity).to.be.a.number().and.to.equal(itemRequest.quantity);
         expect(reserve.warehouseId).to.be.a.string().and.to.equal(itemRequest.warehouseId);
         expect(reserve.expirationTime).to.be.a.string();
-        try {
-          const expirationTime = new Date(reserve.expirationTime);
-        } catch (e) {
-          return done(new Error(`${reserve.expirationTime} is not a Date`));
-        }
+        const expirationTime = new Date(reserve.expirationTime);
+        expect(expirationTime).to.be.a.date().and.not.equal('Invalid Date');
         return done();
       })
-      .catch((error) => done(error));
+      .catch(error => done(error));
   });
 
   it('adds an itemId with a quantity > maxQuantityPerProduct', done => {
@@ -474,7 +527,7 @@ describe('Cart Entries', () => {
         expect(result.data.requestedQuantity).to.equal(itemRequest.quantity);
         done();
       })
-      .catch((error) => done(error));
+      .catch(error => done(error));
   });
 
   it('adds an itemId with a full cart', done => {
@@ -490,6 +543,7 @@ describe('Cart Entries', () => {
       warehouseId: '001'
     };
     mockCartTaxes();
+    mockCartPromotions();
     createCart(maxNumberOfEntries, itemRequest1, true, false)
       .then(cart => {
         const options = {
@@ -513,7 +567,7 @@ describe('Cart Entries', () => {
         expect(result.data.requestedEntries).to.equal(maxNumberOfEntries + 1);
         done();
       })
-      .catch((error) => done(error));
+      .catch(error => done(error));
   });
 
   it('adds an itemId with a product without stock', done => {
@@ -545,7 +599,7 @@ describe('Cart Entries', () => {
         expect(result.error).to.be.a.string().and.to.equal('not_enough_stock');
         done();
       })
-      .catch((error) => done(error));
+      .catch(error => done(error));
   });
 
   it('adds two entries, the second with a product without stock', done => {
@@ -586,7 +640,6 @@ describe('Cart Entries', () => {
         expect(result.error).to.be.a.string().and.to.equal('not_enough_stock');
         done();
       })
-      .catch((error) => done(error));
+      .catch(error => done(error));
   });
-
 });

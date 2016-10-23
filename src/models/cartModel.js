@@ -60,7 +60,7 @@ function modelFactory(base) {
     expirationTime: { type: Date, required: true },
     items: [itemsSchema],
     taxes: taxesSchema,
-    promotions: { type: base.db.Schema.Types.Mixed, required: true }
+    promotions: { type: base.db.Schema.Types.Mixed, required: false }
   }, { _id: false, timestamps: true });
 
   // Enable the virtuals when converting to JSON
