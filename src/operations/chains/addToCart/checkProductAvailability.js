@@ -6,7 +6,8 @@ function factory(base) {
   const discontinuedStockStatus = base.db.models.Cart.STOCKSTATUS.DISCONTINUED;
   return (context, next) => {
     base.services.call({
-      name: 'catalog:product.info'
+      name: 'catalog:product.info',
+      transport: 'amqp'
     }, {
       id: context.productId, fields: '-variants'
     })
