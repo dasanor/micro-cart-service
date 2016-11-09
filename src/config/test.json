@@ -1,4 +1,10 @@
 {
+  "services": {
+    "defaultTransports": [
+      "http"
+    ],
+    "defaultCallTransport": "http"
+  },
   "logger": {
     "level": "info",
     "server": {
