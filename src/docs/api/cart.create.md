@@ -42,7 +42,7 @@ validation_error | The data causing the error | Some validation error
 
 ```bash
 curl --request POST \
-  --url http://localhost:3000/services/cart/v1/cart.new \
+  --url http://localhost:3000/services/cart/v1/cart.create \
   --header 'authorization: Bearer xxxxx...' \
   --header 'accept: application/json' \
   --header 'content-type: application/json' \
