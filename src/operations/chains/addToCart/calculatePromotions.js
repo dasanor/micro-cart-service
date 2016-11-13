@@ -3,6 +3,10 @@
  */
 function factory(base) {
   return (context, next) => {
+    // Clean previous promotions
+    context.cart.items.forEach(item => {
+      item.discounts = [];
+    });
     // Build a minimal version of the cart to be sent to the promotions service
     const requestCart = {
       cartId: context.cart.id,
@@ -24,7 +28,14 @@ function factory(base) {
           return next(base.utils.Error(response.error, response.data));
         }
         // Do something with the calculated promotions. Just copy the response right now.
-        context.cart.promotions = response;
+        context.cart.promotions = {
+          ok: response.ok,
+          almostFulfilledPromos: response.almostFulfilledPromos
+        };
+        response.itemDiscounts.forEach(discountItem => {
+          const cartItem = context.cart.items.find(it => it.id === discountItem.id);
+          cartItem.discounts = discountItem.discounts
+        });
         return next();
       })
       .catch(error => {
