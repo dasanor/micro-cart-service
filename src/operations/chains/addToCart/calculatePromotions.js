@@ -34,7 +34,7 @@ function factory(base) {
         };
         response.itemDiscounts.forEach(discountItem => {
           const cartItem = context.cart.items.find(it => it.id === discountItem.id);
-          cartItem.discounts = discountItem.discounts
+          cartItem.discounts = discountItem.discounts;
         });
         return next();
       })
