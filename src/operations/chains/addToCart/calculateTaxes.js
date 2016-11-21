@@ -19,7 +19,7 @@ function factory(base) {
     cart.taxes = {
       ok: true,
       beforeTax: totals.beforeTax,
-      tax: totals.tax
+      tax: Math.round(totals.tax * 100) / 100
     };
   }
 
