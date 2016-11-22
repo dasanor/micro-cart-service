@@ -10,26 +10,41 @@ function modelFactory(base) {
     DISCONTINUED: 2
   };
 
+  // The taxes schema
+  const taxesSchema = base.db.Schema({
+    ok: { type: Boolean, required: true, default: true },
+    error: { type: String, required: false },
+    tax: { type: Number, required: false, default: 0.00 },
+    beforeTax: { type: Number, required: false, default: 0.00 }
+  }, { _id: false });
+
   // The reservations schema
-  const reservesSchema = base.db.Schema({
+  const itemReservesSchema = base.db.Schema({
     id: { type: String, required: true },
     warehouseId: { type: String, required: true },
     quantity: { type: Number, required: false },
     expirationTime: { type: Date, required: true }
   }, { _id: false });
 
-  // The taxes schema
-  const taxesSchema = base.db.Schema({
-    ok: { type: Boolean, required: true, default: true },
-    error: { type: String, required: false },
-    tax: { type: Number, required: true, default: 0.00 },
-    beforeTax: { type: Number, required: true, default: 0.00 }
-  }, { _id: false });
-
   // Enable the virtuals when converting to JSON
-  reservesSchema.set('toJSON', {
+  itemReservesSchema.set('toJSON', {
     virtuals: true
   });
+
+  // The item taxes schema
+  const itemTaxesSchema = base.db.Schema({
+    beforeTax: { type: Number, required: false, default: 0.00 },
+    tax: { type: Number, required: false, default: 0.00 },
+    taxDetail: { type: String, required: false },
+  }, { _id: false });
+
+  // The item discounts schema
+  const itemDiscountsSchema = base.db.Schema({
+    promotionId: { type: String, required: true },
+    promotionTitle: { type: String, required: true },
+    quantity: { type: Number, required: true },
+    discount: { type: Number, required: true }
+  }, { _id: false });
 
   // The line items schema
   const itemsSchema = base.db.Schema({
@@ -38,10 +53,9 @@ function modelFactory(base) {
     title: { type: String, required: true },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
-    beforeTax: { type: Number, required: false, default: 0.00 },
-    tax: { type: Number, required: false, default: 0.00 },
-    taxDetail: { type: String, required: false },
-    reserves: [reservesSchema]
+    reserves: [itemReservesSchema],
+    taxes: [itemTaxesSchema],
+    discounts: [itemDiscountsSchema]
   }, { _id: false });
 
   // Enable the virtuals when converting to JSON

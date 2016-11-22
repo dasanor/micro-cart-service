@@ -7,18 +7,27 @@ function factory(base) {
   function calculateCartTotals(cart) {
     // Calculate Cart totals
     const totals = cart.items.reduce((subtotals, item) => {
-      subtotals.beforeTax += item.beforeTax;
-      subtotals.tax += item.tax;
+      const taxTotals = item.taxes.reduce((taxSubtotals, tax) => {
+        taxSubtotals.beforeTax += tax.beforeTax;
+        taxSubtotals.tax += tax.tax;
+        return taxSubtotals;
+      }, { beforeTax: 0.00, tax: 0.00 });
+      subtotals.beforeTax += taxTotals.beforeTax;
+      subtotals.tax += taxTotals.tax;
       return subtotals;
     }, { beforeTax: 0.00, tax: 0.00 });
     cart.taxes = {
       ok: true,
       beforeTax: totals.beforeTax,
-      tax: totals.tax
+      tax: Math.round(totals.tax * 100) / 100
     };
   }
 
   return (context, next) => {
+    // Clean previous taxes
+    context.cart.items.forEach(item => {
+      item.taxes = [];
+    });
     // Build a minimal version of the cart to be sent to the tax calculation service
     const requestCart = {
       cartId: context.cart.id,
@@ -26,9 +35,10 @@ function factory(base) {
         return {
           id: item.id,
           productId: item.productId,
-          quantity: item.quantity,
-          price: item.price
-        };
+          price: (item.price * item.quantity) - (item.discounts || []).reduce((total, discount) => {
+            return total + (discount.discount * discount.quantity);
+          }, 0)
+        }
       })
     };
 
@@ -43,7 +53,7 @@ function factory(base) {
         const taxedCart = response.cart;
         taxedCart.items.forEach(taxedItem => {
           const cartItem = context.cart.items.find(i => i.id === taxedItem.id);
-          Object.assign(cartItem, taxedItem);
+          cartItem.taxes = taxedItem.taxes;
         });
         // Summarize
         calculateCartTotals(context.cart);

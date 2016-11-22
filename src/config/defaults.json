@@ -36,6 +36,14 @@
     "saveCart": "./operations/chains/addToCart/saveCart",
     "unreserve": "./operations/chains/removeFromCart/unreserve"
   },
+  "calculateCartChain": {
+    "getCart": "./operations/chains/addToCart/getCart",
+    "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
+    "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
+    "postCalculateCart": "./operations/chains/addToCart/postCalculateCart",
+    "saveCart": "./operations/chains/addToCart/saveCart",
+    "postSaveCart": "./operations/chains/addToCart/postSaveCart"
+  },
   "addToCartOnError": "./operations/chains/addToCart/onError",
   "bus": {
     "engines": {
