@@ -13,6 +13,7 @@
   },
   "addToCartChain": {
     "getCart": "./operations/chains/addToCart/getCart",
+    "renewReserves": "./operations/chains/addToCart/renewReserves",
     "bulkAddToCart": "./operations/chains/addToCart/bulkAddToCart",
     "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
     "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
