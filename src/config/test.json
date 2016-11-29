@@ -3,7 +3,7 @@
     "defaultTransports": [
       "http"
     ],
-    "defaultCallTransport": "http"
+    "defaultOutTransport": "http"
   },
   "logger": {
     "level": "info",
