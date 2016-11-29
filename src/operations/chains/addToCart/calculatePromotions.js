@@ -24,10 +24,14 @@ function factory(base) {
       name: 'promotion:promotion.cartPromotions'
     }, requestCart)
       .then(response => {
-        if (response && response.ok === false) {
-          return next(base.utils.Error(response.error, response.data));
+        if (response.ok === false) {
+          base.logger.warn(`[cart] cannot reach promotions service '${response.data}'`);
+          context.cart.promotions = {
+            ok: false,
+            error: 'cannot_reach_engine'
+          };
+          return next();
         }
-        // Do something with the calculated promotions. Just copy the response right now.
         context.cart.promotions = {
           ok: response.ok,
           almostFulfilledPromos: response.almostFulfilledPromos
@@ -38,17 +42,7 @@ function factory(base) {
         });
         return next();
       })
-      .catch(error => {
-        if (error.code === 'ECONNREFUSED') {
-          base.logger.warn(`[cart] cannot reach promotions service '${error.message}'`);
-          context.cart.promotions = {
-            ok: false,
-            error: 'cannot_reach_engine'
-          };
-          return next();
-        }
-        return next(error);
-      });
+      .catch(error => next(error));
   };
 }
 

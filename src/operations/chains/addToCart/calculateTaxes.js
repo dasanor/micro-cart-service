@@ -46,8 +46,13 @@ function factory(base) {
       name: 'tax:tax.cartTaxes'
     }, requestCart)
       .then(response => {
-        if (response && response.ok === false) {
-          return next(base.utils.Error(response.error, response.data));
+        if (response.ok === false) {
+          base.logger.warn(`[cart] cannot reach taxes service '${response.data}'`);
+          context.cart.promotions = {
+            ok: false,
+            error: 'cannot_reach_engine'
+          };
+          return next();
         }
         // Add taxes to the cart
         const taxedCart = response.cart;
@@ -59,17 +64,7 @@ function factory(base) {
         calculateCartTotals(context.cart);
         return next();
       })
-      .catch(error => {
-        if (error.code === 'ECONNREFUSED') {
-          base.logger.warn(`[cart] cannot reach taxes service '${error.message}'`);
-          context.cart.taxes = {
-            ok: false,
-            error: 'cannot_reach_engine',
-          };
-          return next();
-        }
-        return next(error);
-      });
+      .catch(error => next(error));
   };
 }
 
