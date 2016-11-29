@@ -47,7 +47,7 @@ function factory(base) {
     }, requestCart)
       .then(response => {
         if (response.ok === false) {
-          base.logger.warn(`[cart] cannot reach taxes service '${response.data}'`);
+          base.logger.warn(`[cart] cannot reach taxes service '${JSON.stringify(response.data)}'`);
           context.cart.promotions = {
             ok: false,
             error: 'cannot_reach_engine'
