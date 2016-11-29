@@ -31,6 +31,7 @@
   "removeFromCartChain": {
     "getEntry": "./operations/chains/removeFromCart/getEntry",
     "removeFromCart": "./operations/chains/removeFromCart/removeFromCart",
+    "renewReserves": "./operations/chains/addToCart/renewReserves",
     "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
     "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
     "postCalculateCart": "./operations/chains/addToCart/postCalculateCart",
