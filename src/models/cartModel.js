@@ -23,7 +23,7 @@ function modelFactory(base) {
     id: { type: String, required: true },
     warehouseId: { type: String, required: true },
     quantity: { type: Number, required: false },
-    expirationTime: { type: Date, required: true }
+    expirationTime: { type: Date, required: false }
   }, { _id: false });
 
   // Enable the virtuals when converting to JSON
