@@ -6,26 +6,32 @@ function factory(base) {
   return (context, next) => {
 
     if(context.cart && context.cart.items){
-      let promises = [];
-      let existentItems = context.cart.items;
+      const promises = [];
+      const existentItems = context.cart.items;
+      const renewReserve = function(reserve){
+        return base.services.call({
+          name: 'stock:stock.reserve.renew'
+        }, {
+          id: reserve.id,
+          reserveStockForMinutes
+        })
+          .then(response => {
+            if(response.reserve) {
+              reserve.expirationTime = response.reserve.expirationTime;
+            }
+          });
+      };
 
       existentItems.forEach(item => {
-        let itemReserves = item.reserves;
+        const itemReserves = item.reserves;
 
         if(itemReserves){
-          promises.push(itemReserves.map(reserve => {
-            return base.services.call({
-              name: 'stock:stock.reserve.renew'
-            }, {
-              id: reserve.id,
-              reserveStockForMinutes
-            })
-              .then(response => {
-                if(response.reserve) {
-                  reserve.expirationTime = response.reserve.expirationTime;
-                }
-              });
-          }));
+          itemReserves.forEach(reserve => {
+            const expirationTime = reserve.expirationTime;
+            if(expirationTime && (new Date() <= new Date(expirationTime))){
+              promises.push(renewReserve(reserve));
+            }
+          });
         }
       });
 
