@@ -159,13 +159,15 @@ function mockCartTaxes(times = 1) {
     .times(times)
     .reply(function(uri, requestBody) {
       let items = requestBody.items.map(item => {return {
+        id: item.id,
         productId: item.productId,
         quantity: item.quantity,
         price: 11,
-        beforeTax: 10,
-        tax: 10,
-        taxDetail: "Tax 10",
-        id: item.id
+        taxes: [{
+          beforeTax: 10,
+          tax: 10,
+          taxDetail: "Tax 10"
+        }]
       }});
 
       return [
@@ -190,7 +192,7 @@ function mockCartPromotions(times = 1) {
       return {
         ok: true,
         almostFulfilledPromos: [],
-        fulfilledPromos: []
+        itemDiscounts: []
       };
     });
 }
@@ -216,10 +218,10 @@ function createCart(numEntries, cartitemRequest, sequenceProducts, mockProductTa
     .then(cartResponse => {
       if (numEntries) {
         const itemRequest = cartitemRequest || {
-          productId: '0001',
-          quantity: 10,
-          warehouseId: '001'
-        };
+            productId: '0001',
+            quantity: 10,
+            warehouseId: '001'
+          };
         cart = cartResponse.body.cart;
 
         const allEntries = Array.from(new Array(numEntries), (a, i) => {
