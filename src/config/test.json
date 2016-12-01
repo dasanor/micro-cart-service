@@ -5,6 +5,11 @@
     ],
     "defaultOutTransport": "http"
   },
+  "transports": {
+    "http": {
+      "port": "4000"
+    }
+  },
   "logger": {
     "level": "info",
     "server": {
