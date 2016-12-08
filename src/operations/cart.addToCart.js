@@ -7,7 +7,7 @@
  * @return {Function} The operation factory
  */
 function opFactory(base) {
-  const onError = base.utils.loadModule('addToCartOnError');
+  const onError = base.utils.loadModule('addToCartOnError').module;
   const addToCartChain = new base.utils.Chain().use('addToCartChain');
   const op = {
     validator: {

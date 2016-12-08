@@ -9,7 +9,7 @@ function factory(base) {
   const titleOverride = base.config.get('hooks:addToCartTitleOverride');
   let getTitle;
   if (titleOverride) {
-    getTitle = base.utils.loadModule('hooks:addToCartTitleOverride');
+    getTitle = base.utils.loadModule('hooks:addToCartTitleOverride').module;
   } else {
     getTitle = (product) => {
       let title = `${product.sku} - ${product.title} (${product.brand})`;
