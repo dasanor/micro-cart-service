@@ -1,7 +1,8 @@
 const shortId = require('shortid');
 
-function modelFactory(base) {
-  if (base.logger.isDebugEnabled()) base.logger.debug('[db] registering model Cart');
+function modelFactory(base, configKeys) {
+  const modelName = configKeys[configKeys.length - 1];
+  if (base.logger.isDebugEnabled()) base.logger.debug(`[db] registering model '${modelName}'`);
 
   // From ProductModel
   const STOCKSTATUS = {
@@ -92,7 +93,7 @@ function modelFactory(base) {
     return obj;
   });
 
-  const model = base.db.model('Cart', schema);
+  const model = base.db.model(modelName, schema);
   model.STOCKSTATUS = STOCKSTATUS;
 
   // Add the model to mongoose

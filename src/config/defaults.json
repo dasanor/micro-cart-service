@@ -9,7 +9,7 @@
     "removeFromCart": "./schemas/removeFromCartSchema"
   },
   "models": {
-    "cartModel": "./models/cartModel"
+    "Cart": "./models/cartModel"
   },
   "addToCartChain": {
     "getCart": "./operations/chains/addToCart/getCart",

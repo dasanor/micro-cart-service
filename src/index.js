@@ -1,7 +1,7 @@
 const base = require('microbase')();
 
 // Register model(s)
-require(base.config.get('models:cartModel'))(base);
+base.utils.loadModulesFromKey('models');
 
 // Add operations
 base.services.addOperationsFromFolder();
