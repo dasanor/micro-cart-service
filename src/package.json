@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node index.js",
     "doc": "npm install docker && docker -i . -o docs/code index.js models operations jobs",
-    "apidoc": "npm install aglio && aglio -i docs/main.apib --theme-template triple -o docs/api/index.html",
     "test": "lab test/test.js -I shortid,adjectives,nouns -v",
     "test-cov-html": "lab -r html -o coverage.html test/test.js"
   },
