@@ -23,6 +23,13 @@
       {
         "props": false
       }
+    ],
+    "max-len": [
+      "warn",
+      {
+        "ignoreComments": true,
+        "code": 120
+      }
     ]
   },
   "plugins": [
