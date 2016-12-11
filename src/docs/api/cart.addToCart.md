@@ -25,14 +25,14 @@ warehouseId | yes | String | 001        | The id of the warehouse to pick produc
 
 Returns the complete cart:
 
-```javascript
+```json
 {
   "ok": true,
   "cart": {
     "id": "H19PRsec",
     "userId": "anonymous",
     "expirationTime": "2016-08-23T15:16:50.407Z",
-    "tax": 2062,
+    "tax": 2062.00,
     "beforeTax": 9820.05,
     "promotions": {
       "almostFulfilledPromos": [],
@@ -41,7 +41,7 @@ Returns the complete cart:
     },
     "taxes": {
       "beforeTax": 577.65,
-      "tax": 121,
+      "tax": 121.00,
       "ok": true
     },
     "items": [
@@ -50,7 +50,10 @@ Returns the complete cart:
         "id": "Hypqnvqyx",
         "productId": "By2ZWfAPnV",
         "quantity": 1,
-        "price": 577.65,
+        "price" : {
+         "amount": 577.65,
+         "currency": "EUR"
+        },
         "title": "001004721736835 - Frigorífico combi Samsung RB31FEJNCSS/EF No Frost (Samsung)",
         "reserves": [
           {
@@ -60,7 +63,7 @@ Returns the complete cart:
             "expirationTime": "2016-10-23T17:20:05.245Z"
           }
         ],
-        "tax": 121,
+        "tax": 121.00,
         "beforeTax": 577.65
       }
     ]

@@ -16,17 +16,17 @@ userId  | no  | String | A21afRq1        | The User identifier. Defaults to 'ano
 
 Returns a Cart object:
 
-```javascript
+```json
 {
-    "ok": true,
-    "cart": {
-        "id": "H19PRsec",
-        "userId": "anonymous",
-        "expirationTime": "2016-08-23T15:16:50.407Z",
-        "tax": 0,
-        "beforeTax": 0,
-        "items": []
-    }
+  "ok": true,
+  "cart": {
+    "id": "H19PRsec",
+    "userId": "anonymous",
+    "expirationTime": "2016-08-23T15:16:50.407Z",
+    "tax": 0,
+    "beforeTax": 0,
+    "items": []
+  }
 }
 ```
 

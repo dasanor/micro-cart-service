@@ -26,6 +26,7 @@
     "checkMaxNumberOfEntries": "./operations/chains/addToCart/checkMaxNumberOfEntries",
     "checkProductAvailability": "./operations/chains/addToCart/checkProductAvailability",
     "checkStockAvailability": "./operations/chains/addToCart/checkStockAvailability",
+    "selectPrice": "./operations/chains/addToCart/selectPrice",
     "addToCart": "./operations/chains/addToCart/addToCart"
   },
   "removeFromCartChain": {

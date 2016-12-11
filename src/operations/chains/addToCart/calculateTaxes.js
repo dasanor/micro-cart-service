@@ -35,7 +35,7 @@ function factory(base) {
         return {
           id: item.id,
           productId: item.productId,
-          price: (item.price * item.quantity) - (item.discounts || []).reduce((total, discount) => {
+          price: (item.price.amount * item.quantity) - (item.discounts || []).reduce((total, discount) => {
             return total + (discount.discount * discount.quantity);
           }, 0)
         }

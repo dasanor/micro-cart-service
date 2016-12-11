@@ -15,7 +15,7 @@ function factory(base) {
           id: item.id,
           productId: item.productId,
           quantity: item.quantity,
-          price: item.price
+          price: item.price.amount
         };
       })
     };

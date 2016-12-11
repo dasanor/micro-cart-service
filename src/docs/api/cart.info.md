@@ -16,7 +16,7 @@ cartId | yes | String  | H19PRsec        | The Cart id to get info on.
 
 Returns a Cart object:
 
-```javascript
+```json
 {
     "ok": true,
     "cart": {

@@ -27,6 +27,7 @@ function factory(base) {
       itemId = context.cart.items.find(i => i.productId === context.productId);
       if (itemId) {
         itemId.quantity += context.quantity;
+        itemId.price = context.selectedPrice;
       }
     }
     if (!itemId) {
@@ -34,7 +35,7 @@ function factory(base) {
         id: shortId.generate(),
         productId: context.productId,
         quantity: context.quantity,
-        price: context.product.salePrice,
+        price: context.selectedPrice,
         title: getTitle(context.product),
         reserves: []
       };

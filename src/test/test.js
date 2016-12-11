@@ -118,8 +118,7 @@ function mockProductDataGet(options, times = 1) {
     .reply(200, {
       ok: true,
       product: {
-        price: options.price || 1260,
-        salePrice: options.salePrice || 1041.26,
+        prices: [{ id: '001', amount: options.price || 1260, currency: 'EUR' }],
         taxCode: options.taxCode || 'default-percentage',
         isNetPrice: options.isNetPrice || false,
         categories: [],
@@ -376,7 +375,7 @@ describe('Cart', () => {
 /*
  Cart entries Tests
  */
-describe('Cart Entries', () => {
+describe('Cart Entries', () => §§{
   beforeEach(done => {
     initDB(done);
   });
@@ -644,4 +643,31 @@ describe('Cart Entries', () => {
       })
       .catch(error => done(error));
   });
+});
+
+/*
+ Prices Tests
+ */
+describe('Prices', () => {
+  const fn = require('../operations/chains/addToCart/selectPrice')(base);
+
+  beforeEach(done => {
+    initDB(done);
+  });
+  after(done => {
+    cleanDB(done);
+  });
+
+  it('select a price', done => {
+    const context = {
+      product: {
+        prices: [{ amount: 10.00, currency: 'EUR' }]
+      }
+    };
+    fn(context, () => {
+      expect(context.selectedPrice).to.equal(context.product.prices[0]);
+      done();
+    })
+  });
+
 });
