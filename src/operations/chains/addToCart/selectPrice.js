@@ -5,27 +5,36 @@ const moment = require('moment');
  */
 function factory(base) {
   return (context, next) => {
+    // Data to compare with
     const currency = context.cart.currency;
     const country = context.customer.country;
     const customerTags = context.customer.tags;
     const channel = context.cart.channel;
 
+    // Store the selected price, if any
     let selectedPrice = {};
     let selectedScore = -1;
 
+    // Loop the product prices
     for (const price of context.product.prices) {
+      // Only consider the same currency
       if (price.currency === currency) {
-        let score = 0;
-        if (price.country && price.country === country) score += 1;
-        if (price.channel && price.channel === channel) score += 2;
-        if (price.customerType && customerTags.indexOf(price.customerType) !== -1) score += 4;
-        if (score > selectedScore) {
-          selectedPrice = price;
-          selectedScore = score;
-        } else if (score === selectedScore) {
-          if (price.validFrom && moment().isBetween(price.validFrom, price.validUntil)) {
+        // Only consider the correct period (or no period at all)
+        if (!price.validFrom || price.validFrom && moment().isBetween(price.validFrom, price.validUntil)) {
+          let score = 0;
+          // Add to the score
+          if (price.country && price.country === country) score += 1;
+          if (price.channel && price.channel === channel) score += 2;
+          if (price.customerType && customerTags.indexOf(price.customerType) !== -1) score += 4;
+          if (score > selectedScore) {
             selectedPrice = price;
             selectedScore = score;
+          } else if (score === selectedScore) {
+            // On tie, the prices with period wins
+            if (price.validFrom) {
+              selectedPrice = price;
+              selectedScore = score;
+            }
           }
         }
       }

@@ -729,4 +729,16 @@ describe('Prices', () => {
       done();
     });
   });
+
+  it('select a price - don\'t consider invalid period', done => {
+    const validFrom = moment().add(1, 'day').toISOString();
+    const validUntil = moment().add(2, 'day').toISOString();
+    context.product.prices.push({ amount: 10.00, currency: 'USD', country: 'US' });
+    context.product.prices.push({ amount: 10.00, currency: 'USD', country: 'US', validFrom, validUntil });
+    fn(context, (error) => {
+      expect(error).to.equal(undefined);
+      expect(context.selectedPrice).to.equal(context.product.prices[1]);
+      done();
+    });
+  });
 });
