@@ -27,6 +27,11 @@ function modelFactory(base, configKeys) {
     expirationTime: { type: Date, required: false }
   }, { _id: false });
 
+  // Enable the virtuals when converting to JSON
+  itemReservesSchema.set('toJSON', {
+    virtuals: true
+  });
+
   // Price Schema
   const priceSchema = base.db.Schema({
     id: { type: String, required: true },
@@ -38,11 +43,6 @@ function modelFactory(base, configKeys) {
     validFrom: { type: Date, required: false },
     validUntil: { type: Date, required: false }
   }, { _id: false });
-
-  // Enable the virtuals when converting to JSON
-  itemReservesSchema.set('toJSON', {
-    virtuals: true
-  });
 
   // The item taxes schema
   const itemTaxesSchema = base.db.Schema({
@@ -85,6 +85,8 @@ function modelFactory(base, configKeys) {
     },
     customerId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
+    currency: { type: String, required: true }, // ISO 4217
+    channel: { type: String, required: true },
     items: [itemsSchema],
     taxes: taxesSchema,
     promotions: { type: base.db.Schema.Types.Mixed, required: false }

@@ -1,4 +1,5 @@
 const shortId = require('shortid');
+const moment = require('moment');
 
 const Code = require('code');
 const Lab = require('lab');
@@ -19,6 +20,7 @@ const app = base.transports.http.app;
 const defaultHeaders = base.config.get('test:defaultHeaders');
 const normalStockStatus = base.db.models.Cart.STOCKSTATUS.NORMAL;
 const reserveStockForMinutes = base.config.get('reserveStockForMinutes');
+const defaultCustomer = base.config.get('defaultCustomer');
 
 // Check the environment
 if (process.env.NODE_ENV !== 'test') {
@@ -118,7 +120,7 @@ function mockProductDataGet(options, times = 1) {
     .reply(200, {
       ok: true,
       product: {
-        prices: [{ id: '001', amount: options.price || 1260, currency: 'EUR' }],
+        prices: [{ id: '001', amount: options.price || 1260, currency: 'USD' }],
         taxCode: options.taxCode || 'default-percentage',
         isNetPrice: options.isNetPrice || false,
         categories: [],
@@ -310,7 +312,7 @@ describe('Cart', () => {
         const expirationTime = new Date(cart.expirationTime);
         expect(expirationTime).to.be.a.date().and.not.equal('Invalid Date');
         expect(cart.items).to.be.an.array().and.to.be.empty();
-        expect(cart.customerId).to.be.a.string().and.to.equal('ANON');
+        expect(cart.customerId).to.be.a.string().and.to.equal(defaultCustomer);
         done();
       })
       .catch(error => done(error));
@@ -365,7 +367,7 @@ describe('Cart', () => {
         const expirationTime = new Date(cart.expirationTime);
         expect(expirationTime).to.be.a.date().and.not.equal('Invalid Date');
         expect(cart.items).to.be.an.array().and.to.be.empty();
-        expect(cart.customerId).to.be.a.string().and.to.equal('ANON');
+        expect(cart.customerId).to.be.a.string().and.to.equal(defaultCustomer);
         done();
       })
       .catch(error => done(error));
@@ -651,23 +653,80 @@ describe('Cart Entries', () => {
 describe('Prices', () => {
   const fn = require('../operations/chains/addToCart/selectPrice')(base);
 
+  let context;
+
   beforeEach(done => {
     initDB(done);
+    context = {
+      cart: { currency: 'USD', channel: 'WEB' },
+      customer: { country: 'US', tags: ['VIP'] },
+      product: {
+        prices: [{ amount: 10.00, currency: 'USD' }]
+      }
+    };
   });
   after(done => {
     cleanDB(done);
   });
 
-  it('select a price', done => {
-    const context = {
-      product: {
-        prices: [{ amount: 10.00, currency: 'EUR' }]
-      }
-    };
-    fn(context, () => {
+  it('select a price - single', done => {
+    fn(context, (error) => {
+      expect(error).to.equal(undefined);
       expect(context.selectedPrice).to.equal(context.product.prices[0]);
       done();
-    })
+    });
   });
 
+  it('select a price - country over single', done => {
+    context.product.prices.push({ amount: 10.00, currency: 'USD', country: 'US' });
+    fn(context, (error) => {
+      expect(error).to.equal(undefined);
+      expect(context.selectedPrice).to.equal(context.product.prices[1]);
+      done();
+    });
+  });
+
+  it('select a price - channel over country', done => {
+    context.product.prices.push({ amount: 10.00, currency: 'USD', country: 'US' });
+    context.product.prices.push({ amount: 10.00, currency: 'USD', channel: 'WEB' });
+    fn(context, (error) => {
+      expect(error).to.equal(undefined);
+      expect(context.selectedPrice).to.equal(context.product.prices[2]);
+      done();
+    });
+  });
+
+  it('select a price - customerType over country & channel', done => {
+    context.product.prices.push({ amount: 10.00, currency: 'USD', country: 'US' });
+    context.product.prices.push({ amount: 10.00, currency: 'USD', channel: 'WEB' });
+    context.product.prices.push({ amount: 10.00, currency: 'USD', country: 'US', channel: 'WEB' });
+    context.product.prices.push({ amount: 10.00, currency: 'USD', customerType: 'VIP' });
+    fn(context, (error) => {
+      expect(error).to.equal(undefined);
+      expect(context.selectedPrice).to.equal(context.product.prices[4]);
+      done();
+    });
+  });
+
+  it('select a price - customerType+channel over customerType+country', done => {
+    context.product.prices.push({ amount: 10.00, currency: 'USD', customerType: 'VIP', country: 'US' });
+    context.product.prices.push({ amount: 10.00, currency: 'USD', customerType: 'VIP', channel: 'WEB' });
+    fn(context, (error) => {
+      expect(error).to.equal(undefined);
+      expect(context.selectedPrice).to.equal(context.product.prices[2]);
+      done();
+    });
+  });
+
+  it('select a price - within period over without period', done => {
+    const validFrom = moment().add(-1, 'day').toISOString();
+    const validUntil = moment().add(1, 'day').toISOString();
+    context.product.prices.push({ amount: 10.00, currency: 'USD', country: 'US' });
+    context.product.prices.push({ amount: 10.00, currency: 'USD', country: 'US', validFrom, validUntil });
+    fn(context, (error) => {
+      expect(error).to.equal(undefined);
+      expect(context.selectedPrice).to.equal(context.product.prices[2]);
+      done();
+    });
+  });
 });

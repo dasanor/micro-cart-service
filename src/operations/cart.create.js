@@ -10,11 +10,16 @@ const moment = require('moment');
  */
 function opFactory(base) {
   const cartExpirationMinutes = base.config.get('cartExpirationMinutes');
+  const defaultCustomer = base.config.get('defaultCustomer');
+  const defaultCurrency = base.config.get('defaultCurrency');
+  const defaultChannel = base.config.get('defaultChannel');
   const op = {
     // TODO: create the stock JsonSchema
-    handler: ({ customerId }, reply) => {
+    handler: ({ customerId, currency, channel }, reply) => {
       const cart = new base.db.models.Cart({
-        customerId: customerId || 'ANON',
+        customerId: customerId || defaultCustomer,
+        currency: currency || defaultCurrency,
+        channel: channel || defaultChannel,
         expirationTime: moment().add(cartExpirationMinutes, 'minutes').toDate(),
         items: [],
         total: 0.00

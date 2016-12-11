@@ -10,6 +10,7 @@ function factory(base) {
     const promises = context.items.map(i => {
       return chain.exec({
         cart: context.cart,
+        customer: context.customer,
         productId: i.productId,
         quantity: i.quantity,
         warehouseId: i.warehouseId,

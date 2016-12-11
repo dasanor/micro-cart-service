@@ -46,6 +46,18 @@ price | The single item sale price | Object | yes | -
 taxes | The calculated Taxes for the item | Object | yes | -  
 reserves | Reservation data | Object list | yes | -
 
+### Prices
+
+Argument | Required | Type | Example | Description
+---------|----------|------|---------|------------
+amount       | yes | Numeric | 109.99 | The Product base price
+currency     | yes | String  | USD | The currency code (ISO 4217)
+country      | no  | String  | US  | The country code (ISO 3166-1 alpha-2)
+customerType | no  | String  | VIP | The Customer type (VIP, B2B, B2C)
+channel      | no  | String  | WEB | The channel the Customer is using (WEB, MOBILE, Physical store ID)
+validFrom    | no  | Date    | 2016-01-01T00:00:00.000+0000 | Date start (inclusive) for the validy period of this Price.
+validUntil   | no  | Date    | 2017-12-31T23:59:59.000+0000 | Date end (inclusive) for the validy period of this Price.
+
 ### Taxes
 
 Field | Description| Type | Required | Default

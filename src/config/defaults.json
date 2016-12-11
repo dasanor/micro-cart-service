@@ -13,6 +13,7 @@
   },
   "addToCartChain": {
     "getCart": "./operations/chains/addToCart/getCart",
+    "getCustomer": "./operations/chains/addToCart/getCustomer",
     "renewReserves": "./operations/chains/addToCart/renewReserves",
     "bulkAddToCart": "./operations/chains/addToCart/bulkAddToCart",
     "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
@@ -69,5 +70,9 @@
   "maxQuantityPerProduct": 100,
   "maxNumberOfEntries": 50,
   "reserveStockForMinutes": 1440,
-  "aggregateItems": true
+  "aggregateItems": true,
+  "defaultCustomer": "ANON",
+  "defaultCustomerTags": ["ANON"],
+  "defaultCurrency": "USD",
+  "defaultChannel": "WEB"
 }

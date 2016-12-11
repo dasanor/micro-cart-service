@@ -51,8 +51,8 @@ Returns the complete cart:
         "productId": "By2ZWfAPnV",
         "quantity": 1,
         "price" : {
-         "amount": 577.65,
-         "currency": "EUR"
+          "amount": 577.65,
+          "currency": "EUR"
         },
         "title": "001004721736835 - Frigorífico combi Samsung RB31FEJNCSS/EF No Frost (Samsung)",
         "reserves": [
@@ -70,6 +70,23 @@ Returns the complete cart:
   }
 }
 ```
+
+## Price selection
+
+The Product can have several Prices, each one with diferent fields, some of the mandatory like `amount` and 
+`currency` and some of them optional like `country`, `customerType`, `channel` and `validFrom`/`validUntil`.
+
+When adding Products to the Cart the selection of the Price is made calculating a `score` for each data coincidence:
+
+The `currency` must always coincide.
+
+if `price.country == customer.country` => score = score +1
+
+if `price.channel == cart.channel` => score = score +2
+
+if `price.customerType in customer.tags` => score = score +4
+
+In case of score tie, a valid period will win.
 
 # Errors
 
