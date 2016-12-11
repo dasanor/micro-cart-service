@@ -12,9 +12,9 @@ function opFactory(base) {
   const cartExpirationMinutes = base.config.get('cartExpirationMinutes');
   const op = {
     // TODO: create the stock JsonSchema
-    handler: ({ userId }, reply) => {
+    handler: ({ customerId }, reply) => {
       const cart = new base.db.models.Cart({
-        userId: userId || 'anonymous',
+        customerId: customerId || 'ANON',
         expirationTime: moment().add(cartExpirationMinutes, 'minutes').toDate(),
         items: [],
         total: 0.00

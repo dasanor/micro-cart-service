@@ -301,7 +301,7 @@ describe('Cart', () => {
         //     "expirationTime": "2016-05-29T17:10:37.872Z",
         //     "id": "ByUGODyQ",
         //     "items": [],
-        //     "userId": "anonymous"
+        //     "customerId": "ANON"
         //   }
         // }
         expect(response.body.ok).to.equal(true);
@@ -310,7 +310,7 @@ describe('Cart', () => {
         const expirationTime = new Date(cart.expirationTime);
         expect(expirationTime).to.be.a.date().and.not.equal('Invalid Date');
         expect(cart.items).to.be.an.array().and.to.be.empty();
-        expect(cart.userId).to.be.a.string().and.to.equal('anonymous');
+        expect(cart.customerId).to.be.a.string().and.to.equal('anonymous');
         done();
       })
       .catch(error => done(error));
@@ -353,7 +353,7 @@ describe('Cart', () => {
         // {
         //   "ok": true,
         //   "cart": {
-        //     "userId": "anonymous",
+        //     "customerId": "ANON",
         //     "expirationTime": "2016-05-26T08:17:03.150Z",
         //     "items": [],
         //     "id": "HkwKLxjG"
@@ -365,7 +365,7 @@ describe('Cart', () => {
         const expirationTime = new Date(cart.expirationTime);
         expect(expirationTime).to.be.a.date().and.not.equal('Invalid Date');
         expect(cart.items).to.be.an.array().and.to.be.empty();
-        expect(cart.userId).to.be.a.string().and.to.equal('anonymous');
+        expect(cart.customerId).to.be.a.string().and.to.equal('ANON');
         done();
       })
       .catch(error => done(error));
@@ -445,7 +445,7 @@ describe('Cart Entries', () => §§{
         //       "almostFulfilledPromos": [],
         //       "ok": true
         //     },
-        //     "userId": "anonymous",
+        //     "customerId": "ANON",
         //     "expirationTime": "2016-10-31T12:22:05.167Z",
         //     "items": [
         //       {

@@ -83,7 +83,7 @@ function modelFactory(base, configKeys) {
         return shortId.generate();
       }
     },
-    userId: { type: String, required: true },
+    customerId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
     items: [itemsSchema],
     taxes: taxesSchema,
