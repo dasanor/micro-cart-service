@@ -310,7 +310,7 @@ describe('Cart', () => {
         const expirationTime = new Date(cart.expirationTime);
         expect(expirationTime).to.be.a.date().and.not.equal('Invalid Date');
         expect(cart.items).to.be.an.array().and.to.be.empty();
-        expect(cart.customerId).to.be.a.string().and.to.equal('anonymous');
+        expect(cart.customerId).to.be.a.string().and.to.equal('ANON');
         done();
       })
       .catch(error => done(error));
@@ -375,7 +375,7 @@ describe('Cart', () => {
 /*
  Cart entries Tests
  */
-describe('Cart Entries', () => §§{
+describe('Cart Entries', () => {
   beforeEach(done => {
     initDB(done);
   });

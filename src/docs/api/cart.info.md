@@ -21,7 +21,7 @@ Returns a Cart object:
     "ok": true,
     "cart": {
         "id": "H19PRsec",
-        "userId": "anonymous",
+        "customerId": "ANON",
         "expirationTime": "2016-08-23T15:16:50.407Z",
         "tax": 0,
         "beforeTax": 0,

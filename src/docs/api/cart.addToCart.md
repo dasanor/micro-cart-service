@@ -30,7 +30,7 @@ Returns the complete cart:
   "ok": true,
   "cart": {
     "id": "H19PRsec",
-    "userId": "anonymous",
+    "customerId": "ANON",
     "expirationTime": "2016-08-23T15:16:50.407Z",
     "tax": 2062.00,
     "beforeTax": 9820.05,

@@ -9,8 +9,8 @@ follows the [MicroBase API calling conventions](../calling-conventions.html).
 
 Argument | Required | Type | Example | Description
 ---------|----------|------|---------|------------
-token   | yes | Token  | Bearer xxxxx... | Authentication token.
-userId  | no  | String | A21afRq1        | The User identifier. Defaults to 'anonymous'.
+token      | yes | Token  | Bearer xxxxx... | Authentication token.
+customerId | no  | String | A21afRq1        | The User identifier. Defaults to 'ANON'.
 
 # Response
 
@@ -21,7 +21,7 @@ Returns a Cart object:
   "ok": true,
   "cart": {
     "id": "H19PRsec",
-    "userId": "anonymous",
+    "customerId": "ANON",
     "expirationTime": "2016-08-23T15:16:50.407Z",
     "tax": 0,
     "beforeTax": 0,
