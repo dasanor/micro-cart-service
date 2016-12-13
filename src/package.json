@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "description": "A cart service.",
   "main": "index.js",
+  "homepage": "http://microbase.io",
+  "keywords": [
+    "microservices",
+    "ecommerce"
+  ],
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "scripts": {
     "start": "node index.js",
     "doc": "npm install docker && docker -i . -o docs/code index.js models operations jobs",
@@ -13,7 +21,7 @@
     "type": "git",
     "url": "https://github.com/ncornag/micro-cart-service.git"
   },
-  "author": "Nicolás Cornaglia Schlieman",
+  "author": "Nicolás Cornaglia Schlieman (https://github.com/ncornag)",
   "license": "OSL-3.0",
   "dependencies": {
     "microbase": "0.9.0",
