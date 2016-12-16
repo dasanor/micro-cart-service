@@ -14,11 +14,11 @@
   "addToCartChain": {
     "getCart": "./operations/chains/addToCart/getCart",
     "getCustomer": "./operations/chains/addToCart/getCustomer",
-    "renewReserves": "./operations/chains/addToCart/renewReserves",
     "bulkAddToCart": "./operations/chains/addToCart/bulkAddToCart",
     "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
     "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
     "postCalculateCart": "./operations/chains/addToCart/postCalculateCart",
+    "renewReserves": "./operations/chains/addToCart/renewReserves",
     "saveCart": "./operations/chains/addToCart/saveCart",
     "postSaveCart": "./operations/chains/addToCart/postSaveCart"
   },
@@ -33,10 +33,10 @@
   "removeFromCartChain": {
     "getEntry": "./operations/chains/removeFromCart/getEntry",
     "removeFromCart": "./operations/chains/removeFromCart/removeFromCart",
-    "renewReserves": "./operations/chains/addToCart/renewReserves",
     "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
     "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
     "postCalculateCart": "./operations/chains/addToCart/postCalculateCart",
+    "renewReserves": "./operations/chains/addToCart/renewReserves",
     "saveCart": "./operations/chains/addToCart/saveCart",
     "unreserve": "./operations/chains/removeFromCart/unreserve"
   },
