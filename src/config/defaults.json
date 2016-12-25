@@ -6,10 +6,12 @@
   },
   "schemas": {
     "addToCart": "./schemas/addToCartSchema",
-    "removeFromCart": "./schemas/removeFromCartSchema"
+    "removeFromCart": "./schemas/removeFromCartSchema",
+    "createShipping": "./schemas/createShippingSchema"
   },
   "models": {
-    "Cart": "./models/cartModel"
+    "Cart": "./models/cartModel",
+    "Shipping": "./models/shippingModel"
   },
   "addToCartChain": {
     "getCart": "./operations/chains/addToCart/getCart",
@@ -63,6 +65,10 @@
       "carts": {
         "name": "CARTS",
         "engine": "amqp"
+      },
+      "shippings": {
+        "name": "SHIPPINGS",
+        "engine": "amqp"
       }
     }
   },
@@ -74,5 +80,6 @@
   "defaultCustomer": "ANON",
   "defaultCustomerTags": ["ANON"],
   "defaultCurrency": "USD",
-  "defaultChannel": "WEB"
+  "defaultChannel": "WEB",
+  "defaultTaxCode": "default"
 }
