@@ -17,6 +17,7 @@ script:
   - npm run test-cov-lcov
 after_success:
   - cat ./lcov.info | ./node_modules/.bin/coveralls
+  - cd ..
   - docker build -t ncornag/micro-cart-service:latest .
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   - docker push ncornag/micro-cart-service:latest;
