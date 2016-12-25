@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - '6'
+services:
+  - mongodb
+cache:
+  - yarn
+before_install:
+  - cd src
+  - npm install -g yarn
+install:
+  - yarn
+script:
+  - npm run test-cov-lcov
+after_success:
+  - 'cat ./lcov.info | ./node_modules/.bin/coveralls'

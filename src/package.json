@@ -14,8 +14,9 @@
   "scripts": {
     "start": "node index.js",
     "doc": "npm install docker && docker -i . -o docs/code index.js models operations jobs",
-    "test": "lab test/test.js -I shortid,adjectives,nouns -v",
-    "test-cov-html": "lab -r html -o coverage.html test/test.js"
+    "test": "lab test/test.js -I shortid,adjectives,nouns,name -v",
+    "test-cov-html": "lab -r html -o coverage.html test/test.js -I shortid,adjectives,nouns,name",
+    "test-cov-lcov": "lab -r lcov -o lcov.info test/test.js -I shortid,adjectives,nouns,name"
   },
   "repository": {
     "type": "git",
@@ -25,20 +26,22 @@
   "license": "OSL-3.0",
   "dependencies": {
     "currency-format": "^1.0.6",
-    "i18n-iso-countries": "^1.7.1",
+    "i18n-iso-countries": "^1.8.0",
     "microbase": "0.9.0",
-    "moment": "^2.13.0",
+    "moment": "^2.17.1",
     "shortid": "^2.2.6"
   },
   "devDependencies": {
-    "code": "^3.0.0",
-    "eslint": "^2.9.0",
-    "eslint-config-airbnb": "^9.0.1",
-    "eslint-plugin-import": "^1.7.0",
-    "eslint-plugin-jsx-a11y": "^1.2.0",
-    "eslint-plugin-react": "^5.0.1",
-    "lab": "^10.6.1",
-    "nock": "^8.0.0",
+    "code": "^4.0.0",
+    "coveralls": "^2.11.15",
+    "database-cleaner": "^1.2.0",
+    "eslint": "^3.12.2",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2",
+    "eslint-plugin-react": "^6.8.0",
+    "lab": "^11.2.1",
+    "nock": "^9.0.2",
     "supertest": "^2.0.1",
     "supertest-as-promised": "^4.0.0"
   }
