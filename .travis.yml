@@ -10,6 +10,8 @@ before_install:
   - npm install -g yarn
 install:
   - yarn
+before_script:
+  - sleep 15
 script:
   - npm run test-cov-lcov
 after_success:
