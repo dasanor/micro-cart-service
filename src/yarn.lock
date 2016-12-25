@@ -1758,9 +1758,9 @@ no-arrowception@1.x.x:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/no-arrowception/-/no-arrowception-1.0.0.tgz#5bf3e95eb9c41b57384a805333daa3b734ee327a"
 
-nock@^8.0.0:
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/nock/-/nock-8.1.0.tgz#21a91a1293d4f23058ba3eeff80a08c53d76bb60"
+nock@^9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/nock/-/nock-9.0.2.tgz#f6a5f4a8d560d61f48b5ad428ccff8dc9b62701e"
   dependencies:
     chai ">=1.9.2 <4.0.0"
     debug "^2.2.0"
