@@ -1,5 +1,4 @@
-const isoCurrencies = require('currency-format');
-const isoCountries = require('i18n-iso-countries');
+const country = require('countryjs');
 
 /**
  * ## `shipping.create` operation factory
@@ -12,27 +11,49 @@ const isoCountries = require('i18n-iso-countries');
 function opFactory(base) {
   const shippingChannel = base.config.get('bus:channels:shippings:name');
   const defaultTaxCode = base.config.get('defaultTaxCode');
+
+  // Patch Scotland
+  const s = country.info('GB')
+  s.ISO = { 2: 'GB2', 3: 'GBR2', alpha2: 'GB2', alpha3: 'GBR3' }
+
   return {
     validator: {
       schema: require(base.config.get('schemas:createShipping'))
     },
     handler: (msg, reply) => {
-      // Validate ISO codes
+      // Validate country/state/currency codes
       for (const lr of msg.rates) {
+        const currencyNeeded = new Set();
         for (const location of lr.locations) {
-          if (!isoCountries.alpha2ToNumeric(location.country)) {
+          const c = country.info(location.country);
+          if (!c) {
             return reply(base.utils.genericResponse(null,
-              base.utils.Error('location_contry_invalid', { location: location.country })));
+              base.utils.Error('location_country_invalid', { location: location.country })));
+          }
+          if (!c.currencies) {
+            return reply(base.utils.genericResponse(null,
+              base.utils.Error('location_currency_not_configured', { location: location.country })));
+          }
+          currencyNeeded.add(c.currencies[0]);
+          if (location.state && c.provinces.indexOf(location.state) === -1) {
+            return reply(base.utils.genericResponse(null,
+              base.utils.Error('location_state_invalid', { location: location.state })));
           }
         }
         for (const rate of lr.rates) {
-          if (!isoCurrencies[rate.currency]) {
+          if (!currencyNeeded.has(rate.currency)) {
             return reply(base.utils.genericResponse(null,
-              base.utils.Error('rate_currency_invalid', { rate: rate.currency })));
+              base.utils.Error('rate_currency_not_needed', { rate: rate.currency })));
+          }
+        }
+        for (const cn of currencyNeeded) {
+          const c = lr.rates.find(r => r.currency === cn);
+          if (!c) {
+            return reply(base.utils.genericResponse(null,
+              base.utils.Error('rate_currency_missing', { currency: cn })));
           }
         }
       }
-
       const shipping = new base.db.models.Shipping({
         title: msg.title,
         active: msg.active || true,
