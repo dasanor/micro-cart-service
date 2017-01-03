@@ -18,7 +18,7 @@ script:
 after_success:
   - cat ./lcov.info | ./node_modules/.bin/coveralls
   - cd ..
-  - docker build -t ncornag/$TRAVIS_REPO_SLUG:latest .
+  - docker build -t $TRAVIS_REPO_SLUG:latest .
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   - docker push $TRAVIS_REPO_SLUG:latest;
 notifications:
