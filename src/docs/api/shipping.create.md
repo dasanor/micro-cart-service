@@ -69,6 +69,9 @@ Expected errors that this method could return. Some errors return additional dat
 Error | Data | Description
 ------|------|------------
 validation_error | The data causing the error | Some validation error
+location_country_invalid | The country code | The country code is invalid 
+location_state_invalid | The state | The state is invalid for the country 
+rate_currency_invalid | The currency code | The currency code is not invalid
 
 # Example
 
