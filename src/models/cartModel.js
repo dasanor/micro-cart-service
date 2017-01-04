@@ -11,6 +11,21 @@ function modelFactory(base, configKeys) {
     DISCONTINUED: 2
   };
 
+  // The address schema
+  const addressSchema = base.db.Schema({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: false },
+    address_1: { type: String, required: true },
+    address_2: { type: String, required: false },
+    postCode: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    country: { type: String, required: true },
+    company: { type: String, required: false },
+    phone: { type: Number, required: false },
+    instructions: { type: String, required: false }
+  }, { _id: false });
+
   // The taxes schema
   const taxesSchema = base.db.Schema({
     ok: { type: Boolean, required: true, default: true },
