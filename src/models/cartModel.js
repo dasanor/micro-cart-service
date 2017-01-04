@@ -26,6 +26,19 @@ function modelFactory(base, configKeys) {
     instructions: { type: String, required: false }
   }, { _id: false });
 
+  // Rates Schema
+  const ratesSchema = base.db.Schema({
+    currency: { type: String, required: true }, // ISO 4217
+    amount: { type: Number, required: true }
+  }, { _id: false });
+
+  // The shipping method schema
+  const shippingMethodSchema = base.db.Schema({
+    title: { type: String, required: true },
+    taxCode: { type: String, required: false },
+    rates: [ratesSchema]
+  }, { _id: false });
+
   // The taxes schema
   const taxesSchema = base.db.Schema({
     ok: { type: Boolean, required: true, default: true },
@@ -102,6 +115,8 @@ function modelFactory(base, configKeys) {
     expirationTime: { type: Date, required: true },
     currency: { type: String, required: true }, // ISO 4217
     channel: { type: String, required: true },
+    shippingAddress: addressSchema,
+    shippingMethod: shippingMethodSchema,
     items: [itemsSchema],
     taxes: taxesSchema,
     promotions: { type: base.db.Schema.Types.Mixed, required: false }
