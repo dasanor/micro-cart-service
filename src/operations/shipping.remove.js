@@ -10,12 +10,12 @@ module.exports = (base) => {
   const shippingChannel = base.config.get('bus:channels:shippings:name');
   return {
     // Main handler, receives the ID to remove
-    handler: ({ id }, reply) => {
+    handler: ({ shippingId }, reply) => {
       base.db.models.Shipping
-        .findOneAndRemove({ _id: id })
+        .findOneAndRemove({ _id: shippingId })
         .exec()
         .then(removedShipping => {
-          if (!removedShipping) throw base.utils.Error('shipping_method_not_found', id);
+          if (!removedShipping) throw base.utils.Error('shipping_method_not_found', shippingId);
           if (base.logger.isDebugEnabled()) base.logger.debug(`[cart] shipping method ${removedShipping.id} removed`);
           // Publish a remove event
           base.bus.publish(`${shippingChannel}.REMOVE`,
