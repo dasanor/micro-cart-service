@@ -1,6 +1,7 @@
 function gatewayUrlOverrride(/* base */) {
   const urls = {
     stock: 'http://localhost:3000',
+    cart: 'http://localhost:3001',
     catalog: 'http://localhost:3002',
     tax: 'http://localhost:3003',
     promotion: 'http://localhost:3004'

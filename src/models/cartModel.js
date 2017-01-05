@@ -11,6 +11,34 @@ function modelFactory(base, configKeys) {
     DISCONTINUED: 2
   };
 
+  // The address schema
+  const shippingAddressSchema = base.db.Schema({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: false },
+    address_1: { type: String, required: true },
+    address_2: { type: String, required: false },
+    postCode: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    country: { type: String, required: true },
+    company: { type: String, required: false },
+    phone: { type: Number, required: false },
+    instructions: { type: String, required: false }
+  }, { _id: false });
+
+  // Rates Schema
+  const ratesSchema = base.db.Schema({
+    currency: { type: String, required: true }, // ISO 4217
+    amount: { type: Number, required: true }
+  }, { _id: false });
+
+  // The shipping method schema
+  const shippingMethodSchema = base.db.Schema({
+    title: { type: String, required: true },
+    taxCode: { type: String, required: false },
+    rates: [ratesSchema]
+  }, { _id: false });
+
   // The taxes schema
   const taxesSchema = base.db.Schema({
     ok: { type: Boolean, required: true, default: true },
@@ -87,6 +115,8 @@ function modelFactory(base, configKeys) {
     expirationTime: { type: Date, required: true },
     currency: { type: String, required: true }, // ISO 4217
     channel: { type: String, required: true },
+    shippingAddress: shippingAddressSchema,
+    shippingMethod: shippingMethodSchema,
     items: [itemsSchema],
     taxes: taxesSchema,
     promotions: { type: base.db.Schema.Types.Mixed, required: false }

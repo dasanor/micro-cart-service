@@ -7,7 +7,9 @@
   "schemas": {
     "addToCart": "./schemas/addToCartSchema",
     "removeFromCart": "./schemas/removeFromCartSchema",
-    "createShipping": "./schemas/createShippingSchema"
+    "createShipping": "./schemas/createShippingSchema",
+    "setShippingAddress": "./schemas/setShippingAddress",
+    "setShippingMethod": "./schemas/setShippingMethod"
   },
   "models": {
     "Cart": "./models/cartModel",
