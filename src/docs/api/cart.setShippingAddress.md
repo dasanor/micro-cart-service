@@ -29,29 +29,39 @@ company      | no   | String  | My Company          | Name of the company
 phone        | no   | Number  | 2173203531          | Address phone
 instructions | no   | String  | Some instructions   | Aditional instrucctions for the address
 
+## Shipping Methods
+
+The operation returns a list of the available Shipping Methods for the address.
+
+If there is only one Shipping Method available, the Cart gets that method assigned by default. 
+
 # Response
 
 Returns a list of available Shipping Methods for this address:
 
 ```json
 {
-  "ok": true,
-  "methods": [
-    {
-      "title": "UPS Same Day",
-      "rates": [
-        { "currency": "EUR", "amount": 10.1 },
-        { "currency": "GBP", "amount": 9.9 }
-      ]
-    },
-    {
-      "title": "UPS Next Day",
-      "rates": [
-        { "currency": "EUR", "amount": 10.1 },
-        { "currency": "GBP", "amount": 9.9 }
-      ]
+    "ok": true,
+    "cart": {
+        "id": "H19PRsec",
+        "customerId": "ANON",
+        "expirationTime": "2016-08-23T15:16:50.407Z",
+        "tax": 0,
+        "beforeTax": 0,
+        "items": [],
+        "shippingAddress": {
+          "firstName": "John",
+          "lastName": "Doe",
+          "address_1": "1650 Bolman Court",
+          "postCode": "61701",
+          "city": "Valencia",
+          "state": "Piemonte",
+          "country": "IT",
+          "company": "Thinkwrap",
+          "phone": 2173203531,
+          "instructions": "Instructions"        
+        }
     }
-  ]
 }
 ```
 
@@ -74,5 +84,5 @@ curl --request POST \
   --header 'authorization: Bearer xxxxx...' \
   --header 'accept: application/json' \
   --header 'content-type: application/json' \
-  --data '{}'
+  --data '{...}'
 ```

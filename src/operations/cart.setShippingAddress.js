@@ -3,7 +3,7 @@ const country = require('countryjs');
 /**
  * ## `cart.setShippingAddress` operation factory
  *
- * Add Shipping Address to the Cart operation
+ * Sets the Cart Shipping Address
  *
  * @param {base} Object The microbase object
  * @return {Function} The operation factory
@@ -33,11 +33,10 @@ module.exports = (base) => {
         .call({ name: 'cart:shipping.addressMethods' }, { address })
         .then((response) => {
           if (response.ok === false) throw new Error(response.error);
-          console.log(response);
           if (response.methods.length === 0) throw base.utils.Error('no_suitable_shipping_method');
           const updateObject = { shippingAddress: address };
           if (response.methods.length === 1) {
-            updateObject.shippingMethod = response.methods;
+            updateObject.shippingMethod = response.methods[0];
           }
           return base.db.models.Cart
             .findOneAndUpdate({ _id: cartId }, updateObject, { new: true })
@@ -45,9 +44,9 @@ module.exports = (base) => {
             .then((savedCart) => {
               if (!savedCart) throw base.utils.Error('cart_not_found', { cartId });
               if (base.logger.isDebugEnabled()) {
-                base.logger.debug(`[cart] address set to ${savedCart._id}`);
+                base.logger.debug(`[cart] shipping address set to ${savedCart._id}`);
               }
-              return reply(base.utils.genericResponse({ cart: savedCart.toClient() }));
+              return reply(base.utils.genericResponse({ cart: savedCart.toClient(), methods: response.methods }));
             })
         })
         .catch(error => reply(base.utils.genericResponse(null, error)));

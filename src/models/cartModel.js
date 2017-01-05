@@ -12,7 +12,7 @@ function modelFactory(base, configKeys) {
   };
 
   // The address schema
-  const addressSchema = base.db.Schema({
+  const shippingAddressSchema = base.db.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: false },
     address_1: { type: String, required: true },
@@ -115,7 +115,7 @@ function modelFactory(base, configKeys) {
     expirationTime: { type: Date, required: true },
     currency: { type: String, required: true }, // ISO 4217
     channel: { type: String, required: true },
-    shippingAddress: addressSchema,
+    shippingAddress: shippingAddressSchema,
     shippingMethod: shippingMethodSchema,
     items: [itemsSchema],
     taxes: taxesSchema,

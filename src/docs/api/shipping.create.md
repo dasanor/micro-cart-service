@@ -13,7 +13,7 @@ token    | yes | Token       | Bearer xxxxx... | Authentication token.
 title    | yes | String      | UPS Same Day    | Shipping method title.
 active   | yes | Boolean     | true            | Active or disabled.
 taxCode  | no  | String      | vat-7           | Tax code applicable to this shipping method. Defaults to 'default'.   
-rates    | yes | Object List | *see below*     | List of rates by location.
+rates    | yes | Object List | -               | List of rates by location.
 
 ## Rates
 
