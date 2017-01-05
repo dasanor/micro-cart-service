@@ -9,10 +9,6 @@ const country = require('countryjs');
  * @return {Function} The operation factory
  */
 module.exports = (base) => {
-  // Patch Scotland
-  const s = country.info('GB')
-  s.ISO = { 2: 'GB2', 3: 'GBR2', alpha2: 'GB2', alpha3: 'GBR3' };
-
   return {
     validator: {
       schema: require(base.config.get('schemas:setShippingAddress'))
@@ -47,10 +43,9 @@ module.exports = (base) => {
                 base.logger.debug(`[cart] shipping address set to ${savedCart._id}`);
               }
               return reply(base.utils.genericResponse({ cart: savedCart.toClient(), methods: response.methods }));
-            })
+            });
         })
         .catch(error => reply(base.utils.genericResponse(null, error)));
     }
   };
-}
-;
+};

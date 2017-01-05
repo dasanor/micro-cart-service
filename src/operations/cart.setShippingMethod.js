@@ -1,5 +1,3 @@
-const country = require('countryjs');
-
 /**
  * ## `cart.setShippingMethod` operation factory
  *

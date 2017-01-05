@@ -489,9 +489,9 @@ cors@^2.8.1:
   dependencies:
     vary "^1"
 
-countryjs:
-  version "1.5.6"
-  resolved "https://registry.yarnpkg.com/countryjs/-/countryjs-1.5.6.tgz#7871423100b1b81bf21121d5662d9a6faae2a554"
+countryjs@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/countryjs/-/countryjs-1.6.0.tgz#14a81d5ab52c398841ad211f8d05c2c19037bf49"
   dependencies:
     bulk-require "^1.0.0"
     lodash "^4.17.2"

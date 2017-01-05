@@ -12,13 +12,6 @@ function opFactory(base) {
   const shippingChannel = base.config.get('bus:channels:shippings:name');
   const defaultTaxCode = base.config.get('defaultTaxCode');
 
-  // Patch Scotland/Wales
-  let s = country.info('GB');
-  while (s.name !== 'United Kingdom') {
-    s.ISO = { 2: '', 3: '', alpha2: '', alpha3: '' };
-    s = country.info('GB');
-  }
-
   // Extract currencies
   const cList = country.all()
     .map(c => (c.currencies ? c.currencies[0] : undefined))
