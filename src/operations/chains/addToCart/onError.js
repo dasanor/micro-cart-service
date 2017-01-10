@@ -2,13 +2,14 @@
  * Hook to allow customization of the error handling
  */
 function factory(base) {
+  const unreserveURI = base.config.get('services:uris:stock.unreserve');
   return (context, error, request, reply) => {
     if (context.newReserves) {
       // Asynchrony revert the reserves
       // TODO: Change to messaging
       context.newReserves.forEach(reserve => {
         base.services.call({
-          name: 'stock:stock.unreserve'
+          name: unreserveURI
         }, {
           reserveId: reserve.id,
           unreserveQuantity: reserve.quantity

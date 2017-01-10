@@ -5,10 +5,11 @@
 function factory(base) {
   const normalStockStatus = base.db.models.Cart.STOCKSTATUS.NORMAL;
   const reserveStockForMinutes = base.config.get('reserveStockForMinutes');
+  const reserveURI = base.config.get('services:uris:stock.reserve');
   return (context, next) => {
     if (context.product.stockStatus === normalStockStatus) {
       base.services.call({
-        name: 'stock:stock.reserve'
+        name: reserveURI
       }, {
         productId: context.productId,
         quantity: context.quantity,

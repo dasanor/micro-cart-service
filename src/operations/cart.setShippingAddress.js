@@ -9,6 +9,7 @@ const country = require('countryjs');
  * @return {Function} The operation factory
  */
 module.exports = (base) => {
+  const methodsURI = base.config.get('services:uris:shipping.addressMethods');
   return {
     validator: {
       schema: require(base.config.get('schemas:setShippingAddress'))
@@ -26,7 +27,7 @@ module.exports = (base) => {
       }
 
       base.services
-        .call({ name: 'cart:shipping.addressMethods' }, { address })
+        .call({ name: methodsURI }, { address })
         .then((response) => {
           if (response.ok === false) throw new Error(response.error);
           if (response.methods.length === 0) throw base.utils.Error('no_suitable_shipping_method');

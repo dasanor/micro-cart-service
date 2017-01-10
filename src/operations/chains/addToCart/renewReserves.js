@@ -3,6 +3,7 @@
  */
 function factory(base) {
   const reserveStockForMinutes = base.config.get('reserveStockForMinutes');
+  const renewURI = base.config.get('services:uris:stock.reserve.renew');
   return (context, next) => {
 
     if(context.cart && context.cart.items){
@@ -10,7 +11,7 @@ function factory(base) {
       const existentItems = context.cart.items;
       const renewReserve = function(reserve){
         return base.services.call({
-          name: 'stock:stock.reserve.renew'
+          name: renewURI
         }, {
           id: reserve.id,
           reserveStockForMinutes

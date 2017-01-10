@@ -3,12 +3,13 @@
  * By default it delegates the responsibility to the StockService
  */
 function factory(base) {
+  const unreserveURI = base.config.get('services:uris:stock.unreserve');
   return (context, next) => {
     // Asynchrony revert the reserves
     // TODO: Change to messaging
     context.reserves.forEach(reserve => {
       base.services.call({
-        name: 'stock:stock.unreserve'
+        name: unreserveURI
       }, {
         reserveId: reserve.id,
         unreserveQuantity: reserve.quantity

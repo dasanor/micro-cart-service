@@ -2,7 +2,16 @@
   "services": {
     "name": "cart",
     "version": "v1",
-    "style": "RPC"
+    "style": "RPC",
+    "uris": {
+      "stock.reserve": "stock:stock.reserve",
+      "stock.unreserve": "stock:stock.unreserve",
+      "stock.reserve.renew": "stock:stock.reserve.renew",
+      "promotion.cartPromotions": "promotion:promotion.cartPromotions",
+      "product.info": "catalog:product.info",
+      "tax.cartTaxes": "tax:tax.cartTaxes",
+      "shipping.addressMethods": "cart:shipping.addressMethods"
+    }
   },
   "schemas": {
     "addToCart": "./schemas/addToCartSchema",
