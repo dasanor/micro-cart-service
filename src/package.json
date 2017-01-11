@@ -26,8 +26,9 @@
   "license": "OSL-3.0",
   "dependencies": {
     "countryjs": "1.6.0",
-    "microbase": "^0.9.0",
+    "microbase": "^0.10.0",
     "moment": "^2.17.1",
+    "raven": "^1.1.1",
     "shortid": "^2.2.6"
   },
   "devDependencies": {
