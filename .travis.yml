@@ -32,6 +32,7 @@ before_script:
 script:
   - npm run test-cov-lcov
 after_success:
+  - echo {\"info\":{\"package\":{\"commit\":\"$TRAVIS_COMMIT\"}}}>extra.json
   - cat ./lcov.info | ./node_modules/.bin/coveralls
   - cd ..
   - docker build -t $TRAVIS_REPO_SLUG:build .
