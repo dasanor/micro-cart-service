@@ -18,11 +18,11 @@ module.exports = (base) => {
       const cartCountry = country.info(address.country);
       if (!cartCountry) {
         return reply(base.utils.genericResponse(null,
-          base.utils.Error('invalid_country', { location: address.country })));
+          base.utils.Error('invalid_country', { country: address.country })));
       }
       if (address.state && cartCountry.provinces.indexOf(address.state) === -1) {
         return reply(base.utils.genericResponse(null,
-          base.utils.Error('invalid_state', { location: address.state })));
+          base.utils.Error('invalid_state', { country: address.country, state: address.state })));
       }
 
       base.services
@@ -42,7 +42,10 @@ module.exports = (base) => {
               if (base.logger.isDebugEnabled()) {
                 base.logger.debug(`[cart] shipping address set to ${savedCart._id}`);
               }
-              return reply(base.utils.genericResponse({ cart: savedCart.toClient(), methods: response.methods }));
+              return reply(base.utils.genericResponse({
+                cart: savedCart.toClient(),
+                shippingMethods: response.methods
+              }));
             });
         })
         .catch(error => reply(base.utils.genericResponse(null, error)));

@@ -32,11 +32,11 @@ function opFactory(base) {
           const c = country.info(location.country);
           if (!c) {
             return reply(base.utils.genericResponse(null,
-              base.utils.Error('location_country_invalid', { location: location.country })));
+              base.utils.Error('location_country_invalid', { country: location.country })));
           }
           if (location.state && c.provinces.indexOf(location.state) === -1) {
             return reply(base.utils.genericResponse(null,
-              base.utils.Error('location_state_invalid', { location: location.state })));
+              base.utils.Error('location_state_invalid', { country: location.country, state: location.state })));
           }
         }
         for (const rate of lr.rates) {

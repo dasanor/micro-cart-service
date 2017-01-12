@@ -14,9 +14,9 @@
   "scripts": {
     "start": "node index.js",
     "doc": "npm install docker && docker -i . -o docs/code index.js models operations jobs",
-    "test": "lab test/test.js -I shortid,adjectives,nouns,name -v",
-    "test-cov-html": "lab -r html -o coverage.html test/test.js -I shortid,adjectives,nouns,name",
-    "test-cov-lcov": "lab -r lcov -o lcov.info test/test.js -I shortid,adjectives,nouns,name"
+    "test": "lab test -I shortid,adjectives,nouns,name -v -R",
+    "test-cov-html": "lab -r html -o coverage.html test -I shortid,adjectives,nouns,name -R",
+    "test-cov-lcov": "lab -r lcov -o lcov.info test -I shortid,adjectives,nouns,name -R"
   },
   "repository": {
     "type": "git",

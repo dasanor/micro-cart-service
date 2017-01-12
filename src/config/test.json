@@ -22,9 +22,7 @@
     "debug": true
   },
   "gateway": {
-    "host": "gateway",
-    "port": "80",
-    "path": "/services"
+    "gatewayUrlOverrride": "./test/gatewayUrlOverride"
   },
   "test": {
     "defaultHeaders": {

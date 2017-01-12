@@ -61,7 +61,24 @@ Returns a list of available Shipping Methods for this address:
           "phone": 2173203531,
           "instructions": "Instructions"        
         }
-    }
+    },
+    "shippingMethods": [
+       {
+         "title": "UPS Same Day",
+         "taxCode": "default",
+         "rates": [
+           {
+             "currency": "EUR",
+             "amount": 10.1
+           },
+           {
+             "currency": "GBP",
+             "amount": 9.9
+           }
+         ]
+       }
+     ]
+
 }
 ```
 
