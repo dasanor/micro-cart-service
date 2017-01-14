@@ -106,11 +106,7 @@ function modelFactory(base, configKeys) {
 
   // The root schema
   const schema = base.db.Schema({
-    _id: {
-      type: String, required: true, default: function () {
-        return shortId.generate();
-      }
-    },
+    _id: { type: String, required: true, default: shortId.generate },
     customerId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
     currency: { type: String, required: true }, // ISO 4217
