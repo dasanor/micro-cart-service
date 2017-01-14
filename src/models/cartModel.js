@@ -114,7 +114,8 @@ function modelFactory(base, configKeys) {
     customerId: { type: String, required: true },
     expirationTime: { type: Date, required: true },
     currency: { type: String, required: true }, // ISO 4217
-    channel: { type: String, required: true },
+    country: { type: String, required: false }, // ISO 3166-1 alpha-2
+    channel: { type: String, required: false }, // Distribution channel (opposed to supply channel)
     shippingAddress: shippingAddressSchema,
     shippingMethod: shippingMethodSchema,
     items: [itemsSchema],

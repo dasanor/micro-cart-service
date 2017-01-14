@@ -62,7 +62,7 @@ describe('Prices', () => {
   beforeEach((done) => {
     initDB(done);
     context = {
-      cart: { currency: 'USD', channel: 'WEB' },
+      cart: { currency: 'USD', channel: 'WEB', country: 'US' },
       customer: { country: 'US', tags: ['VIP'] },
       product: {
         prices: [{ amount: 10.00, currency: 'USD' }]

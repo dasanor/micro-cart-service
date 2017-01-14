@@ -82,6 +82,7 @@
   "defaultCustomer": "ANON",
   "defaultCustomerTags": ["ANON"],
   "defaultCurrency": "USD",
+  "defaultCountry": "US",
   "defaultChannel": "WEB",
   "defaultTaxCode": "default"
 }
