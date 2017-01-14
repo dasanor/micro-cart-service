@@ -318,6 +318,58 @@ describe('Cart', () => {
       .catch(error => done(error));
   });
 
+  it('validates the Country on Cart creation', (done) => {
+    const options = {
+      url: '/services/cart/v1/cart.create',
+      payload: {
+        country: 'XX'
+      }
+    };
+    callService(options)
+      .then((response) => {
+        expect(response.statusCode).to.equal(200);
+        // Expected result:
+        // {
+        //   "ok": false,
+        //   "error": "invalid_country",
+        //   "data": {
+        //     "country": "XX"
+        //   }
+        // }
+        expect(response.body.ok).to.equal(false);
+        expect(response.body.error).to.equal('invalid_country');
+        expect(response.body.data).to.equal({ country: 'XX' });
+        done();
+      })
+      .catch(error => done(error));
+  });
+
+  it('validates the Currency on Cart creation', (done) => {
+    const options = {
+      url: '/services/cart/v1/cart.create',
+      payload: {
+        currency: 'XX'
+      }
+    };
+    callService(options)
+      .then((response) => {
+        expect(response.statusCode).to.equal(200);
+        // Expected result:
+        // {
+        //   "ok": false,
+        //   "error": "invalid_currency",
+        //   "data": {
+        //     "country": "XX"
+        //   }
+        // }
+        expect(response.body.ok).to.equal(false);
+        expect(response.body.error).to.equal('invalid_currency');
+        expect(response.body.data).to.equal({ currency: 'XX' });
+        done();
+      })
+      .catch(error => done(error));
+  });
+
   it('retrieves a non-existent cart', (done) => {
     const options = {
       method: 'GET',
@@ -641,6 +693,39 @@ describe('Cart Entries', () => {
         const result = response.body;
         expect(result.ok).to.equal(false);
         expect(result.error).to.be.a.string().and.to.equal('not_enough_stock');
+        done();
+      })
+      .catch(error => done(error));
+  });
+
+  it('removes an item', (done) => {
+    const quantity = 10;
+    const itemRequest1 = {
+      productId: '0001',
+      quantity,
+      warehouseId: '001'
+    };
+    mockCartTaxes();
+    mockCartPromotions();
+    mockCartTaxes();
+    mockCartPromotions();
+    createCart(1, itemRequest1, true, false)
+      .then((cart) => {
+        const options = {
+          url: `/services/cart/v1/cart.removeFromCart?cartId=${cart.id}`,
+          payload: {
+            itemId: cart.items[0].id,
+            quantity: 1
+          }
+        };
+        return callService(options);
+      })
+      .then((response) => {
+        expect(nock.isDone()).to.equal(true);
+        expect(response.statusCode).to.equal(200);
+        const result = response.body;
+        expect(result.ok).to.equal(true);
+        expect(result.cart.items[0].quantity = quantity - 1);
         done();
       })
       .catch(error => done(error));
