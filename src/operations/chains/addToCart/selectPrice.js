@@ -23,8 +23,8 @@ function factory(base) {
         if (!price.validFrom || (price.validFrom && moment().isBetween(price.validFrom, price.validUntil))) {
           let score = 0;
           // Add to the score
-          if (price.country && price.country === country) score += 1;
-          if (price.channel && price.channel === channel) score += 2;
+          if (price.country && country && price.country === country) score += 1;
+          if (price.channel && channel && price.channel === channel) score += 2;
           if (price.customerType && customerTags.indexOf(price.customerType) !== -1) score += 4;
           if (score > selectedScore) {
             selectedPrice = price;

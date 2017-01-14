@@ -24,7 +24,6 @@ module.exports = (base) => {
   const defaultCustomer = base.config.get('defaultCustomer');
   const defaultCurrency = base.config.get('defaultCurrency');
   const defaultChannel = base.config.get('defaultChannel');
-  const defaultCountry = base.config.get('defaultCountry');
 
   return {
     // TODO: create the stock JsonSchema
@@ -32,19 +31,26 @@ module.exports = (base) => {
       customerId = defaultCustomer,
       currency = defaultCurrency,
       channel = defaultChannel,
-      country = defaultCountry
+      country
     }, reply) => {
 
       // Validate country
-      const cartCountry = countryjs.info(country);
-      if (!cartCountry) {
-        return reply(base.utils.genericResponse(null,
-          base.utils.Error('invalid_country', { country })));
-      }
-      // Validate currency
-      if (!currencies.has(currency)) {
-        return reply(base.utils.genericResponse(null,
-          base.utils.Error('invalid_currency', { currency })));
+      if (country) {
+        const cartCountry = countryjs.info(country);
+        if (!cartCountry) {
+          return reply(base.utils.genericResponse(null,
+            base.utils.Error('invalid_country', { country })));
+        }
+        if (!cartCountry.currencies || cartCountry.currencies[0] !== currency) {
+          return reply(base.utils.genericResponse(null,
+            base.utils.Error('invalid_currency', { currency })));
+        }
+      } else {
+        // Validate currency
+        if (!currencies.has(currency)) {
+          return reply(base.utils.genericResponse(null,
+            base.utils.Error('invalid_currency', { currency })));
+        }
       }
 
       const cart = new base.db.models.Cart({
