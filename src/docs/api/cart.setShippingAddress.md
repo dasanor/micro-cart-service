@@ -90,7 +90,7 @@ Error | Data | Description
 ------|------|------------
 validation_error | The data causing the error | Some validation error
 cart_not_found   | The cart Id | The cart was not found
-invalid_country  | The state | The country code is invalid 
+invalid_country  | The country code | The country code is invalid 
 invalid_state    | The currency code | The state is invalid for the country 
 
 # Example
