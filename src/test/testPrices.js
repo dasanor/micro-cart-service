@@ -11,7 +11,8 @@ const after = lab.after;
 const it = lab.it;
 const expect = Code.expect;
 
-const base = require('../index.js');
+const service = require('../index.js');
+const base = service.base || service.start().base;
 
 // Check the environment
 if (process.env.NODE_ENV !== 'test') {

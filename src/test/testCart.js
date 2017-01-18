@@ -13,7 +13,8 @@ const after = lab.after;
 const it = lab.it;
 const expect = Code.expect;
 
-const base = require('../index.js');
+const service = require('../index.js');
+const base = service.base || service.start().base;
 const app = base.transports.http.app;
 
 const defaultHeaders = base.config.get('test:defaultHeaders');
@@ -731,27 +732,3 @@ describe('Cart Entries', () => {
       .catch(error => done(error));
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

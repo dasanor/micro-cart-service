@@ -1,5 +1,3 @@
-const shortId = require('shortid');
-
 const Code = require('code');
 const Lab = require('lab');
 const nock = require('nock');
@@ -13,11 +11,11 @@ const after = lab.after;
 const it = lab.it;
 const expect = Code.expect;
 
-const base = require('../index.js');
+const service = require('../index.js');
+const base = service.base || service.start().base;
 const app = base.transports.http.app;
 
 const defaultHeaders = base.config.get('test:defaultHeaders');
-const defaultCustomer = base.config.get('defaultCustomer');
 
 // Check the environment
 if (process.env.NODE_ENV !== 'test') {
