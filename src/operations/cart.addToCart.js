@@ -11,7 +11,7 @@ function opFactory(base) {
   const addToCartChain = new base.utils.Chain().use('addToCartChain');
   const op = {
     validator: {
-      schema: require(base.config.get('schemas:addToCart')),
+      schema: base.utils.loadModule('schemas:addToCart')
     },
     handler: (msg, reply) => {
       const context = {

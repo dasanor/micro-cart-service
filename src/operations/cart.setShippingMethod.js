@@ -9,7 +9,7 @@
 module.exports = (base) => {
   return {
     validator: {
-      schema: require(base.config.get('schemas:setShippingMethod'))
+      schema: base.utils.loadModule('schemas:setShippingMethod')
     },
     handler: ({ cartId, method }, reply) => {
       base.db.models.Cart

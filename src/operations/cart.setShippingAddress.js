@@ -12,7 +12,7 @@ module.exports = (base) => {
   const methodsURI = base.config.get('services:uris:shipping.addressMethods');
   return {
     validator: {
-      schema: require(base.config.get('schemas:setShippingAddress'))
+      schema: base.utils.loadModule('schemas:setShippingAddress')
     },
     handler: ({ cartId, address }, reply) => {
       // Validate country/state

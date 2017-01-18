@@ -23,7 +23,7 @@ function opFactory(base) {
 
   return {
     validator: {
-      schema: require(base.config.get('schemas:createShipping'))
+      schema: base.utils.loadModule('schemas:createShipping')
     },
     handler: (msg, reply) => {
       // Validate country/state/currency codes

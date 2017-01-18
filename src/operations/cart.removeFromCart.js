@@ -9,7 +9,7 @@ function opFactory(base) {
   const removeFromCartChain = new base.utils.Chain().use('removeFromCartChain');
   const op = {
     validator: {
-      schema: require(base.config.get('schemas:removeFromCart')),
+      schema: base.utils.loadModule('schemas:removeFromCart')
     },
     handler: (msg, reply) => {
       const context = {
