@@ -2,6 +2,7 @@
  * Hook to allow customization Taxes calculation
  */
 function factory(base) {
+  const taxesURI = base.config.get('services:uris:tax.cartTaxes');
 
   // Calculate Cart totals
   function calculateCartTotals(cart) {
@@ -43,7 +44,7 @@ function factory(base) {
     };
 
     base.services.call({
-      name: 'tax:tax.cartTaxes'
+      name: taxesURI
     }, requestCart)
       .then(response => {
         if (response.ok === false) {

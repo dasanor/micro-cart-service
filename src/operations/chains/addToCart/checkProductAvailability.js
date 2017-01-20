@@ -4,9 +4,10 @@
  */
 function factory(base) {
   const discontinuedStockStatus = base.db.models.Cart.STOCKSTATUS.DISCONTINUED;
+  const productURI = base.config.get('services:uris:product.info');
   return (context, next) => {
     base.services.call({
-      name: 'catalog:product.info'
+      name: productURI
     }, {
       id: context.productId, fields: '-variants'
     })

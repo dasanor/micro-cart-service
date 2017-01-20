@@ -1,26 +1,56 @@
+sudo: required
 language: node_js
 node_js:
   - '6'
+branches:
+  only:
+  - master
+  - develop
+  - /^deploy\/.+$/
+#  - /^feature\/.+$/
 services:
   - mongodb
   - docker
 cache:
-  - yarn
+  directories:
+  - $HOME/.yarn-cache
 before_install:
-  - cd src
-  - npm install -g yarn
+  # Repo for Yarn
+  - sudo apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg
+  - echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+  - sudo apt-get update -qq
+  - sudo apt-get install -y -qq yarn
+env:
+  global:
+    - ISDEPLOY=$(echo ${TRAVIS_BRANCH} | grep -q "^.*/.*$" && echo true || echo false)
+    - DEPLOY_NAME=$(echo ${TRAVIS_BRANCH} | sed s/deploy\\///)
 install:
-  - yarn
+  - cd src
+  - yarn --pure-lockfile
 before_script:
   - sleep 15
 script:
   - npm run test-cov-lcov
 after_success:
+  - echo {\"info\":{\"package\":{\"commit\":\"$TRAVIS_COMMIT\"}}}>extra.json
   - cat ./lcov.info | ./node_modules/.bin/coveralls
   - cd ..
-  - docker build -t ncornag/micro-cart-service:latest .
+  - docker build -t $TRAVIS_REPO_SLUG:build .
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  - docker push ncornag/micro-cart-service:latest;
+  - if [ "$TRAVIS_BRANCH" == "develop" ]; then
+    docker tag $TRAVIS_REPO_SLUG:build $TRAVIS_REPO_SLUG:develop;
+    docker push $TRAVIS_REPO_SLUG:develop;
+    fi
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ -n "${TRAVIS_TAG}" ]; then
+    docker tag $TRAVIS_REPO_SLUG:build $TRAVIS_REPO_SLUG:$TRAVIS_TAG;
+    docker push $TRAVIS_REPO_SLUG:$TRAVIS_TAG;
+    docker tag $TRAVIS_REPO_SLUG:build $TRAVIS_REPO_SLUG:latest;
+    docker push $TRAVIS_REPO_SLUG:latest;
+    fi
+  - if [ "$ISDEPLOY" == "true" ]; then
+    docker tag $TRAVIS_REPO_SLUG:build $TRAVIS_REPO_SLUG:$DEPLOY_NAME;
+    docker push $TRAVIS_REPO_SLUG:$DEPLOY_NAME;
+    fi
 notifications:
   slack:
     secure: ej6xmArToAAsxY2uLpvz6SgDFDt8EHyQD4G9siikFl080vlKaJ6GE7BFOjZCWrkJwm0AChVRafi/R6pia+K6P0f/N4y0nS89Ed/7oF8eRK8bLcxIdte9MFa15HbOjdmdxQxtwuOt+yzaiFHGms+256asDrA/LULZrsXwYDkov5Nu3qqi3LVNbVbHNThRrIi5dO0w5RyNPN9jk4Bo62En8XnRSrEtJ+ze4kOtumxwje8ID0hltnvA0LST/fCXdwqkFRxz+YPejQjNYc7BYA/jpVMKJHCicAp9P2bIMIyjX4gtFg+a39Ic32Vq9GkWbV2FWCcsNvS6nIkmmsvl4FRRVza/8mbFPWPyUrdhPjYhHQHi70hY5wk6odLDqV9lZruePvxCBY1WBQYYj7cdbDRfGZ6ZEh94Ivmxw0LsvkACcmiB6du4f/znVcDHHg5JD46B3S6yxQdwMcc51UkoYyysrRuHSJti3bu0b7oerDaLsNT9Bk+uB7em9UeLB9yvDj08aFU18mZhnjJWeIMFn2f1cdkKYdy8XhDyw0M7pMpvAk/4tH+RwJXdWvUb3N42pzXjf1CMfU3Jo41NCJ9VmlUSnkMSPXN46qwsN5zdebxoP7F9M7fgUmYiRmPBRAWFoDGqki5uzHB4tANZ6+ukG2/d9fNbqmUju0XtSv46y/NF5p8=

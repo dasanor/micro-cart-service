@@ -13,7 +13,7 @@ token    | yes | Token       | Bearer xxxxx... | Authentication token.
 title    | yes | String      | UPS Same Day    | Shipping method title.
 active   | yes | Boolean     | true            | Active or disabled.
 taxCode  | no  | String      | vat-7           | Tax code applicable to this shipping method. Defaults to 'default'.   
-rates    | yes | Object List | *see below*     | List of rates by location.
+rates    | yes | Object List | -               | List of rates by location.
 
 ## Rates
 
@@ -69,6 +69,9 @@ Expected errors that this method could return. Some errors return additional dat
 Error | Data | Description
 ------|------|------------
 validation_error | The data causing the error | Some validation error
+location_country_invalid | The country code | The country code is invalid 
+location_state_invalid | The state | The state is invalid for the country 
+rate_currency_invalid | The currency code | The currency code is not invalid
 
 # Example
 

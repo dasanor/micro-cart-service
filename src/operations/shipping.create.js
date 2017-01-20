@@ -1,10 +1,9 @@
-const isoCurrencies = require('currency-format');
-const isoCountries = require('i18n-iso-countries');
+const country = require('countryjs');
 
 /**
  * ## `shipping.create` operation factory
  *
- * Create Ahipping Method operation
+ * Create Shipping Method operation
  *
  * @param {base} Object The microbase object
  * @return {Function} The operation factory
@@ -12,27 +11,41 @@ const isoCountries = require('i18n-iso-countries');
 function opFactory(base) {
   const shippingChannel = base.config.get('bus:channels:shippings:name');
   const defaultTaxCode = base.config.get('defaultTaxCode');
+
+  // Extract currencies
+  const cList = country.all()
+    .map(c => (c.currencies ? c.currencies[0] : undefined))
+    .filter(c => c !== undefined);
+  const currencies = cList.reduce((result, c) => {
+    result.add(c);
+    return result;
+  }, new Set());
+
   return {
     validator: {
-      schema: require(base.config.get('schemas:createShipping'))
+      schema: base.utils.loadModule('schemas:createShipping')
     },
     handler: (msg, reply) => {
-      // Validate ISO codes
+      // Validate country/state/currency codes
       for (const lr of msg.rates) {
         for (const location of lr.locations) {
-          if (!isoCountries.alpha2ToNumeric(location.country)) {
+          const c = country.info(location.country);
+          if (!c) {
             return reply(base.utils.genericResponse(null,
-              base.utils.Error('location_contry_invalid', { location: location.country })));
+              base.utils.Error('location_country_invalid', { country: location.country })));
+          }
+          if (location.state && c.provinces.indexOf(location.state) === -1) {
+            return reply(base.utils.genericResponse(null,
+              base.utils.Error('location_state_invalid', { country: location.country, state: location.state })));
           }
         }
         for (const rate of lr.rates) {
-          if (!isoCurrencies[rate.currency]) {
+          if (!currencies.has(rate.currency)) {
             return reply(base.utils.genericResponse(null,
               base.utils.Error('rate_currency_invalid', { rate: rate.currency })));
           }
         }
       }
-
       const shipping = new base.db.models.Shipping({
         title: msg.title,
         active: msg.active || true,

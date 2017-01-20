@@ -2,6 +2,7 @@
  * Hook to allow customization of the Promotions engine
  */
 function factory(base) {
+  const cartPromotionsURI = base.config.get('services:uris:promotion.cartPromotions');
   return (context, next) => {
     // Clean previous promotions
     context.cart.items.forEach(item => {
@@ -21,7 +22,7 @@ function factory(base) {
     };
     // Call the service
     base.services.call({
-      name: 'promotion:promotion.cartPromotions'
+      name: cartPromotionsURI
     }, requestCart)
       .then(response => {
         if (response.ok === false) {

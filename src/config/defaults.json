@@ -2,55 +2,66 @@
   "services": {
     "name": "cart",
     "version": "v1",
-    "style": "RPC"
+    "style": "RPC",
+    "uris": {
+      "stock.reserve": "stock:stock.reserve",
+      "stock.unreserve": "stock:stock.unreserve",
+      "stock.reserve.renew": "stock:stock.reserve.renew",
+      "promotion.cartPromotions": "promotion:promotion.cartPromotions",
+      "product.info": "catalog:product.info",
+      "tax.cartTaxes": "tax:tax.cartTaxes",
+      "shipping.addressMethods": "cart:shipping.addressMethods"
+    }
   },
   "schemas": {
-    "addToCart": "./schemas/addToCartSchema",
-    "removeFromCart": "./schemas/removeFromCartSchema",
-    "createShipping": "./schemas/createShippingSchema"
+    "addToCart": "${servicePath}/operations/schemas/addToCartSchema",
+    "removeFromCart": "${servicePath}/operations/schemas/removeFromCartSchema",
+    "createShipping": "${servicePath}/operations/schemas/createShippingSchema",
+    "setShippingAddress": "${servicePath}/operations/schemas/setShippingAddress",
+    "setShippingMethod": "${servicePath}/operations/schemas/setShippingMethod"
   },
   "models": {
-    "Cart": "./models/cartModel",
-    "Shipping": "./models/shippingModel"
+    "Cart": "${servicePath}/models/cartModel",
+    "Shipping": "${servicePath}/models/shippingModel"
   },
   "addToCartChain": {
-    "getCart": "./operations/chains/addToCart/getCart",
-    "getCustomer": "./operations/chains/addToCart/getCustomer",
-    "bulkAddToCart": "./operations/chains/addToCart/bulkAddToCart",
-    "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
-    "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
-    "postCalculateCart": "./operations/chains/addToCart/postCalculateCart",
-    "renewReserves": "./operations/chains/addToCart/renewReserves",
-    "saveCart": "./operations/chains/addToCart/saveCart",
-    "postSaveCart": "./operations/chains/addToCart/postSaveCart"
+    "getCart": "${servicePath}/operations/chains/addToCart/getCart",
+    "getCustomer": "${servicePath}/operations/chains/addToCart/getCustomer",
+    "bulkAddToCart": "${servicePath}/operations/chains/addToCart/bulkAddToCart",
+    "calculatePromotions": "${servicePath}/operations/chains/addToCart/calculatePromotions",
+    "calculateTaxes": "${servicePath}/operations/chains/addToCart/calculateTaxes",
+    "postCalculateCart": "${servicePath}/operations/chains/addToCart/postCalculateCart",
+    "renewReserves": "${servicePath}/operations/chains/addToCart/renewReserves",
+    "saveCart": "${servicePath}/operations/chains/addToCart/saveCart",
+    "postSaveCart": "${servicePath}/operations/chains/addToCart/postSaveCart"
   },
   "itemAddToCartChain": {
-    "checkMaxQuantityPerProduct": "./operations/chains/addToCart/checkMaxQuantityPerProduct",
-    "checkMaxNumberOfEntries": "./operations/chains/addToCart/checkMaxNumberOfEntries",
-    "checkProductAvailability": "./operations/chains/addToCart/checkProductAvailability",
-    "checkStockAvailability": "./operations/chains/addToCart/checkStockAvailability",
-    "selectPrice": "./operations/chains/addToCart/selectPrice",
-    "addToCart": "./operations/chains/addToCart/addToCart"
+    "checkMaxQuantityPerProduct": "${servicePath}/operations/chains/addToCart/checkMaxQuantityPerProduct",
+    "checkMaxNumberOfEntries": "${servicePath}/operations/chains/addToCart/checkMaxNumberOfEntries",
+    "checkProductAvailability": "${servicePath}/operations/chains/addToCart/checkProductAvailability",
+    "checkStockAvailability": "${servicePath}/operations/chains/addToCart/checkStockAvailability",
+    "selectPrice": "${servicePath}/operations/chains/addToCart/selectPrice",
+    "addToCart": "${servicePath}/operations/chains/addToCart/addToCart"
   },
   "removeFromCartChain": {
-    "getEntry": "./operations/chains/removeFromCart/getEntry",
-    "removeFromCart": "./operations/chains/removeFromCart/removeFromCart",
-    "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
-    "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
-    "postCalculateCart": "./operations/chains/addToCart/postCalculateCart",
-    "renewReserves": "./operations/chains/addToCart/renewReserves",
-    "saveCart": "./operations/chains/addToCart/saveCart",
-    "unreserve": "./operations/chains/removeFromCart/unreserve"
+    "getEntry": "${servicePath}/operations/chains/removeFromCart/getEntry",
+    "removeFromCart": "${servicePath}/operations/chains/removeFromCart/removeFromCart",
+    "calculatePromotions": "${servicePath}/operations/chains/addToCart/calculatePromotions",
+    "calculateTaxes": "${servicePath}/operations/chains/addToCart/calculateTaxes",
+    "postCalculateCart": "${servicePath}/operations/chains/addToCart/postCalculateCart",
+    "renewReserves": "${servicePath}/operations/chains/addToCart/renewReserves",
+    "saveCart": "${servicePath}/operations/chains/addToCart/saveCart",
+    "unreserve": "${servicePath}/operations/chains/removeFromCart/unreserve"
   },
   "calculateCartChain": {
-    "getCart": "./operations/chains/addToCart/getCart",
-    "calculatePromotions": "./operations/chains/addToCart/calculatePromotions",
-    "calculateTaxes": "./operations/chains/addToCart/calculateTaxes",
-    "postCalculateCart": "./operations/chains/addToCart/postCalculateCart",
-    "saveCart": "./operations/chains/addToCart/saveCart",
-    "postSaveCart": "./operations/chains/addToCart/postSaveCart"
+    "getCart": "${servicePath}/operations/chains/addToCart/getCart",
+    "calculatePromotions": "${servicePath}/operations/chains/addToCart/calculatePromotions",
+    "calculateTaxes": "${servicePath}/operations/chains/addToCart/calculateTaxes",
+    "postCalculateCart": "${servicePath}/operations/chains/addToCart/postCalculateCart",
+    "saveCart": "${servicePath}/operations/chains/addToCart/saveCart",
+    "postSaveCart": "${servicePath}/operations/chains/addToCart/postSaveCart"
   },
-  "addToCartOnError": "./operations/chains/addToCart/onError",
+  "addToCartOnError": "${servicePath}/operations/chains/addToCart/onError",
   "bus": {
     "engines": {
       "local": {
@@ -80,6 +91,7 @@
   "defaultCustomer": "ANON",
   "defaultCustomerTags": ["ANON"],
   "defaultCurrency": "USD",
+  "defaultCountry": "US",
   "defaultChannel": "WEB",
   "defaultTaxCode": "default"
 }

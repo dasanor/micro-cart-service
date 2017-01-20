@@ -5,3 +5,4 @@ docs/code
 .idea
 .queues
 lcov.info
+extra.json
